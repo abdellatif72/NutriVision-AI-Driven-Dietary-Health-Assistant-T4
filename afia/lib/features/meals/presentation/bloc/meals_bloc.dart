@@ -1,0 +1,3 @@
+class MealsBloc {
+  const MealsBloc();
+}

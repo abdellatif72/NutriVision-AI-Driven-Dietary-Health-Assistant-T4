@@ -1,0 +1,3 @@
+class ExploreBloc {
+  const ExploreBloc();
+}

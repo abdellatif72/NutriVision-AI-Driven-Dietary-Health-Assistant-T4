@@ -1,0 +1,3 @@
+class OnboardBloc {
+  const OnboardBloc();
+}

@@ -1,0 +1,3 @@
+class AiBloc {
+  const AiBloc();
+}

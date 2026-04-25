@@ -1,0 +1,3 @@
+class LocaleCubit {
+  const LocaleCubit();
+}

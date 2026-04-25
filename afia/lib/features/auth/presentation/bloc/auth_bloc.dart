@@ -1,0 +1,3 @@
+class AuthBloc {
+  const AuthBloc();
+}

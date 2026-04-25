@@ -1,0 +1,3 @@
+class WaterBloc {
+  const WaterBloc();
+}
