@@ -1,3 +1,0 @@
-class MainBloc {
-  const MainBloc();
-}

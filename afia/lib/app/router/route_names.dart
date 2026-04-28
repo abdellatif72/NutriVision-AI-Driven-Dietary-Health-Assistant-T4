@@ -3,6 +3,7 @@ abstract final class RouteNames {
   static const onboard = '/onboard';
   static const main = '/main';
   static const meals = '/meals';
+  static const mealSearch = '/meals/search';
   static const water = '/water';
   static const ai = '/ai';
   static const explore = '/explore';

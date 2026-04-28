@@ -2,11 +2,12 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/features/ai/presentation/pages/ai_page.dart';
 import 'package:afia/features/auth/presentation/pages/auth_page.dart';
 import 'package:afia/features/explore/presentation/pages/explore_page.dart';
-import 'package:afia/features/main/presentation/pages/main_page.dart';
+import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
+import 'package:afia/features/meals/presentation/pages/meal_search_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:afia/features/more/presentation/pages/more_page.dart';
 import 'package:afia/features/onboard/presentation/pages/onboard_page.dart';
-import 'package:afia/features/water/presentation/pages/water_page.dart';
+import 'package:afia/features/water/presentation/pages/water_recording_page.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
@@ -26,7 +27,7 @@ abstract final class AppRouter {
         );
       case RouteNames.main:
         return MaterialPageRoute<void>(
-          builder: (_) => const MainPage(),
+          builder: (_) => const MainShellPage(),
           settings: settings,
         );
       case RouteNames.meals:
@@ -34,9 +35,14 @@ abstract final class AppRouter {
           builder: (_) => const MealsPage(),
           settings: settings,
         );
+      case RouteNames.mealSearch:
+        return MaterialPageRoute<void>(
+          builder: (_) => const MealSearchPage(),
+          settings: settings,
+        );
       case RouteNames.water:
         return MaterialPageRoute<void>(
-          builder: (_) => const WaterPage(),
+          builder: (_) => const WaterRecordingPage(),
           settings: settings,
         );
       case RouteNames.ai:
