@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -9,9 +9,9 @@ class MacroStackBar extends StatelessWidget {
   final String title;
 
   static const _colors = <Color>[
-    AppColors.primary,
-    AppColors.secondary,
-    AppColors.streak,
+    AfiaColors.primary,
+    AfiaColors.green700,
+    AfiaColors.orange,
   ];
 
   @override
@@ -20,9 +20,9 @@ class MacroStackBar extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,7 +32,7 @@ class MacroStackBar extends StatelessWidget {
             style: const TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
+              color: AfiaColors.textPrimary,
             ),
           ),
           const SizedBox(height: 10),
@@ -91,7 +91,7 @@ class _Legend extends StatelessWidget {
           label,
           style: const TextStyle(
             fontSize: 10,
-            color: AppColors.textSecondary,
+            color: AfiaColors.textSecondary,
           ),
         ),
       ],

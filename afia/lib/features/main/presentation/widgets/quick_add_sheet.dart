@@ -1,5 +1,5 @@
 import 'package:afia/app/router/route_names.dart';
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:flutter/material.dart';
 
 Future<void> showQuickAddSheet(BuildContext context) {
@@ -18,7 +18,7 @@ class _QuickAddSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: const BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -31,7 +31,7 @@ class _QuickAddSheet extends StatelessWidget {
               width: 36,
               height: 4,
               decoration: BoxDecoration(
-                color: AppColors.divider,
+                color: AfiaColors.divider,
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -41,7 +41,7 @@ class _QuickAddSheet extends StatelessWidget {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
-                color: AppColors.textPrimary,
+                color: AfiaColors.textPrimary,
               ),
             ),
             const SizedBox(height: 14),
@@ -96,11 +96,11 @@ class _QuickAddOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = filled ? AppColors.ctaFood : AppColors.background;
-    final border = filled ? AppColors.ctaFood : AppColors.divider;
-    final titleColor = filled ? Colors.white : AppColors.textPrimary;
+    final bg = filled ? AfiaColors.orange : AfiaColors.scaffoldBackground;
+    final border = filled ? AfiaColors.orange : AfiaColors.divider;
+    final titleColor = filled ? Colors.white : AfiaColors.textPrimary;
     final subtitleColor =
-        filled ? Colors.white.withValues(alpha: 0.85) : AppColors.textSecondary;
+        filled ? Colors.white.withValues(alpha: 0.85) : AfiaColors.textSecondary;
 
     return InkWell(
       borderRadius: BorderRadius.circular(14),

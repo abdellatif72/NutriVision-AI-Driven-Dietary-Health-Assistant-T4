@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:flutter/material.dart';
 
 class GreetingHeader extends StatelessWidget {
@@ -15,7 +15,7 @@ class GreetingHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
-      decoration: const BoxDecoration(color: AppColors.primary),
+      decoration: const BoxDecoration(color: AfiaColors.primary),
       child: Row(
         children: [
           Expanded(

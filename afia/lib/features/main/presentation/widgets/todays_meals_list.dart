@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +19,7 @@ class TodaysMealsList extends StatelessWidget {
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
+              color: AfiaColors.textPrimary,
             ),
           ),
         ),
@@ -41,9 +41,9 @@ class _MealRow extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Row(
         children: [
@@ -58,7 +58,7 @@ class _MealRow extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: AppColors.textPrimary,
+                    color: AfiaColors.textPrimary,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -68,7 +68,7 @@ class _MealRow extends StatelessWidget {
                       : '0 cal',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppColors.textSecondary,
+                    color: AfiaColors.textSecondary,
                   ),
                 ),
               ],
@@ -78,14 +78,14 @@ class _MealRow extends StatelessWidget {
             const Icon(
               Icons.chevron_right,
               size: 18,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             )
           else
             Container(
               width: 28,
               height: 28,
               decoration: const BoxDecoration(
-                color: AppColors.ctaFood,
+                color: AfiaColors.orange,
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.add, size: 16, color: Colors.white),

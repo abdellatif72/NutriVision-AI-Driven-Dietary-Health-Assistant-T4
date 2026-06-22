@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/meals/domain/entities/meal_summary.dart';
 import 'package:flutter/material.dart';
 
@@ -25,9 +25,9 @@ class MealSearchTile extends StatelessWidget {
               height: 44,
               alignment: Alignment.center,
               decoration: BoxDecoration(
-                color: AppColors.background,
+                color: AfiaColors.scaffoldBackground,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.divider),
+                border: Border.all(color: AfiaColors.divider),
               ),
               child: Text(meal.emoji, style: const TextStyle(fontSize: 22)),
             ),
@@ -41,7 +41,7 @@ class MealSearchTile extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
+                      color: AfiaColors.textPrimary,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -49,7 +49,7 @@ class MealSearchTile extends StatelessWidget {
                     meal.servingLabel,
                     style: const TextStyle(
                       fontSize: 11,
-                      color: AppColors.textSecondary,
+                      color: AfiaColors.textSecondary,
                     ),
                   ),
                 ],
@@ -59,7 +59,7 @@ class MealSearchTile extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
               decoration: BoxDecoration(
-                color: AppColors.ctaFood.withValues(alpha: 0.12),
+                color: AfiaColors.orange.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
@@ -67,7 +67,7 @@ class MealSearchTile extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.ctaFood,
+                  color: AfiaColors.orange,
                 ),
               ),
             ),

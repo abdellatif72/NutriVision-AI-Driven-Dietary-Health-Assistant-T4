@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:flutter/material.dart';
 
 const int _minMl = 50;
@@ -50,7 +50,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
       ),
       child: Container(
         decoration: const BoxDecoration(
-          color: AppColors.surface,
+          color: AfiaColors.surface,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
@@ -63,7 +63,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.divider,
+                  color: AfiaColors.divider,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -73,7 +73,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+                  color: AfiaColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
@@ -81,7 +81,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                 'In ml (e.g. 350)',
                 style: TextStyle(
                   fontSize: 11,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
               ),
               const SizedBox(height: 16),
@@ -150,8 +150,8 @@ class _AmountDisplay extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.background,
-        border: Border.all(color: AppColors.divider),
+        color: AfiaColors.scaffoldBackground,
+        border: Border.all(color: AfiaColors.divider),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
@@ -160,7 +160,7 @@ class _AmountDisplay extends StatelessWidget {
             'Quantity',
             style: TextStyle(
               fontSize: 11,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             ),
           ),
           const SizedBox(height: 4),
@@ -169,7 +169,7 @@ class _AmountDisplay extends StatelessWidget {
             style: const TextStyle(
               fontSize: 26,
               fontWeight: FontWeight.w900,
-              color: AppColors.textPrimary,
+              color: AfiaColors.textPrimary,
               height: 1.1,
             ),
           ),
@@ -178,7 +178,7 @@ class _AmountDisplay extends StatelessWidget {
             'ml',
             style: TextStyle(
               fontSize: 11,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             ),
           ),
         ],
@@ -207,10 +207,10 @@ class _StepButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: highlighted
-              ? AppColors.primary.withValues(alpha: 0.12)
-              : AppColors.background,
+              ? AfiaColors.primary.withValues(alpha: 0.12)
+              : AfiaColors.scaffoldBackground,
           border: Border.all(
-            color: highlighted ? AppColors.primary : AppColors.divider,
+            color: highlighted ? AfiaColors.primary : AfiaColors.divider,
           ),
           borderRadius: BorderRadius.circular(14),
         ),
@@ -219,7 +219,7 @@ class _StepButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.w900,
-            color: highlighted ? AppColors.primary : AppColors.textPrimary,
+            color: highlighted ? AfiaColors.primary : AfiaColors.textPrimary,
             height: 1,
           ),
         ),
@@ -248,9 +248,9 @@ class _SheetButton extends StatelessWidget {
         height: 44,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: filled ? AppColors.secondary : AppColors.surface,
+          color: filled ? AfiaColors.green700 : AfiaColors.surface,
           border: Border.all(
-            color: filled ? AppColors.secondary : AppColors.divider,
+            color: filled ? AfiaColors.green700 : AfiaColors.divider,
           ),
           borderRadius: BorderRadius.circular(12),
         ),
@@ -259,7 +259,7 @@ class _SheetButton extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w800,
-            color: filled ? Colors.white : AppColors.textPrimary,
+            color: filled ? Colors.white : AfiaColors.textPrimary,
           ),
         ),
       ),

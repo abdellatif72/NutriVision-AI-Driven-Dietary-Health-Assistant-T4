@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:afia/features/main/presentation/widgets/calories_ring_card.dart';
 import 'package:afia/features/main/presentation/widgets/greeting_header.dart';
@@ -31,7 +31,7 @@ class _HomeView extends StatelessWidget {
           return const Center(child: CircularProgressIndicator());
         }
         return Container(
-          color: AppColors.background,
+          color: AfiaColors.scaffoldBackground,
           child: ListView(
             padding: const EdgeInsets.only(bottom: 24),
             children: [
