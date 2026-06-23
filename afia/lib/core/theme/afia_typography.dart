@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'afia_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+
 
 /// Type scale extracted from the Afia UI reference.
 ///
@@ -16,7 +18,7 @@ import 'afia_colors.dart';
 class AfiaTypography {
   AfiaTypography._();
 
-  static String? fontFamily; // null = platform default
+  static String? fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 
   /// The big hero numbers: "1250", "5,500", "12", "86".
   static TextStyle get statValue => TextStyle(

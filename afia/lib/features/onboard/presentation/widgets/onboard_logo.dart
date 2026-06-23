@@ -2,14 +2,23 @@ import 'package:flutter/material.dart';
 
 /// Afia brand logo rendered from the actual logo image asset.
 class OnboardLogo extends StatelessWidget {
-  const OnboardLogo({super.key});
+  final double? width;
+  final double? height;
+
+  const OnboardLogo({
+    super.key,
+    this.width,
+    this.height = 60.0, // Default fallback height
+  });
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Image.asset(
         'assets/images/afia_logo.png',
-        height: 60,
+        width: width,
+        height: height,
+        fit: BoxFit.contain, 
       ),
     );
   }

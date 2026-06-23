@@ -7,6 +7,7 @@ import 'package:afia/features/onboard/presentation/widgets/onboard_illustration.
 import 'package:afia/features/onboard/presentation/widgets/onboard_logo.dart';
 import 'package:flutter/material.dart';
 
+
 /// First screen the user sees. A visual welcome introducing the Afia
 /// brand and value proposition, with a CTA to start onboarding or log in.
 class OnboardPage extends StatelessWidget {
@@ -27,7 +28,7 @@ class OnboardPage extends StatelessWidget {
               const SizedBox(height: AfiaSpacing.xl),
 
               // ── Afia branding logo ──
-              const OnboardLogo(),
+              const OnboardLogo(height: 130),
 
               const SizedBox(height: AfiaSpacing.xxl),
 

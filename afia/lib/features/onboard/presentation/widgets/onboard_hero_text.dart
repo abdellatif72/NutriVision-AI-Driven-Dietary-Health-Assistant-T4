@@ -2,6 +2,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// "Healthy habits, smarter you." heading + subtitle paragraph, centered.
 class OnboardHeroText extends StatelessWidget {
@@ -14,10 +15,11 @@ class OnboardHeroText extends StatelessWidget {
         Text(
           'Healthy habits,\nsmarter you.',
           textAlign: TextAlign.center,
-          style: AfiaTypography.statValue.copyWith(
+          style: GoogleFonts.inter(
             fontSize: 28,
             height: 1.2,
             letterSpacing: -0.3,
+            fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: AfiaSpacing.sm),
@@ -25,7 +27,8 @@ class OnboardHeroText extends StatelessWidget {
           'Nutrition, activity, and AI insights\n— all in one place.',
           textAlign: TextAlign.center,
           style: AfiaTypography.body.copyWith(
-            color: AfiaColors.textSecondary,
+            color: AfiaColors.textPrimary,
+            fontSize: 16,
             height: 1.5,
           ),
         ),
