@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -38,9 +38,9 @@ class WaterLogTile extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Row(
         children: [
@@ -51,7 +51,7 @@ class WaterLogTile extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textSecondary,
+                color: AfiaColors.textSecondary,
               ),
             ),
           ),
@@ -61,7 +61,7 @@ class WaterLogTile extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: AfiaColors.textPrimary,
               ),
             ),
           ),
@@ -71,7 +71,7 @@ class WaterLogTile extends StatelessWidget {
             onPressed: () {},
             icon: const Icon(
               Icons.edit_outlined,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             ),
           ),
           IconButton(
@@ -80,7 +80,7 @@ class WaterLogTile extends StatelessWidget {
             onPressed: onDelete,
             icon: const Icon(
               Icons.delete_outline,
-              color: AppColors.ctaFood,
+              color: AfiaColors.orange,
             ),
           ),
         ],

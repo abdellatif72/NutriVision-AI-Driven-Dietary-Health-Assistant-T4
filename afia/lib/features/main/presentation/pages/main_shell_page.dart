@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/main_shell_cubit.dart';
 import 'package:afia/features/main/presentation/pages/home_page.dart';
 import 'package:afia/features/main/presentation/pages/progress_page.dart';
@@ -107,7 +107,7 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? AppColors.primary : AppColors.textSecondary;
+    final color = selected ? AfiaColors.primary : AfiaColors.textSecondary;
     return Expanded(
       child: InkWell(
         onTap: onTap,
@@ -141,7 +141,7 @@ class _QuickAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return FloatingActionButton(
       onPressed: () => showQuickAddSheet(context),
-      backgroundColor: AppColors.primary,
+      backgroundColor: AfiaColors.primary,
       shape: const CircleBorder(),
       child: const Icon(Icons.add, color: Colors.white),
     );

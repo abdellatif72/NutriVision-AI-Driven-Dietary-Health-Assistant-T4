@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:flutter/material.dart';
 
 class WaterProgressRing extends StatelessWidget {
@@ -37,7 +37,7 @@ class WaterProgressRing extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 30,
                   fontWeight: FontWeight.w900,
-                  color: AppColors.hydration,
+                  color: AfiaColors.blue,
                 ),
               ),
               const SizedBox(height: 4),
@@ -45,7 +45,7 @@ class WaterProgressRing extends StatelessWidget {
                 'From ${_formatLiters(goalMl)}',
                 style: const TextStyle(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
               ),
             ],
@@ -68,12 +68,12 @@ class _RingPainter extends CustomPainter {
     final track = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
-      ..color = AppColors.hydration.withValues(alpha: 0.18);
+      ..color = AfiaColors.blue.withValues(alpha: 0.18);
     final progress = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 12
       ..strokeCap = StrokeCap.round
-      ..color = AppColors.hydration;
+      ..color = AfiaColors.blue;
     canvas.drawCircle(center, radius, track);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),

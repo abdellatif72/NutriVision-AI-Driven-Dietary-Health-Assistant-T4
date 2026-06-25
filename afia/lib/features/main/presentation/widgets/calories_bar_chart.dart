@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -18,9 +18,9 @@ class CaloriesBarChart extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -29,7 +29,7 @@ class CaloriesBarChart extends StatelessWidget {
             caption,
             style: const TextStyle(
               fontSize: 11,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             ),
           ),
           const SizedBox(height: 12),
@@ -60,7 +60,7 @@ class _BarColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color =
-        bar.emphasized ? AppColors.primary : AppColors.primary.withValues(alpha: 0.45);
+        bar.emphasized ? AfiaColors.primary : AfiaColors.primary.withValues(alpha: 0.45);
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -72,7 +72,7 @@ class _BarColumn extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
-                color: AppColors.textSecondary,
+                color: AfiaColors.textSecondary,
               ),
             ),
           ),
@@ -82,7 +82,7 @@ class _BarColumn extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 3),
           height: (bar.heightPercent.clamp(0.0, 1.0)) * 80 + 2,
           decoration: BoxDecoration(
-            color: bar.heightPercent <= 0 ? AppColors.divider : color,
+            color: bar.heightPercent <= 0 ? AfiaColors.divider : color,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -92,7 +92,7 @@ class _BarColumn extends StatelessWidget {
           style: const TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.w600,
-            color: AppColors.textSecondary,
+            color: AfiaColors.textSecondary,
           ),
         ),
       ],

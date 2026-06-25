@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
 import 'package:afia/features/main/presentation/widgets/calories_bar_chart.dart';
 import 'package:afia/features/main/presentation/widgets/macro_stack_bar.dart';
@@ -40,7 +40,7 @@ class _ProgressView extends StatelessWidget {
       builder: (context, state) {
         final cubit = context.read<ProgressCubit>();
         return Container(
-          color: AppColors.background,
+          color: AfiaColors.scaffoldBackground,
           child: ListView(
             padding: const EdgeInsets.only(top: 16, bottom: 24),
             children: [
@@ -51,7 +51,7 @@ class _ProgressView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: AfiaColors.textPrimary,
                   ),
                 ),
               ),

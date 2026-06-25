@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:afia/features/water/presentation/widgets/custom_water_amount_sheet.dart';
 import 'package:afia/features/water/presentation/widgets/water_log_tile.dart';
@@ -36,20 +36,20 @@ class _WaterRecordingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: AfiaColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: AfiaColors.textPrimary),
         ),
         title: const Text(
           'Water logging',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
+            color: AfiaColors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -72,7 +72,7 @@ class _WaterRecordingView extends StatelessWidget {
                   'Your goal: ${(state.goalMl / 1000).toStringAsFixed(1)}L',
                   style: const TextStyle(
                     fontSize: 11,
-                    color: AppColors.textSecondary,
+                    color: AfiaColors.textSecondary,
                   ),
                 ),
               ),
@@ -109,7 +109,7 @@ class _WaterRecordingView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: AfiaColors.textPrimary,
                   ),
                 ),
               ),
@@ -120,7 +120,7 @@ class _WaterRecordingView extends StatelessWidget {
                     'No entries yet — tap a preset above to log water.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: AppColors.textSecondary,
+                      color: AfiaColors.textSecondary,
                     ),
                   ),
                 )

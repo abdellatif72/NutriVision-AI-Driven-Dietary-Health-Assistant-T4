@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/meals/domain/entities/meal_summary.dart';
 import 'package:afia/features/meals/presentation/bloc/meal_search_bloc.dart';
 import 'package:afia/features/meals/presentation/widgets/meal_search_tile.dart';
@@ -41,20 +41,20 @@ class _MealSearchViewState extends State<_MealSearchView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
-        backgroundColor: AppColors.background,
+        backgroundColor: AfiaColors.scaffoldBackground,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(Icons.arrow_back, color: AppColors.textPrimary),
+          icon: const Icon(Icons.arrow_back, color: AfiaColors.textPrimary),
         ),
         title: const Text(
           'Add a meal',
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: AppColors.textPrimary,
+            color: AfiaColors.textPrimary,
           ),
         ),
         centerTitle: true,
@@ -73,11 +73,11 @@ class _MealSearchViewState extends State<_MealSearchView> {
                 hintText: 'Turn around to eat...for example: koshari, fava beans',
                 hintStyle: const TextStyle(
                   fontSize: 12,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
                 prefixIcon: const Icon(
                   Icons.search,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
                 suffixIcon: ValueListenableBuilder<TextEditingValue>(
                   valueListenable: _controller,
@@ -86,7 +86,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
                     return IconButton(
                       icon: const Icon(
                         Icons.close,
-                        color: AppColors.textSecondary,
+                        color: AfiaColors.textSecondary,
                       ),
                       onPressed: () {
                         _controller.clear();
@@ -96,20 +96,20 @@ class _MealSearchViewState extends State<_MealSearchView> {
                   },
                 ),
                 filled: true,
-                fillColor: AppColors.surface,
+                fillColor: AfiaColors.surface,
                 contentPadding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.divider),
+                  borderSide: const BorderSide(color: AfiaColors.divider),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.divider),
+                  borderSide: const BorderSide(color: AfiaColors.divider),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.primary),
+                  borderSide: const BorderSide(color: AfiaColors.primary),
                 ),
               ),
             ),
@@ -126,7 +126,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
                   case MealSearchStatus.loading:
                     return const Center(
                       child: CircularProgressIndicator(
-                        color: AppColors.primary,
+                        color: AfiaColors.primary,
                         strokeWidth: 2.4,
                       ),
                     );
@@ -146,7 +146,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
                       itemCount: state.results.length,
                       separatorBuilder: (_, _) => const Divider(
                         height: 1,
-                        color: AppColors.divider,
+                        color: AfiaColors.divider,
                         indent: 16,
                         endIndent: 16,
                       ),
@@ -182,14 +182,14 @@ class _CenteredHint extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 36, color: AppColors.textSecondary),
+            Icon(icon, size: 36, color: AfiaColors.textSecondary),
             const SizedBox(height: 10),
             Text(
               text,
               textAlign: TextAlign.center,
               style: const TextStyle(
                 fontSize: 13,
-                color: AppColors.textSecondary,
+                color: AfiaColors.textSecondary,
               ),
             ),
           ],

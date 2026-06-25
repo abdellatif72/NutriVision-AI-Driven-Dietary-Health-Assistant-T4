@@ -11,7 +11,7 @@ import 'package:afia/features/water/presentation/pages/water_recording_page.dart
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
-  static const initialRoute = RouteNames.auth;
+  static const initialRoute = RouteNames.onboard;
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -62,9 +62,8 @@ abstract final class AppRouter {
         );
       default:
         return MaterialPageRoute<void>(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Route not found')),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Route not found'))),
           settings: settings,
         );
     }

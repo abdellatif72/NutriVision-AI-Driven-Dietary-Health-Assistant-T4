@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ class WeightTrendCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isLoss = trend.deltaKg < 0;
-    final deltaColor = isLoss ? AppColors.secondary : AppColors.ctaFood;
+    final deltaColor = isLoss ? AfiaColors.green700 : AfiaColors.orange;
     final deltaText =
         '${isLoss ? '▼' : '▲'} ${trend.deltaKg.abs().toStringAsFixed(1)} kg';
 
@@ -18,9 +18,9 @@ class WeightTrendCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,7 +33,7 @@ class WeightTrendCard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w800,
-                    color: AppColors.textPrimary,
+                    color: AfiaColors.textPrimary,
                   ),
                 ),
               ),
@@ -52,7 +52,7 @@ class WeightTrendCard extends StatelessWidget {
             trend.caption,
             style: const TextStyle(
               fontSize: 10,
-              color: AppColors.textSecondary,
+              color: AfiaColors.textSecondary,
             ),
           ),
           const SizedBox(height: 8),
@@ -71,14 +71,14 @@ class WeightTrendCard extends StatelessWidget {
                 '${trend.startKg.toStringAsFixed(1)} kg',
                 style: const TextStyle(
                   fontSize: 10,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
               ),
               Text(
                 '${trend.endKg.toStringAsFixed(1)} kg',
                 style: const TextStyle(
                   fontSize: 10,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
               ),
             ],
@@ -101,8 +101,8 @@ class _TrendPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round
-      ..color = AppColors.primary;
-    final dot = Paint()..color = AppColors.primary;
+      ..color = AfiaColors.primary;
+    final dot = Paint()..color = AfiaColors.primary;
 
     final stepX = size.width / (points.length - 1);
     final path = Path();

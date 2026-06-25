@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -13,9 +13,9 @@ class StreakCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,12 +26,12 @@ class StreakCard extends StatelessWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppColors.streak.withValues(alpha: 0.15),
+                  color: AfiaColors.orange.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: const Icon(
                   Icons.emoji_events_outlined,
-                  color: AppColors.streak,
+                  color: AfiaColors.orange,
                   size: 20,
                 ),
               ),
@@ -45,7 +45,7 @@ class StreakCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.textPrimary,
+                        color: AfiaColors.textPrimary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -53,7 +53,7 @@ class StreakCard extends StatelessWidget {
                       'Record your daily eating to keep the streak going.',
                       style: TextStyle(
                         fontSize: 11,
-                        color: AppColors.textSecondary,
+                        color: AfiaColors.textSecondary,
                       ),
                     ),
                   ],
@@ -74,7 +74,7 @@ class StreakCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
-                        color: AppColors.textSecondary,
+                        color: AfiaColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -82,11 +82,11 @@ class StreakCard extends StatelessWidget {
                       width: 22,
                       height: 22,
                       decoration: BoxDecoration(
-                        color: done ? AppColors.streak : AppColors.divider,
+                        color: done ? AfiaColors.orange : AfiaColors.divider,
                         shape: BoxShape.circle,
                         border: isToday
                             ? Border.all(
-                                color: AppColors.primary,
+                                color: AfiaColors.primary,
                                 width: 2,
                               )
                             : null,

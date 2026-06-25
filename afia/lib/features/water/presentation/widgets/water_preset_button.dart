@@ -1,4 +1,4 @@
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -37,24 +37,24 @@ class WaterPresetButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
           decoration: BoxDecoration(
             color: selected
-                ? AppColors.hydration.withValues(alpha: 0.10)
-                : AppColors.surface,
+                ? AfiaColors.blue.withValues(alpha: 0.10)
+                : AfiaColors.surface,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
-              color: selected ? AppColors.hydration : AppColors.divider,
+              color: selected ? AfiaColors.blue : AfiaColors.divider,
               width: selected ? 1.5 : 1,
             ),
           ),
           child: Column(
             children: [
-              Icon(icon, color: AppColors.hydration, size: 22),
+              Icon(icon, color: AfiaColors.blue, size: 22),
               const SizedBox(height: 6),
               Text(
                 preset.label,
                 style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+                  color: AfiaColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 2),
@@ -62,7 +62,7 @@ class WaterPresetButton extends StatelessWidget {
                 preset.sublabel,
                 style: const TextStyle(
                   fontSize: 10,
-                  color: AppColors.textSecondary,
+                  color: AfiaColors.textSecondary,
                 ),
               ),
             ],

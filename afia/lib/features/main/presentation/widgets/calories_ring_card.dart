@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:afia/app/theme/app_colors.dart';
+import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -15,9 +15,9 @@ class CaloriesRingCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.divider),
+        border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -27,7 +27,7 @@ class CaloriesRingCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w800,
-              color: AppColors.textPrimary,
+              color: AfiaColors.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
@@ -44,7 +44,7 @@ class CaloriesRingCard extends StatelessWidget {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: AppColors.primary,
+                        color: AfiaColors.primary,
                       ),
                     ),
                   ),
@@ -86,7 +86,7 @@ class _MacroBar extends StatelessWidget {
               style: const TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary,
+                color: AfiaColors.textPrimary,
               ),
             ),
             const SizedBox(width: 6),
@@ -94,7 +94,7 @@ class _MacroBar extends StatelessWidget {
               macro.label,
               style: const TextStyle(
                 fontSize: 10,
-                color: AppColors.textSecondary,
+                color: AfiaColors.textSecondary,
               ),
             ),
           ],
@@ -105,9 +105,9 @@ class _MacroBar extends StatelessWidget {
           child: LinearProgressIndicator(
             value: macro.fillPercent,
             minHeight: 4,
-            backgroundColor: AppColors.divider,
+            backgroundColor: AfiaColors.divider,
             valueColor:
-                const AlwaysStoppedAnimation<Color>(AppColors.primary),
+                const AlwaysStoppedAnimation<Color>(AfiaColors.primary),
           ),
         ),
       ],
@@ -127,12 +127,12 @@ class _RingPainter extends CustomPainter {
     final track = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
-      ..color = AppColors.divider;
+      ..color = AfiaColors.divider;
     final progress = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 6
       ..strokeCap = StrokeCap.round
-      ..color = AppColors.primary;
+      ..color = AfiaColors.primary;
     canvas.drawCircle(center, radius, track);
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
