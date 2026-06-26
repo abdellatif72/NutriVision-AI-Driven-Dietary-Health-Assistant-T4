@@ -57,6 +57,8 @@ class ProgressState extends Equatable {
     this.macros = const [],
     this.weight,
     this.water,
+    this.waterChartCaption = '',
+    this.waterBars = const [],
   });
 
   final ProgressPeriod period;
@@ -65,6 +67,8 @@ class ProgressState extends Equatable {
   final List<MacroSummary> macros;
   final WeightTrend? weight;
   final WaterSummary? water;
+  final String waterChartCaption;
+  final List<ChartBar> waterBars;
 
   ProgressState copyWith({
     ProgressPeriod? period,
@@ -73,6 +77,8 @@ class ProgressState extends Equatable {
     List<MacroSummary>? macros,
     WeightTrend? weight,
     WaterSummary? water,
+    String? waterChartCaption,
+    List<ChartBar>? waterBars,
   }) {
     return ProgressState(
       period: period ?? this.period,
@@ -81,12 +87,22 @@ class ProgressState extends Equatable {
       macros: macros ?? this.macros,
       weight: weight ?? this.weight,
       water: water ?? this.water,
+      waterChartCaption: waterChartCaption ?? this.waterChartCaption,
+      waterBars: waterBars ?? this.waterBars,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [period, chartCaption, bars, macros, weight, water];
+  List<Object?> get props => [
+    period,
+    chartCaption,
+    bars,
+    macros,
+    weight,
+    water,
+    waterChartCaption,
+    waterBars,
+  ];
 }
 
 class ProgressCubit extends Cubit<ProgressState> {
@@ -135,6 +151,26 @@ class ProgressCubit extends Cubit<ProgressState> {
             caption: 'During the last week',
           ),
           water: WaterSummary(consumedLiters: 1.5, goalLiters: 2.4),
+          waterChartCaption: 'Water — last week (day by day)',
+          waterBars: [
+            ChartBar(label: 'M', heightPercent: 0.75, value: '1.8L'),
+            ChartBar(
+              label: 'T',
+              heightPercent: 0.88,
+              value: '2.1L',
+              emphasized: true,
+            ),
+            ChartBar(label: 'W', heightPercent: 0.50, value: '1.2L'),
+            ChartBar(
+              label: 'T',
+              heightPercent: 0.96,
+              value: '2.3L',
+              emphasized: true,
+            ),
+            ChartBar(label: 'F', heightPercent: 0.62, value: '1.5L'),
+            ChartBar(label: 'S', heightPercent: 0.0, value: '—'),
+            ChartBar(label: 'S', heightPercent: 0.0, value: '—'),
+          ],
         );
       case ProgressPeriod.month:
         return const ProgressState(
@@ -168,6 +204,23 @@ class ProgressCubit extends Cubit<ProgressState> {
             caption: 'During the last month',
           ),
           water: WaterSummary(consumedLiters: 1.8, goalLiters: 2.4),
+          waterChartCaption: 'Average water per week — last 4 weeks',
+          waterBars: [
+            ChartBar(label: 'W1', heightPercent: 0.65, value: '1.6L'),
+            ChartBar(
+              label: 'W2',
+              heightPercent: 0.88,
+              value: '2.1L',
+              emphasized: true,
+            ),
+            ChartBar(label: 'W3', heightPercent: 0.71, value: '1.7L'),
+            ChartBar(
+              label: 'W4',
+              heightPercent: 0.54,
+              value: '1.3L',
+              emphasized: true,
+            ),
+          ],
         );
       case ProgressPeriod.year:
         return const ProgressState(
@@ -224,6 +277,46 @@ class ProgressCubit extends Cubit<ProgressState> {
             caption: 'During the last year',
           ),
           water: WaterSummary(consumedLiters: 1.7, goalLiters: 2.4),
+          waterChartCaption: 'Daily water average per month — last 12 months',
+          waterBars: [
+            ChartBar(label: 'J', heightPercent: 0.50, value: ''),
+            ChartBar(label: 'F', heightPercent: 0.54, value: ''),
+            ChartBar(
+              label: 'M',
+              heightPercent: 0.62,
+              value: '',
+              emphasized: true,
+            ),
+            ChartBar(label: 'A', heightPercent: 0.58, value: ''),
+            ChartBar(
+              label: 'M',
+              heightPercent: 0.67,
+              value: '',
+              emphasized: true,
+            ),
+            ChartBar(label: 'J', heightPercent: 0.71, value: ''),
+            ChartBar(
+              label: 'J',
+              heightPercent: 0.75,
+              value: '',
+              emphasized: true,
+            ),
+            ChartBar(label: 'A', heightPercent: 0.83, value: ''),
+            ChartBar(
+              label: 'S',
+              heightPercent: 0.79,
+              value: '',
+              emphasized: true,
+            ),
+            ChartBar(label: 'O', heightPercent: 0.71, value: ''),
+            ChartBar(
+              label: 'N',
+              heightPercent: 0.65,
+              value: '',
+              emphasized: true,
+            ),
+            ChartBar(label: 'D', heightPercent: 0.62, value: ''),
+          ],
         );
     }
   }

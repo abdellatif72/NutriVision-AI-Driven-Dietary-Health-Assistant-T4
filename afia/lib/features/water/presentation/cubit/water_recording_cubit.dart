@@ -36,7 +36,7 @@ class WaterEntry extends Equatable {
 
 class WaterRecordingState extends Equatable {
   const WaterRecordingState({
-    this.goalMl = 2400,
+    this.goalMl = 2500,
     this.consumedMl = 0,
     this.entries = const [],
     this.selectedPreset,
@@ -95,7 +95,7 @@ class WaterRecordingCubit extends Cubit<WaterRecordingState> {
       ),
       WaterEntry(
         id: '3',
-        timestamp: at(13, 0),
+        timestamp: at(16, 15),
         amountMl: 500,
         preset: WaterPreset.pint,
       ),
@@ -123,6 +123,11 @@ class WaterRecordingCubit extends Cubit<WaterRecordingState> {
   void addPreset(WaterPreset preset) {
     if (preset == WaterPreset.custom || preset.amountMl <= 0) return;
     _addEntry(preset.amountMl, preset);
+  }
+
+  void addAmount(int amountMl) {
+    if (amountMl <= 0) return;
+    _addEntry(amountMl, WaterPreset.custom);
   }
 
   void addCustomAmount(int amountMl) {

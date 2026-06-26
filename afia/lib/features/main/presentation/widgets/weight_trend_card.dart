@@ -1,4 +1,6 @@
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_spacing.dart';
+import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +17,16 @@ class WeightTrendCard extends StatelessWidget {
         '${isLoss ? '▼' : '▲'} ${trend.deltaKg.abs().toStringAsFixed(1)} kg';
 
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.fromLTRB(
+        AfiaSpacing.pageMargin,
+        0,
+        AfiaSpacing.pageMargin,
+        AfiaSpacing.md,
+      ),
+      padding: const EdgeInsets.all(AfiaSpacing.lg),
       decoration: BoxDecoration(
         color: AfiaColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AfiaRadius.md),
         border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
@@ -27,35 +34,24 @@ class WeightTrendCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Weight development',
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w800,
-                    color: AfiaColors.textPrimary,
-                  ),
+                  style: AfiaTypography.cardTitle,
                 ),
               ),
               Text(
                 deltaText,
-                style: TextStyle(
-                  fontSize: 11,
+                style: AfiaTypography.caption.copyWith(
                   fontWeight: FontWeight.w700,
                   color: deltaColor,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 2),
-          Text(
-            trend.caption,
-            style: const TextStyle(
-              fontSize: 10,
-              color: AfiaColors.textSecondary,
-            ),
-          ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AfiaSpacing.xs),
+          Text(trend.caption, style: AfiaTypography.caption),
+          const SizedBox(height: AfiaSpacing.sm),
           SizedBox(
             height: 36,
             child: CustomPaint(
@@ -63,23 +59,17 @@ class WeightTrendCard extends StatelessWidget {
               size: Size.infinite,
             ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AfiaSpacing.xs),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${trend.startKg.toStringAsFixed(1)} kg',
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AfiaColors.textSecondary,
-                ),
+                style: AfiaTypography.caption,
               ),
               Text(
                 '${trend.endKg.toStringAsFixed(1)} kg',
-                style: const TextStyle(
-                  fontSize: 10,
-                  color: AfiaColors.textSecondary,
-                ),
+                style: AfiaTypography.caption,
               ),
             ],
           ),
@@ -117,8 +107,7 @@ class _TrendPainter extends CustomPainter {
     }
     canvas.drawPath(path, stroke);
     final lastX = stepX * (points.length - 1);
-    final lastY =
-        size.height - (points.last.clamp(0.0, 1.0)) * size.height;
+    final lastY = size.height - (points.last.clamp(0.0, 1.0)) * size.height;
     canvas.drawCircle(Offset(lastX, lastY), 3, dot);
   }
 

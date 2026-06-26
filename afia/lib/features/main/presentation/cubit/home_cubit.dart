@@ -24,13 +24,17 @@ class CalorieSummary extends Equatable {
   const CalorieSummary({
     required this.percent,
     required this.macros,
+    required this.consumed,
+    required this.goal,
   });
 
   final double percent;
   final List<MacroSummary> macros;
+  final int consumed;
+  final int goal;
 
   @override
-  List<Object?> get props => [percent, macros];
+  List<Object?> get props => [percent, macros, consumed, goal];
 }
 
 class StreakSummary extends Equatable {
@@ -72,6 +76,7 @@ class MealEntry extends Equatable {
     required this.slot,
     required this.title,
     required this.emoji,
+    this.imagePath,
     this.description,
     this.calories,
   });
@@ -79,13 +84,14 @@ class MealEntry extends Equatable {
   final MealSlot slot;
   final String title;
   final String emoji;
+  final String? imagePath;
   final String? description;
   final int? calories;
 
   bool get isLogged => calories != null;
 
   @override
-  List<Object?> get props => [slot, title, emoji, description, calories];
+  List<Object?> get props => [slot, title, emoji, imagePath, description, calories];
 }
 
 class HomeState extends Equatable {
@@ -96,6 +102,10 @@ class HomeState extends Equatable {
     this.calories,
     this.streak,
     this.water,
+    this.steps,
+    this.stepsGoal,
+    this.heartRate,
+    this.heartRateStatus,
     this.meals = const [],
   });
 
@@ -105,6 +115,10 @@ class HomeState extends Equatable {
   final CalorieSummary? calories;
   final StreakSummary? streak;
   final WaterSummary? water;
+  final int? steps;
+  final int? stepsGoal;
+  final int? heartRate;
+  final String? heartRateStatus;
   final List<MealEntry> meals;
 
   HomeState copyWith({
@@ -114,6 +128,10 @@ class HomeState extends Equatable {
     CalorieSummary? calories,
     StreakSummary? streak,
     WaterSummary? water,
+    int? steps,
+    int? stepsGoal,
+    int? heartRate,
+    String? heartRateStatus,
     List<MealEntry>? meals,
   }) {
     return HomeState(
@@ -123,13 +141,28 @@ class HomeState extends Equatable {
       calories: calories ?? this.calories,
       streak: streak ?? this.streak,
       water: water ?? this.water,
+      steps: steps ?? this.steps,
+      stepsGoal: stepsGoal ?? this.stepsGoal,
+      heartRate: heartRate ?? this.heartRate,
+      heartRateStatus: heartRateStatus ?? this.heartRateStatus,
       meals: meals ?? this.meals,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [status, greeting, userName, calories, streak, water, meals];
+  List<Object?> get props => [
+        status,
+        greeting,
+        userName,
+        calories,
+        streak,
+        water,
+        steps,
+        stepsGoal,
+        heartRate,
+        heartRateStatus,
+        meals,
+      ];
 }
 
 class HomeCubit extends Cubit<HomeState> {
@@ -139,10 +172,12 @@ class HomeCubit extends Cubit<HomeState> {
     emit(
       const HomeState(
         status: HomeStatus.success,
-        greeting: 'Good morning 🌤️',
-        userName: 'Ahmed',
+        greeting: "Let's make today amazing!",
+        userName: 'Sara',
         calories: CalorieSummary(
-          percent: 0.68,
+          percent: 0.71,
+          consumed: 1420,
+          goal: 2000,
           macros: [
             MacroSummary(label: 'Carb', grams: 142, fillPercent: 0.70),
             MacroSummary(label: 'Protein', grams: 89, fillPercent: 0.60),
@@ -155,13 +190,18 @@ class HomeCubit extends Cubit<HomeState> {
           completed: [true, true, true, true, true, true, true],
           todayIndex: 6,
         ),
-        water: WaterSummary(consumedLiters: 1.5, goalLiters: 2.4),
+        water: WaterSummary(consumedLiters: 1.6, goalLiters: 2.5),
+        steps: 8432,
+        stepsGoal: 10000,
+        heartRate: 72,
+        heartRateStatus: 'Resting',
         meals: [
           MealEntry(
             slot: MealSlot.breakfast,
             title: 'Breakfast',
             emoji: '☀️',
-            description: 'Beans + eggs',
+            imagePath: 'assets/images/breakfast_oatmeal.png',
+            description: 'Oatmeal with berries',
             calories: 420,
           ),
           MealEntry(
