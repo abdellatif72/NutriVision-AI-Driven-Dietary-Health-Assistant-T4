@@ -166,7 +166,7 @@ abstract final class RouteNames {
 }
 ```
 
-**Initial route**: `/onboard`
+**Initial route**: `/main` (temporary — skips onboarding/auth; was `/onboard`)
 
 **Navigation**: `Navigator.pushReplacementNamed()` or `Navigator.pushNamed()` — no deep linking yet.
 
@@ -296,8 +296,8 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | **Routing** | All 9 named routes defined and wired |
 | **Onboarding** | Logo, hero text, CTAs, navigates to auth |
 | **Home dashboard** | Metrics (steps, water, heart rate), calories ring, daily progress, meals list — all with mock data |
-| **Progress page** | Bar charts, macro breakdown, weekly/monthly/yearly toggle — mock data |
-| **Main shell** | Tab navigation, FAB, `MainShellCubit` |
+| **Progress page** | Calories bar chart, water bar chart, macro breakdown, weight trend, weekly/monthly/yearly toggle — mock data. Charts use design system tokens. |
+| **Main shell** | Simplified — renders `HomePage` directly. Removed duplicate bottom nav (`_MainBottomNav`). |
 | **Water logging** | Preset buttons (250ml, 500ml, custom), progress ring, entry list — mock data via `WaterRecordingCubit` |
 | **Meal search UI** | Search TextField, `MealSearchBloc`, result tiles, mock results |
 | **More / profile flow** | More hub, profile entry, goals, progress, reminders, connected apps, help/support, logout flow |
