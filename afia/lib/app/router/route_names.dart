@@ -8,4 +8,11 @@ abstract final class RouteNames {
   static const ai = '/ai';
   static const explore = '/explore';
   static const more = '/more';
+  static const profile = '/more/profile';
+  static const goals = '/more/goals';
+  static const progress = '/more/progress';
+  static const reminders = '/more/reminders';
+  static const connectedApps = '/more/connected-apps';
+  static const settings = '/more/settings';
+  static const helpSupport = '/more/help-support';
 }

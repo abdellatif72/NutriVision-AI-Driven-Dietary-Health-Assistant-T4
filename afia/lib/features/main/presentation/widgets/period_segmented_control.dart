@@ -1,4 +1,5 @@
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -15,11 +16,16 @@ class PeriodSegmentedControl extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(4),
+      margin: EdgeInsets.fromLTRB(
+        AfiaSpacing.pageMargin,
+        0,
+        AfiaSpacing.pageMargin,
+        AfiaSpacing.md,
+      ),
+      padding: const EdgeInsets.all(AfiaSpacing.xs),
       decoration: BoxDecoration(
         color: AfiaColors.divider,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AfiaRadius.sm),
       ),
       child: Row(
         children: ProgressPeriod.values
@@ -55,11 +61,11 @@ class _SegmentButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: AfiaSpacing.sm),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active ? AfiaColors.surface : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(AfiaRadius.sm),
           boxShadow: active
               ? [
                   BoxShadow(

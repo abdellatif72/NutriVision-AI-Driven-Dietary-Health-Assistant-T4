@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/afia_colors.dart';
 
-/// Bottom nav matching the reference: 4 regular items (Home, Progress,
-/// Rewards, Menu) plus a 5th circular FAB-style item that sits centered
+/// Bottom nav matching the reference: 4 regular items (Home, Meals,
+/// Chat, More) plus a 5th circular FAB-style item that sits centered
 /// and slightly raised above the bar.
 ///
 /// [items] should contain exactly 4 entries; the FAB is supplied
@@ -29,17 +29,26 @@ class AfiaBottomNav extends StatelessWidget {
     final mid = items.length ~/ 2;
 
     return SizedBox(
-      height: 76,
+      height: 80,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
         children: [
           Positioned.fill(
-            top: 14,
+            top: 12,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: AfiaColors.surface,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 18,
+                    offset: const Offset(0, -2),
+                  ),
+                ],
               ),
               child: Row(
                 children: [
@@ -59,17 +68,26 @@ class AfiaBottomNav extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 0,
+            top: 2,
             child: Material(
-              color: AfiaColors.primary,
-              shape: const CircleBorder(),
-              elevation: 4,
+              color: Colors.transparent,
               child: InkWell(
                 onTap: onCenterTap,
                 customBorder: const CircleBorder(),
                 child: Container(
-                  width: 56,
-                  height: 56,
+                  width: 50,
+                  height: 50,
+                  decoration: const BoxDecoration(
+                    color: AfiaColors.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Color(0x1A000000),
+                        blurRadius: 12,
+                        offset: Offset(0, 5),
+                      ),
+                    ],
+                  ),
                   alignment: Alignment.center,
                   child: Icon(centerIcon, color: Colors.white, size: 24),
                 ),
@@ -107,12 +125,12 @@ class _NavTab extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(item.icon, size: 22, color: color),
-          const SizedBox(height: 4),
+          Icon(item.icon, size: 23, color: color),
+          const SizedBox(height: 3),
           Text(
             item.label,
             style: TextStyle(
-              fontSize: 11,
+              fontSize: 12,
               fontWeight: FontWeight.w600,
               color: color,
             ),

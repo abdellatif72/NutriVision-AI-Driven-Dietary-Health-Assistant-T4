@@ -3,6 +3,7 @@ import 'package:afia/features/ai/presentation/pages/ai_page.dart';
 import 'package:afia/features/auth/presentation/pages/auth_page.dart';
 import 'package:afia/features/explore/presentation/pages/explore_page.dart';
 import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
+import 'package:afia/features/main/presentation/pages/progress_page.dart';
 import 'package:afia/features/meals/presentation/pages/meal_search_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:afia/features/more/presentation/pages/more_page.dart';
@@ -11,7 +12,7 @@ import 'package:afia/features/water/presentation/pages/water_recording_page.dart
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
-  static const initialRoute = RouteNames.onboard;
+  static const initialRoute = RouteNames.main;
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -60,12 +61,50 @@ abstract final class AppRouter {
           builder: (_) => const MorePage(),
           settings: settings,
         );
+      case RouteNames.progress:
+        return MaterialPageRoute<void>(
+          builder: (_) => const ProgressPage(),
+          settings: settings,
+        );
+      case RouteNames.profile:
+      case RouteNames.goals:
+      case RouteNames.reminders:
+      case RouteNames.connectedApps:
+      case RouteNames.helpSupport:
+        return MaterialPageRoute<void>(
+          builder: (_) => MoreSectionPage(title: _titleForRoute(settings.name)),
+          settings: settings,
+        );
+      case RouteNames.settings:
+        return MaterialPageRoute<void>(
+          builder: (_) => const SettingsPage(),
+          settings: settings,
+        );
       default:
         return MaterialPageRoute<void>(
           builder: (_) =>
               const Scaffold(body: Center(child: Text('Route not found'))),
           settings: settings,
         );
+    }
+  }
+
+  static String _titleForRoute(String? routeName) {
+    switch (routeName) {
+      case RouteNames.profile:
+        return 'Profile';
+      case RouteNames.goals:
+        return 'Goals';
+      case RouteNames.progress:
+        return 'Progress';
+      case RouteNames.reminders:
+        return 'Reminders';
+      case RouteNames.connectedApps:
+        return 'Connected Apps';
+      case RouteNames.helpSupport:
+        return 'Help & Support';
+      default:
+        return 'More';
     }
   }
 }

@@ -1,4 +1,6 @@
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_spacing.dart';
+import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:flutter/material.dart';
 
@@ -17,32 +19,33 @@ class MacroStackBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
-      padding: const EdgeInsets.all(14),
+      margin: EdgeInsets.fromLTRB(
+        AfiaSpacing.pageMargin,
+        0,
+        AfiaSpacing.pageMargin,
+        AfiaSpacing.md,
+      ),
+      padding: const EdgeInsets.all(AfiaSpacing.lg),
       decoration: BoxDecoration(
         color: AfiaColors.surface,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AfiaRadius.md),
         border: Border.all(color: AfiaColors.divider),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w800,
-              color: AfiaColors.textPrimary,
-            ),
-          ),
-          const SizedBox(height: 10),
+          Text(title, style: AfiaTypography.cardTitle),
+          const SizedBox(height: AfiaSpacing.sm),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(AfiaRadius.sm),
             child: SizedBox(
               height: 8,
               child: Row(
                 children: List.generate(macros.length, (i) {
-                  final flex = (macros[i].fillPercent * 100).round().clamp(1, 100);
+                  final flex = (macros[i].fillPercent * 100).round().clamp(
+                    1,
+                    100,
+                  );
                   return Expanded(
                     flex: flex,
                     child: Container(color: _colors[i % _colors.length]),
@@ -51,7 +54,7 @@ class MacroStackBar extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AfiaSpacing.sm),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: List.generate(macros.length, (i) {
@@ -86,14 +89,8 @@ class _Legend extends StatelessWidget {
             borderRadius: BorderRadius.circular(2),
           ),
         ),
-        const SizedBox(width: 4),
-        Text(
-          label,
-          style: const TextStyle(
-            fontSize: 10,
-            color: AfiaColors.textSecondary,
-          ),
-        ),
+        const SizedBox(width: AfiaSpacing.xs),
+        Text(label, style: AfiaTypography.caption),
       ],
     );
   }
