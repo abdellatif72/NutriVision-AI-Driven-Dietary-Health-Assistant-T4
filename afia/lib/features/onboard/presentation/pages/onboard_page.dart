@@ -41,10 +41,16 @@ class OnboardPage extends StatelessWidget {
               // ── Bottom CTA area ──
               OnboardBottomSection(
                 onGetStarted: () {
-                  Navigator.of(context).pushReplacementNamed(RouteNames.auth);
+                  Navigator.of(context).pushReplacementNamed(
+                    RouteNames.authSignup,
+                    arguments: true,
+                  );
                 },
                 onLogIn: () {
-                  Navigator.of(context).pushReplacementNamed(RouteNames.auth);
+                  Navigator.of(context).pushReplacementNamed(
+                    RouteNames.authLogin,
+                    arguments: true,
+                  );
                 },
               ),
 
