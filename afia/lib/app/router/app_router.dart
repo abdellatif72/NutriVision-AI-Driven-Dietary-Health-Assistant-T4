@@ -1,6 +1,11 @@
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/features/ai/presentation/pages/ai_page.dart';
 import 'package:afia/features/auth/presentation/pages/auth_page.dart';
+import 'package:afia/features/auth/presentation/pages/login_page.dart';
+import 'package:afia/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:afia/features/auth/presentation/pages/goal_selection_page.dart';
+import 'package:afia/features/auth/presentation/pages/physical_information_page.dart';
+import 'package:afia/features/auth/presentation/pages/signup_page.dart';
 import 'package:afia/features/explore/presentation/pages/explore_page.dart';
 import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
 import 'package:afia/features/main/presentation/pages/progress_page.dart';
@@ -12,13 +17,38 @@ import 'package:afia/features/water/presentation/pages/water_recording_page.dart
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
-  static const initialRoute = RouteNames.main;
+  static const initialRoute = RouteNames.onboard;
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case RouteNames.auth:
         return MaterialPageRoute<void>(
           builder: (_) => const AuthPage(),
+          settings: settings,
+        );
+      case RouteNames.authLogin:
+        return MaterialPageRoute<void>(
+          builder: (_) => const LoginPage(),
+          settings: settings,
+        );
+      case RouteNames.authSignup:
+        return MaterialPageRoute<void>(
+          builder: (_) => const SignupPage(),
+          settings: settings,
+        );
+      case RouteNames.authPhysicalInformation:
+        return MaterialPageRoute<void>(
+          builder: (_) => const PhysicalInformationPage(),
+          settings: settings,
+        );
+      case RouteNames.authGoalSelection:
+        return MaterialPageRoute<void>(
+          builder: (_) => const GoalSelectionPage(),
+          settings: settings,
+        );
+      case RouteNames.authForgotPassword:
+        return MaterialPageRoute<void>(
+          builder: (_) => const ForgotPasswordPage(),
           settings: settings,
         );
       case RouteNames.onboard:

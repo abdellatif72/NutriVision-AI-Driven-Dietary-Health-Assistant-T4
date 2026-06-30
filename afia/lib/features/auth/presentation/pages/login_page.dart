@@ -1,0 +1,235 @@
+import 'package:afia/app/router/route_names.dart';
+import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_spacing.dart';
+import 'package:afia/core/theme/afia_typography.dart';
+import 'package:flutter/material.dart';
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscure = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AfiaColors.surface,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: AfiaSpacing.xl),
+
+              // Back button
+              IconButton(
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                onPressed: () {
+                  final fromOnboard = ModalRoute.of(context)?.settings.arguments == true;
+                  if (fromOnboard) {
+                    Navigator.of(context).pushReplacementNamed(RouteNames.onboard);
+                  } else {
+                    Navigator.of(context).maybePop();
+                  }
+                },
+                icon: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AfiaColors.trackInactive,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.arrow_back, size: 18),
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.xl),
+
+              Text('Welcome back!', style: AfiaTypography.statValue),
+              const SizedBox(height: AfiaSpacing.sm),
+              Text('Log in to continue your journey.',
+                  style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+
+              const SizedBox(height: AfiaSpacing.xxxl),
+
+              // Email label
+              Text('Email', style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary)),
+              const SizedBox(height: AfiaSpacing.sm),
+              TextField(
+                controller: _emailController,
+                keyboardType: TextInputType.emailAddress,
+                decoration: InputDecoration(
+                  hintText: 'you@example.com',
+                  filled: true,
+                  fillColor: AfiaColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AfiaRadius.lg),
+                    borderSide: BorderSide(color: AfiaColors.divider),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AfiaRadius.lg),
+                    borderSide: BorderSide(color: AfiaColors.divider),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.xl),
+
+              // Password
+              Text('Password', style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary)),
+              const SizedBox(height: AfiaSpacing.sm),
+              TextField(
+                controller: _passwordController,
+                obscureText: _obscure,
+                decoration: InputDecoration(
+                  hintText: '• • • • • • • • •',
+                  filled: true,
+                  fillColor: AfiaColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AfiaRadius.lg),
+                    borderSide: BorderSide(color: AfiaColors.divider),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(AfiaRadius.lg),
+                    borderSide: BorderSide(color: AfiaColors.divider),
+                  ),
+                  suffixIcon: IconButton(
+                    onPressed: () => setState(() => _obscure = !_obscure),
+                    icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off, color: AfiaColors.textSecondary),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.sm),
+              Align(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  height: 44,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(RouteNames.authForgotPassword);
+                    },
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: AfiaColors.primary),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                      foregroundColor: AfiaColors.primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    child: Text('Forgot password?', style: AfiaTypography.body.copyWith(color: AfiaColors.primary)),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.xl),
+
+              // Log in button
+              SizedBox(
+                width: double.infinity,
+                height: 56,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed(RouteNames.main);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AfiaColors.primary,
+                    foregroundColor: AfiaColors.onPrimary,
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                    textStyle: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary),
+                  ),
+                  child: const Text('Log In'),
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.xl),
+
+              // OR with dividers
+              Row(
+                children: [
+                  const Expanded(child: Divider(color: AfiaColors.divider)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: Text('or continue with', style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+                  ),
+                  const Expanded(child: Divider(color: AfiaColors.divider)),
+                ],
+              ),
+
+              const SizedBox(height: AfiaSpacing.lg),
+
+              // Social buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.g_mobiledata, color: Colors.black),
+                      label: Text('Google', style: AfiaTypography.body.copyWith(color: AfiaColors.textPrimary)),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        side: BorderSide(color: AfiaColors.divider),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AfiaSpacing.lg),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.apple, color: Colors.black),
+                      label: Text('Apple', style: AfiaTypography.body.copyWith(color: AfiaColors.textPrimary)),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        elevation: 0,
+                        side: BorderSide(color: AfiaColors.divider),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: AfiaSpacing.xxxl),
+
+              Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("Don't have an account? ", style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).pushNamed(RouteNames.authSignup);
+                      },
+                      child: Text('Sign up', style: AfiaTypography.body.copyWith(color: AfiaColors.primary, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: AfiaSpacing.xxxl),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
