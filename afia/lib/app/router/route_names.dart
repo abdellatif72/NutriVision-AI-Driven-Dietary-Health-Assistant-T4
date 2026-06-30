@@ -14,6 +14,7 @@ abstract final class RouteNames {
   static const explore = '/explore';
   static const more = '/more';
   static const profile = '/more/profile';
+  static const editProfile = '/more/profile/edit';
   static const goals = '/more/goals';
   static const progress = '/more/progress';
   static const reminders = '/more/reminders';

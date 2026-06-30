@@ -11,7 +11,9 @@ import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
 import 'package:afia/features/main/presentation/pages/progress_page.dart';
 import 'package:afia/features/meals/presentation/pages/meal_search_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
+import 'package:afia/features/more/presentation/pages/edit_profile_page.dart';
 import 'package:afia/features/more/presentation/pages/more_page.dart';
+import 'package:afia/features/more/presentation/pages/profile_page.dart';
 import 'package:afia/features/onboard/presentation/pages/onboard_page.dart';
 import 'package:afia/features/water/presentation/pages/water_recording_page.dart';
 import 'package:flutter/material.dart';
@@ -97,6 +99,15 @@ abstract final class AppRouter {
           settings: settings,
         );
       case RouteNames.profile:
+        return MaterialPageRoute<void>(
+          builder: (_) => const ProfilePage(),
+          settings: settings,
+        );
+      case RouteNames.editProfile:
+        return MaterialPageRoute<void>(
+          builder: (_) => const EditProfilePage(),
+          settings: settings,
+        );
       case RouteNames.goals:
       case RouteNames.reminders:
       case RouteNames.connectedApps:
@@ -121,8 +132,6 @@ abstract final class AppRouter {
 
   static String _titleForRoute(String? routeName) {
     switch (routeName) {
-      case RouteNames.profile:
-        return 'Profile';
       case RouteNames.goals:
         return 'Goals';
       case RouteNames.progress:

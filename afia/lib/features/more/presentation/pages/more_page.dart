@@ -53,10 +53,8 @@ class MorePage extends StatelessWidget {
                 icon: Icons.link_rounded,
                 title: 'Connected Apps',
                 subtitle: 'Manage your integrations',
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  RouteNames.connectedApps,
-                ),
+                onTap: () =>
+                    Navigator.pushNamed(context, RouteNames.connectedApps),
               ),
               _MoreTile(
                 icon: Icons.settings_outlined,
@@ -68,10 +66,8 @@ class MorePage extends StatelessWidget {
                 icon: Icons.help_outline_rounded,
                 title: 'Help & Support',
                 subtitle: 'Get help and FAQs',
-                onTap: () => Navigator.pushNamed(
-                  context,
-                  RouteNames.helpSupport,
-                ),
+                onTap: () =>
+                    Navigator.pushNamed(context, RouteNames.helpSupport),
               ),
             ],
           ),
@@ -103,7 +99,9 @@ class MorePage extends StatelessWidget {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Log out?'),
-          content: const Text('This will return you to the authentication screen.'),
+          content: const Text(
+            'This will return you to the authentication screen.',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
@@ -164,7 +162,10 @@ class _ProfileCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(Icons.chevron_right_rounded, color: AfiaColors.textMuted),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: AfiaColors.textMuted,
+              ),
             ],
           ),
         ),
@@ -220,7 +221,10 @@ class _MoreTile extends StatelessWidget {
       leading: Icon(icon, color: AfiaColors.textSecondary, size: 22),
       title: Text(title, style: AfiaTypography.cardTitle),
       subtitle: Text(subtitle, style: AfiaTypography.body),
-      trailing: const Icon(Icons.chevron_right_rounded, color: AfiaColors.textMuted),
+      trailing: const Icon(
+        Icons.chevron_right_rounded,
+        color: AfiaColors.textMuted,
+      ),
     );
   }
 }
@@ -233,7 +237,6 @@ class MoreSectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final body = switch (title) {
-      'Profile' => const _ProfileSection(),
       'Goals' => const _GoalsSection(),
       'Progress' => const _ProgressSection(),
       'Reminders' => const _RemindersSection(),
@@ -275,84 +278,6 @@ class _FallbackSection extends StatelessWidget {
   }
 }
 
-class _ProfileSection extends StatelessWidget {
-  const _ProfileSection();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        AfiaSpacing.pageMargin,
-        AfiaSpacing.sm,
-        AfiaSpacing.pageMargin,
-        AfiaSpacing.xxxl,
-      ),
-      children: [
-        _HeroSummaryCard(
-          title: 'Sara Khan',
-          subtitle: 'Healthy routine • 4 week streak',
-          accent: AfiaColors.primary,
-          child: Row(
-            children: const [
-              _SmallStat(label: 'Weight', value: '62.4'),
-              SizedBox(width: AfiaSpacing.md),
-              _SmallStat(label: 'Meals', value: '16'),
-              SizedBox(width: AfiaSpacing.md),
-              _SmallStat(label: 'Water', value: '2.1 L'),
-            ],
-          ),
-        ),
-        const SizedBox(height: AfiaSpacing.xl),
-        _ActionGroupCard(
-          children: [
-            _SettingsTile(
-              icon: Icons.edit_outlined,
-              title: 'Edit Profile',
-              trailing: 'Sara Khan',
-            ),
-            _SettingsTile(
-              icon: Icons.restaurant_outlined,
-              title: 'Diet Preferences',
-              trailing: 'Balanced',
-            ),
-            _SettingsTile(
-              icon: Icons.security_outlined,
-              title: 'Security',
-              trailing: 'Managed',
-            ),
-          ],
-        ),
-        const SizedBox(height: AfiaSpacing.xl),
-        const _SectionTitle('Today at a glance'),
-        const SizedBox(height: AfiaSpacing.md),
-        Row(
-          children: const [
-            Expanded(
-              child: _MiniInfoCard(
-                icon: Icons.local_fire_department_outlined,
-                label: 'Calories',
-                value: '1,420',
-                accent: AfiaColors.orange,
-                container: AfiaColors.orangeContainer,
-              ),
-            ),
-            SizedBox(width: AfiaSpacing.md),
-            Expanded(
-              child: _MiniInfoCard(
-                icon: Icons.directions_walk_rounded,
-                label: 'Steps',
-                value: '5,480',
-                accent: AfiaColors.primary,
-                container: AfiaColors.primaryContainer,
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
 class _GoalsSection extends StatelessWidget {
   const _GoalsSection();
 
@@ -366,7 +291,7 @@ class _GoalsSection extends StatelessWidget {
         AfiaSpacing.xxxl,
       ),
       children: const [
-        _SectionTitle('Daily targets'),
+        SectionTitle('Daily targets'),
         SizedBox(height: AfiaSpacing.md),
         _GoalCard(
           icon: Icons.local_fire_department_outlined,
@@ -412,9 +337,9 @@ class _ProgressSection extends StatelessWidget {
         AfiaSpacing.xxxl,
       ),
       children: [
-        const _SectionTitle('History'),
+        const SectionTitle('History'),
         const SizedBox(height: AfiaSpacing.md),
-        _ActionGroupCard(
+        ActionGroupCard(
           children: const [
             _ProgressRow(
               label: 'This week',
@@ -434,7 +359,7 @@ class _ProgressSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AfiaSpacing.xl),
-        const _SectionTitle('Milestones'),
+        const SectionTitle('Milestones'),
         const SizedBox(height: AfiaSpacing.md),
         const _TimelineCard(
           title: 'Completed 4 healthy days in a row',
@@ -467,9 +392,9 @@ class _RemindersSectionState extends State<_RemindersSection> {
         AfiaSpacing.xxxl,
       ),
       children: [
-        const _SectionTitle('Smart reminders'),
+        const SectionTitle('Smart reminders'),
         const SizedBox(height: AfiaSpacing.md),
-        _ActionGroupCard(
+        ActionGroupCard(
           children: [
             SwitchListTile.adaptive(
               value: water,
@@ -488,7 +413,10 @@ class _RemindersSectionState extends State<_RemindersSection> {
                 horizontal: AfiaSpacing.lg,
               ),
               title: Text('Meal logging', style: AfiaTypography.cardTitle),
-              subtitle: Text('Breakfast, lunch and dinner', style: AfiaTypography.body),
+              subtitle: Text(
+                'Breakfast, lunch and dinner',
+                style: AfiaTypography.body,
+              ),
             ),
             const Divider(height: 1, thickness: 1, color: AfiaColors.divider),
             SwitchListTile.adaptive(
@@ -520,7 +448,7 @@ class _ConnectedAppsSection extends StatelessWidget {
         AfiaSpacing.xxxl,
       ),
       children: const [
-        _SectionTitle('Integrations'),
+        SectionTitle('Integrations'),
         SizedBox(height: AfiaSpacing.md),
         _IntegrationCard(
           icon: Icons.watch_outlined,
@@ -563,7 +491,7 @@ class _HelpSupportSection extends StatelessWidget {
         AfiaSpacing.xxxl,
       ),
       children: const [
-        _SectionTitle('Support'),
+        SectionTitle('Support'),
         SizedBox(height: AfiaSpacing.md),
         _SupportCard(
           icon: Icons.chat_bubble_outline_rounded,
@@ -577,7 +505,7 @@ class _HelpSupportSection extends StatelessWidget {
           subtitle: 'support@afia.app',
         ),
         SizedBox(height: AfiaSpacing.xl),
-        _SectionTitle('FAQs'),
+        SectionTitle('FAQs'),
         SizedBox(height: AfiaSpacing.md),
         _FaqCard(
           question: 'How do I change my calorie goal?',
@@ -593,107 +521,22 @@ class _HelpSupportSection extends StatelessWidget {
   }
 }
 
-class _HeroSummaryCard extends StatelessWidget {
-  const _HeroSummaryCard({
-    required this.title,
-    required this.subtitle,
-    required this.accent,
-    required this.child,
-  });
-
-  final String title;
-  final String subtitle;
-  final Color accent;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AfiaSpacing.lg),
-      decoration: BoxDecoration(
-        color: AfiaColors.surface,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  'SK',
-                  style: AfiaTypography.cardTitle.copyWith(color: accent),
-                ),
-              ),
-              const SizedBox(width: AfiaSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: AfiaTypography.cardTitle),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: AfiaTypography.body),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AfiaSpacing.lg),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-class _SmallStat extends StatelessWidget {
-  const _SmallStat({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AfiaSpacing.md),
-        decoration: BoxDecoration(
-          color: AfiaColors.scaffoldBackground,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: AfiaTypography.label),
-            const SizedBox(height: 4),
-            Text(value, style: AfiaTypography.cardTitle),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  const _SectionTitle(this.title);
+class SectionTitle extends StatelessWidget {
+  const SectionTitle(this.title, {super.key});
 
   final String title;
 
   @override
   Widget build(BuildContext context) {
-    return Text(title, style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary));
+    return Text(
+      title,
+      style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary),
+    );
   }
 }
 
-class _ActionGroupCard extends StatelessWidget {
-  const _ActionGroupCard({required this.children});
+class ActionGroupCard extends StatelessWidget {
+  const ActionGroupCard({required this.children, super.key});
 
   final List<Widget> children;
 
@@ -709,49 +552,6 @@ class _ActionGroupCard extends StatelessWidget {
               const Divider(height: 1, thickness: 1, color: AfiaColors.divider),
             children[i],
           ],
-        ],
-      ),
-    );
-  }
-}
-
-class _MiniInfoCard extends StatelessWidget {
-  const _MiniInfoCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.accent,
-    required this.container,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color accent;
-  final Color container;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AfiaSpacing.lg),
-      decoration: BoxDecoration(
-        color: AfiaColors.surface,
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 34,
-            height: 34,
-            decoration: BoxDecoration(color: container, shape: BoxShape.circle),
-            alignment: Alignment.center,
-            child: Icon(icon, size: 18, color: accent),
-          ),
-          const SizedBox(height: AfiaSpacing.md),
-          Text(label, style: AfiaTypography.label),
-          const SizedBox(height: 4),
-          Text(value, style: AfiaTypography.cardTitle),
         ],
       ),
     );
@@ -791,7 +591,10 @@ class _GoalCard extends StatelessWidget {
               Container(
                 width: 36,
                 height: 36,
-                decoration: BoxDecoration(color: container, shape: BoxShape.circle),
+                decoration: BoxDecoration(
+                  color: container,
+                  shape: BoxShape.circle,
+                ),
                 alignment: Alignment.center,
                 child: Icon(icon, size: 18, color: accent),
               ),
@@ -849,7 +652,9 @@ class _ProgressRow extends StatelessWidget {
               value: progress,
               minHeight: 7,
               backgroundColor: AfiaColors.trackInactive,
-              valueColor: const AlwaysStoppedAnimation<Color>(AfiaColors.primary),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AfiaColors.primary,
+              ),
             ),
           ),
         ],
@@ -881,7 +686,10 @@ class _TimelineCard extends StatelessWidget {
               color: AfiaColors.primaryContainer,
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.emoji_events_outlined, color: AfiaColors.primary),
+            child: const Icon(
+              Icons.emoji_events_outlined,
+              color: AfiaColors.primary,
+            ),
           ),
           const SizedBox(width: AfiaSpacing.md),
           Expanded(
@@ -946,7 +754,9 @@ class _IntegrationCard extends StatelessWidget {
                 Text(
                   status,
                   style: AfiaTypography.caption.copyWith(
-                    color: connected ? AfiaColors.primary : AfiaColors.textMuted,
+                    color: connected
+                        ? AfiaColors.primary
+                        : AfiaColors.textMuted,
                   ),
                 ),
               ],
@@ -1065,17 +875,17 @@ class SettingsPage extends StatelessWidget {
           _SettingsGroup(
             title: 'Preferences',
             children: [
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.straighten_rounded,
                 title: 'Units',
                 trailing: 'Metric (kg, cm)',
               ),
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.palette_outlined,
                 title: 'Theme',
                 trailing: 'Light',
               ),
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.notifications_none_rounded,
                 title: 'Notifications',
                 trailing: 'On',
@@ -1086,25 +896,22 @@ class SettingsPage extends StatelessWidget {
           _SettingsGroup(
             title: 'Account',
             children: [
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.person_outline,
                 title: 'Personal Information',
               ),
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.lock_outline_rounded,
                 title: 'Change Password',
               ),
-              _SettingsTile(
-                icon: Icons.privacy_tip_outlined,
-                title: 'Privacy',
-              ),
+              SettingsTile(icon: Icons.privacy_tip_outlined, title: 'Privacy'),
             ],
           ),
           SizedBox(height: AfiaSpacing.xl),
           _SettingsGroup(
             title: 'About',
             children: [
-              _SettingsTile(
+              SettingsTile(
                 icon: Icons.info_outline_rounded,
                 title: 'About Afia',
                 trailing: 'Version 1.0.0',
@@ -1129,7 +936,10 @@ class _SettingsGroup extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: AfiaSpacing.sm, bottom: AfiaSpacing.sm),
+          padding: const EdgeInsets.only(
+            left: AfiaSpacing.sm,
+            bottom: AfiaSpacing.sm,
+          ),
           child: Text(title, style: AfiaTypography.label),
         ),
         Material(
@@ -1139,7 +949,11 @@ class _SettingsGroup extends StatelessWidget {
             children: [
               for (var i = 0; i < children.length; i++) ...[
                 if (i != 0)
-                  const Divider(height: 1, thickness: 1, color: AfiaColors.divider),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: AfiaColors.divider,
+                  ),
                 children[i],
               ],
             ],
@@ -1150,21 +964,24 @@ class _SettingsGroup extends StatelessWidget {
   }
 }
 
-class _SettingsTile extends StatelessWidget {
-  const _SettingsTile({
+class SettingsTile extends StatelessWidget {
+  const SettingsTile({
     required this.icon,
     required this.title,
     this.trailing,
+    this.onTap,
+    super.key,
   });
 
   final IconData icon;
   final String title;
   final String? trailing;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {},
+      onTap: onTap ?? () {},
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AfiaSpacing.lg,
         vertical: 2,
@@ -1179,7 +996,9 @@ class _SettingsTile extends StatelessWidget {
               padding: const EdgeInsets.only(right: AfiaSpacing.sm),
               child: Text(
                 trailing!,
-                style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary),
+                style: AfiaTypography.body.copyWith(
+                  color: AfiaColors.textSecondary,
+                ),
               ),
             ),
           const Icon(Icons.chevron_right_rounded, color: AfiaColors.textMuted),
