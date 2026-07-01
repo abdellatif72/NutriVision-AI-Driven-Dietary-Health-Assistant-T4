@@ -29,7 +29,9 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: AfiaColors.surface,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AfiaSpacing.pageMargin,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -40,9 +42,12 @@ class _LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.zero,
                 constraints: const BoxConstraints(),
                 onPressed: () {
-                  final fromOnboard = ModalRoute.of(context)?.settings.arguments == true;
+                  final fromOnboard =
+                      ModalRoute.of(context)?.settings.arguments == true;
                   if (fromOnboard) {
-                    Navigator.of(context).pushReplacementNamed(RouteNames.onboard);
+                    Navigator.of(
+                      context,
+                    ).pushReplacementNamed(RouteNames.onboard);
                   } else {
                     Navigator.of(context).maybePop();
                   }
@@ -61,13 +66,22 @@ class _LoginPageState extends State<LoginPage> {
 
               Text('Welcome back!', style: AfiaTypography.statValue),
               const SizedBox(height: AfiaSpacing.sm),
-              Text('Log in to continue your journey.',
-                  style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+              Text(
+                'Log in to continue your journey.',
+                style: AfiaTypography.body.copyWith(
+                  color: AfiaColors.textSecondary,
+                ),
+              ),
 
               const SizedBox(height: AfiaSpacing.xxxl),
 
               // Email label
-              Text('Email', style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary)),
+              Text(
+                'Email',
+                style: AfiaTypography.label.copyWith(
+                  color: AfiaColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: AfiaSpacing.sm),
               TextField(
                 controller: _emailController,
@@ -76,7 +90,10 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: 'you@example.com',
                   filled: true,
                   fillColor: AfiaColors.surface,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AfiaRadius.lg),
                     borderSide: BorderSide(color: AfiaColors.divider),
@@ -91,7 +108,12 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: AfiaSpacing.xl),
 
               // Password
-              Text('Password', style: AfiaTypography.label.copyWith(color: AfiaColors.textPrimary)),
+              Text(
+                'Password',
+                style: AfiaTypography.label.copyWith(
+                  color: AfiaColors.textPrimary,
+                ),
+              ),
               const SizedBox(height: AfiaSpacing.sm),
               TextField(
                 controller: _passwordController,
@@ -100,7 +122,10 @@ class _LoginPageState extends State<LoginPage> {
                   hintText: '• • • • • • • • •',
                   filled: true,
                   fillColor: AfiaColors.surface,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 18,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AfiaRadius.lg),
                     borderSide: BorderSide(color: AfiaColors.divider),
@@ -111,7 +136,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   suffixIcon: IconButton(
                     onPressed: () => setState(() => _obscure = !_obscure),
-                    icon: Icon(_obscure ? Icons.visibility : Icons.visibility_off, color: AfiaColors.textSecondary),
+                    icon: Icon(
+                      _obscure ? Icons.visibility : Icons.visibility_off,
+                      color: AfiaColors.textSecondary,
+                    ),
                   ),
                 ),
               ),
@@ -119,19 +147,21 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: AfiaSpacing.sm),
               Align(
                 alignment: Alignment.centerRight,
-                child: SizedBox(
-                  height: 44,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(RouteNames.authForgotPassword);
-                    },
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: AfiaColors.primary),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
-                      foregroundColor: AfiaColors.primary,
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: TextButton(
+                  onPressed: () {
+                    Navigator.of(
+                      context,
+                    ).pushNamed(RouteNames.authForgotPassword);
+                  },
+                  style: TextButton.styleFrom(
+                    foregroundColor: AfiaColors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  child: Text(
+                    'Forgot password?',
+                    style: AfiaTypography.body.copyWith(
+                      color: AfiaColors.primary,
                     ),
-                    child: Text('Forgot password?', style: AfiaTypography.body.copyWith(color: AfiaColors.primary)),
                   ),
                 ),
               ),
@@ -150,8 +180,12 @@ class _LoginPageState extends State<LoginPage> {
                     backgroundColor: AfiaColors.primary,
                     foregroundColor: AfiaColors.onPrimary,
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
-                    textStyle: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AfiaRadius.xl),
+                    ),
+                    textStyle: AfiaTypography.cardTitle.copyWith(
+                      color: AfiaColors.onPrimary,
+                    ),
                   ),
                   child: const Text('Log In'),
                 ),
@@ -165,7 +199,12 @@ class _LoginPageState extends State<LoginPage> {
                   const Expanded(child: Divider(color: AfiaColors.divider)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
-                    child: Text('or continue with', style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+                    child: Text(
+                      'or continue with',
+                      style: AfiaTypography.body.copyWith(
+                        color: AfiaColors.textSecondary,
+                      ),
+                    ),
                   ),
                   const Expanded(child: Divider(color: AfiaColors.divider)),
                 ],
@@ -180,12 +219,19 @@ class _LoginPageState extends State<LoginPage> {
                     child: OutlinedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.g_mobiledata, color: Colors.black),
-                      label: Text('Google', style: AfiaTypography.body.copyWith(color: AfiaColors.textPrimary)),
+                      label: Text(
+                        'Google',
+                        style: AfiaTypography.body.copyWith(
+                          color: AfiaColors.textPrimary,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
                         elevation: 0,
                         side: BorderSide(color: AfiaColors.divider),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AfiaRadius.xl),
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
@@ -195,12 +241,19 @@ class _LoginPageState extends State<LoginPage> {
                     child: OutlinedButton.icon(
                       onPressed: () {},
                       icon: const Icon(Icons.apple, color: Colors.black),
-                      label: Text('Apple', style: AfiaTypography.body.copyWith(color: AfiaColors.textPrimary)),
+                      label: Text(
+                        'Apple',
+                        style: AfiaTypography.body.copyWith(
+                          color: AfiaColors.textPrimary,
+                        ),
+                      ),
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.white,
                         elevation: 0,
                         side: BorderSide(color: AfiaColors.divider),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AfiaRadius.xl),
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
@@ -214,12 +267,23 @@ class _LoginPageState extends State<LoginPage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text("Don't have an account? ", style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary)),
+                    Text(
+                      "Don't have an account? ",
+                      style: AfiaTypography.body.copyWith(
+                        color: AfiaColors.textSecondary,
+                      ),
+                    ),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pushNamed(RouteNames.authSignup);
                       },
-                      child: Text('Sign up', style: AfiaTypography.body.copyWith(color: AfiaColors.primary, fontWeight: FontWeight.w600)),
+                      child: Text(
+                        'Sign up',
+                        style: AfiaTypography.body.copyWith(
+                          color: AfiaColors.primary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),

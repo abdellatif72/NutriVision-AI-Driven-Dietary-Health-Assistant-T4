@@ -210,9 +210,9 @@ abstract final class InjectionContainer {
 
 No third-party DI package (like `get_it`) is installed yet. Choose and add one when starting the data layer.
 
-**Packages already in pubspec.yaml**: `google_fonts ^6.2.1`, `flutter_bloc ^8.1.6`, `equatable ^2.0.5`, `bloc_concurrency ^0.2.5`, `stream_transform ^2.1.0`, `shared_preferences ^2.5.5`, `image_picker ^1.2.3`, `speech_to_text ^7.4.0`. Dev: `flutter_lints ^6.0.0`, `flutter_launcher_icons ^0.13.1`, `mocktail ^1.0.4`.
+**Packages already in pubspec.yaml**: `google_fonts ^6.2.1`, `flutter_bloc ^8.1.6`, `equatable ^2.0.5`, `bloc_concurrency ^0.2.5`, `stream_transform ^2.1.0`, `shared_preferences ^2.5.5`, `image_picker ^1.2.3`, `speech_to_text ^7.4.0`, `dartz ^0.10.1`, `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage`, `google_sign_in`, `sign_in_with_apple`. Dev: `flutter_lints ^6.0.0`, `flutter_launcher_icons ^0.13.1`, `mocktail ^1.0.4`, `injectable_generator`, `build_runner`.
 
-**Still missing**: `firebase_*`, `dio`/`http`, `get_it`/`injectable`, `flutter_localizations`/`intl`, `flutter_secure_storage`, `connectivity_plus`, `dartz` (⚠️ imported but not declared), `google_sign_in`, `sign_in_with_apple`.
+**Still missing**: `injectable_generator` (dev), `build_runner` (dev), `google_sign_in`, `sign_in_with_apple`.
 
 ---
 
@@ -336,7 +336,7 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | **Auth** | Real UI: `LoginPage` (235 lines, email/password fields, Google/Apple buttons), `SignupPage` (210 lines, name/email/password/dob/gender), `ForgotPasswordPage` (94 lines), `GoalSelectionPage` (4 goal cards), `PhysicalInformationPage` (gender/weight/height with unit conversion). 6 auth routes wired. | `AuthPage` entry point is a placeholder. `AuthBloc` is an empty stub. `AuthRepository` is an empty abstract. No Firebase, no real auth logic. |
 | **AI Chat** | Full chat interface (558 lines) with speech-to-text (`speech_to_text`), image picker (`image_picker`), SharedPreferences-based history persistence, mock responses, bottom nav integration. | `AiBloc` is an empty stub. `AiService` (`core/services/ai_service.dart`) is an empty stub. No real LLM/API integration. |
 | **Meals** | `MealsPage` (764 lines): full meal logging UI with date selector, summary card, quick actions (breakfast/lunch/dinner/snack), AI suggestion card, meal log cards. `MealsCubit` + `MealsState` with mock data. `MealSearchBloc`/`Event`/`State` with mock results. 6 widget files. | NO `data/` directory at all — no datasources, no models, no repository implementations, no use cases. Domain layer only has the entity. |
-| **More / profile** | Most complete feature. **Data layer**: 4 model files (`UserProfileModel`, `AppPreferencesModel`, `DietPreferencesModel`, `NotificationPreferencesModel`), abstract datasource interfaces (local + remote). **Domain layer**: 4 entities, abstract repository, 5 use cases. **Presentation**: 14 page files (MorePage, ProfilePage, SettingsPage, EditProfilePage, PersonalInformationPage, DietPreferencesPage, NotificationsPage, ChangePasswordPage, ProgressSettingsPage, AboutPage, HelpPage, FaqsPage), 8 widget files, 8 cubit files. | Datasources are unimplemented interfaces. `MoreRepositoryImpl` is an empty stub. UI uses mock data from cubits. ⚠️ `more_repository.dart` imports `dartz` which is NOT in `pubspec.yaml` — will cause compile error. |
+| **More / profile** | Most complete feature. **Data layer**: 4 model files (`UserProfileModel`, `AppPreferencesModel`, `DietPreferencesModel`, `NotificationPreferencesModel`), abstract datasource interfaces (local + remote). **Domain layer**: 4 entities, abstract repository, 5 use cases. **Presentation**: 14 page files (MorePage, ProfilePage, SettingsPage, EditProfilePage, PersonalInformationPage, DietPreferencesPage, NotificationsPage, ChangePasswordPage, ProgressSettingsPage, AboutPage, HelpPage, FaqsPage), 8 widget files, 8 cubit files. | Datasources are unimplemented interfaces. `MoreRepositoryImpl` is an empty stub. UI uses mock data from cubits. |
 | **Localization** | Infrastructure files exist (`l10n.dart` defines `supported = ['en', 'ar']`, `locale_cubit.dart` exists). | No translation strings, no `.arb` files, no `flutter_localizations` or `intl` packages. App is not wired with `LocalizationsDelegate` or `supportedLocales`. |
 
 ### ❌ Not Started
@@ -356,8 +356,6 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 
 | Issue | Details |
 |-------|---------|
-| **`dartz` imported but not declared** | `lib/features/more/domain/repositories/more_repository.dart` imports `package:dartz/dartz.dart` but `dartz` is missing from `pubspec.yaml` — **compile error**. |
-| **`AfiaRadius` used but not defined** | Auth pages reference `AfiaRadius` which does not exist in any theme file. |
 | **No DI package** | `InjectionContainer` expects DI registration but no DI framework is installed. |
 | **AI page bypasses service layer** | `ai_page.dart` directly uses `speech_to_text`, `image_picker`, and `shared_preferences` instead of going through the stub service layer. |
 
@@ -388,3 +386,59 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 8. **Mock data** lives inside cubits/blocs for now — real data sources will replace it once the data layer is built.
 9. **Fix known issues first** if working on compilation: add `dartz` to pubspec.yaml (imported by `more_repository.dart`) and define `AfiaRadius` (referenced by auth pages).
 10. **Meals has no `data/` directory** — unlike the reference folder structure, the meals feature has zero data layer files. Create from scratch if needed.
+
+
+---
+
+## What's Next to Work On
+
+> Last updated: 2026-07-01. Derived from gap analysis against the DEPI project proposal.
+
+### 🔴 Phase 1 — Foundation & Critical Fixes
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ✅ | Fix compile error: add `dartz` to `pubspec.yaml` | Added `dartz ^0.10.1` to `pubspec.yaml` and ran `flutter pub get` |
+| ✅ | Define `AfiaRadius` in theme (`afia_radius.dart` or `afia_theme.dart`) | Already exists in `lib/core/theme/afia_spacing.dart:26-33`. Was out of date in AGENTS.md. ✅ |
+| ✅ | Add all missing packages to `pubspec.yaml` | `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage` added |
+| ❌ | Firebase project setup | Add `google-services.json` / `GoogleService-Info.plist`, `firebase_options.dart`, call `Firebase.initializeApp()` in `main.dart` |
+| ❌ | Implement `InjectionContainer` with `get_it` | Register all existing cubits, blocs, repos, and datasources |
+| ❌ | Implement `AuthBloc` | Wire Firebase Auth — email/password + Google Sign-In |
+| ❌ | Implement `AuthRepositoryImpl` + `AuthRemoteDataSource` | Firebase Auth backend |
+| ❌ | Auth session guard in `AuthPage` / router | Check token on cold start → route to `/main` or `/auth/login` |
+| ❌ | BMR/TDEE `CalculateDailyCalories` use case + unit tests | ≥50% coverage required by KPI. Inputs exist in `PhysicalInformationPage`. |
+| ❌ | Persist BMR result + user profile to Firestore on onboarding complete | |
+| ❌ | Dio setup with interceptors (auth token, retry on 401, timeout handling) | |
+
+### 🟡 Phase 2 — Data Layers & AI Integration
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ❌ | `meals` data layer: `MealModel`, `MealRemoteDataSource`, `MealLocalDataSource`, `MealRepositoryImpl` | No `data/` dir exists at all |
+| ❌ | Meals use cases: `AddMeal`, `DeleteMeal`, `GetMealsForDay`, `SearchMeals` | |
+| ❌ | Wire `MealsCubit` to repository — replace mock data | |
+| ❌ | `water` data layer + wire `WaterRecordingCubit` to Firestore | |
+| ❌ | Implement `AiService` — Gemini Text API: Recipe Converter + Snack Discovery | Mario's responsibility per proposal |
+| ❌ | Refactor `ai_page.dart` to use `AiBloc` events (remove direct SDK calls) | Currently bypasses service layer |
+| ❌ | "Snap Your Plate" — Gemini Vision API image recognition → `Meal` entity | Core proposal objective |
+| ❌ | AI meal confirmation bottom sheet with manual calorie override before save | Required by risk mitigation plan |
+| ❌ | `ExploreBloc` + `ExplorePage` — category grid, search, meal detail, "Add to Log" | Currently a placeholder |
+| ❌ | `MoreRepositoryImpl` — implement all datasource interfaces, wire cubits to Firestore | |
+| ❌ | Wire `Progress` page to real Firestore data | |
+
+### 🟢 Phase 3 — Localization, Polish & Testing
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ❌ | Wire `flutter_localizations` + `intl`; create `app_en.arb` + `app_ar.arb` | Infrastructure exists, strings missing |
+| ❌ | RTL layout audit — replace all `EdgeInsets` with `EdgeInsetsDirectional` | |
+| ❌ | Dark theme color tokens + Settings toggle | |
+| ❌ | Firebase Crashlytics integration | KPI: zero crashes during demo |
+| ❌ | `AfiaEmptyState` + `AfiaErrorState` shared widgets in `core/widgets/` | |
+| ❌ | Shimmer skeleton loading (meals list, explore, AI response) | |
+| ❌ | `RemindersPage` with local notification scheduling | |
+| ❌ | Widget tests: home dashboard, meals page, water page | Week 3/4 deliverable |
+| ❌ | Integration test: 3-minute onboarding flow end-to-end | Week 5 KPI |
+| ❌ | Performance audit with Flutter DevTools | |
+| ❌ | Edge-case handling: offline banner, empty states, AI timeout fallback | |
+| ❌ | Final MVP: seed demo account, prepare presentation | Week 5 |
