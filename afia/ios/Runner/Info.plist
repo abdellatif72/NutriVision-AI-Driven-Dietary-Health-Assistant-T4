@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Afia uses your photo library to let you attach food images to the chat.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>Afia uses speech recognition so you can send voice messages.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Afia uses the microphone for voice input.</string>
 </dict>
 </plist>

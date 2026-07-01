@@ -15,10 +15,17 @@ abstract final class RouteNames {
   static const more = '/more';
   static const profile = '/more/profile';
   static const editProfile = '/more/profile/edit';
+  static const personalInformation = '/more/personal-information';
+  static const dietPreferences = '/more/diet-preferences';
   static const goals = '/more/goals';
   static const progress = '/more/progress';
   static const reminders = '/more/reminders';
+  static const notifications = '/more/notifications';
   static const connectedApps = '/more/connected-apps';
   static const settings = '/more/settings';
+  static const changePassword = '/more/change-password';
   static const helpSupport = '/more/help-support';
+  static const faqs = '/more/faqs';
+  static const help = '/more/help';
+  static const about = '/more/about';
 }

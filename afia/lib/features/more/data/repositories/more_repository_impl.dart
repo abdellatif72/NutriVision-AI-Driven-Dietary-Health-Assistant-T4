@@ -1,0 +1,3 @@
+class MoreRepositoryImpl {
+  const MoreRepositoryImpl();
+}

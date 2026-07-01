@@ -39,6 +39,9 @@ dependencies:
   equatable: ^2.0.5
   bloc_concurrency: ^0.2.5
   stream_transform: ^2.1.0
+  shared_preferences: ^2.5.5
+  image_picker: ^1.2.3
+  speech_to_text: ^7.4.0
 
 dev_dependencies:
   flutter_test:

@@ -2,11 +2,28 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
-import 'package:afia/features/more/presentation/pages/more_page.dart';
+import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
+import 'package:afia/features/more/presentation/cubit/more_state.dart';
+import 'package:afia/features/more/presentation/widgets/more_section_card.dart';
+import 'package:afia/features/more/presentation/widgets/section_title.dart';
+import 'package:afia/features/more/presentation/widgets/settings_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider.value(
+      value: context.read<MoreCubit>(),
+      child: const _ProfileView(),
+    );
+  }
+}
+
+class _ProfileView extends StatelessWidget {
+  const _ProfileView();
 
   @override
   Widget build(BuildContext context) {
@@ -22,77 +39,104 @@ class ProfilePage extends StatelessWidget {
         title: Text('Profile', style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          AfiaSpacing.pageMargin,
-          AfiaSpacing.sm,
-          AfiaSpacing.pageMargin,
-          AfiaSpacing.xxxl,
-        ),
-        children: [
-          _HeroSummaryCard(
-            title: 'Sara Khan',
-            subtitle: 'Healthy routine • 4 week streak',
-            accent: AfiaColors.primary,
-            child: Row(
-              children: const [
-                _SmallStat(label: 'Weight', value: '62.4 kg'),
-                SizedBox(width: AfiaSpacing.md),
-                _SmallStat(label: 'Height', value: '165 cm'),
-                SizedBox(width: AfiaSpacing.md),
-                _SmallStat(label: 'BMI', value: '22.9'),
-              ],
+      body: BlocBuilder<MoreCubit, MoreState>(
+        builder: (context, state) {
+          return ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AfiaSpacing.pageMargin,
+              AfiaSpacing.sm,
+              AfiaSpacing.pageMargin,
+              AfiaSpacing.xxxl,
             ),
-          ),
-          const SizedBox(height: AfiaSpacing.xl),
-          ActionGroupCard(
             children: [
-              SettingsTile(
-                icon: Icons.edit_outlined,
-                title: 'Edit Profile',
-                trailing: 'Sara Khan',
-                onTap: () =>
-                    Navigator.pushNamed(context, RouteNames.editProfile),
+              _HeroSummaryCard(
+                name: state.name,
+                initials: state.initials,
+                currentGoal: state.currentGoal,
+                streakDays: state.streakDays,
               ),
-              SettingsTile(
-                icon: Icons.restaurant_outlined,
-                title: 'Diet Preferences',
-                trailing: 'Balanced',
+              const SizedBox(height: AfiaSpacing.xl),
+              MoreSectionCard(
+                children: [
+                  SettingsTile(
+                    icon: Icons.edit_outlined,
+                    title: 'Edit Profile',
+                    trailing: state.name,
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      RouteNames.personalInformation,
+                    ),
+                  ),
+                  SettingsTile(
+                    icon: Icons.restaurant_outlined,
+                    title: 'Diet Preferences',
+                    trailing: state.currentGoal,
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      RouteNames.dietPreferences,
+                    ),
+                  ),
+                  SettingsTile(
+                    icon: Icons.lock_outline_rounded,
+                    title: 'Change Password',
+                    onTap: () =>
+                        Navigator.pushNamed(context, RouteNames.changePassword),
+                  ),
+                ],
               ),
-              SettingsTile(
-                icon: Icons.security_outlined,
-                title: 'Security',
-                trailing: 'Managed',
+              const SizedBox(height: AfiaSpacing.xl),
+              const SectionTitle('Today at a glance'),
+              const SizedBox(height: AfiaSpacing.md),
+              Row(
+                children: const [
+                  Expanded(
+                    child: _MiniInfoCard(
+                      icon: Icons.local_fire_department_outlined,
+                      label: 'Calories',
+                      value: '1,420',
+                      accent: AfiaColors.orange,
+                      container: AfiaColors.orangeContainer,
+                    ),
+                  ),
+                  SizedBox(width: AfiaSpacing.md),
+                  Expanded(
+                    child: _MiniInfoCard(
+                      icon: Icons.directions_walk_rounded,
+                      label: 'Steps',
+                      value: '5,480',
+                      accent: AfiaColors.primary,
+                      container: AfiaColors.primaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AfiaSpacing.md),
+              Row(
+                children: const [
+                  Expanded(
+                    child: _MiniInfoCard(
+                      icon: Icons.water_drop_outlined,
+                      label: 'Water',
+                      value: '1.8 L',
+                      accent: AfiaColors.blue,
+                      container: AfiaColors.blueContainer,
+                    ),
+                  ),
+                  SizedBox(width: AfiaSpacing.md),
+                  Expanded(
+                    child: _MiniInfoCard(
+                      icon: Icons.favorite_outlined,
+                      label: 'Heart Rate',
+                      value: '72 bpm',
+                      accent: AfiaColors.red,
+                      container: AfiaColors.redContainer,
+                    ),
+                  ),
+                ],
               ),
             ],
-          ),
-          const SizedBox(height: AfiaSpacing.xl),
-          const SectionTitle('Today at a glance'),
-          const SizedBox(height: AfiaSpacing.md),
-          Row(
-            children: const [
-              Expanded(
-                child: _MiniInfoCard(
-                  icon: Icons.local_fire_department_outlined,
-                  label: 'Calories',
-                  value: '1,420',
-                  accent: AfiaColors.orange,
-                  container: AfiaColors.orangeContainer,
-                ),
-              ),
-              SizedBox(width: AfiaSpacing.md),
-              Expanded(
-                child: _MiniInfoCard(
-                  icon: Icons.directions_walk_rounded,
-                  label: 'Steps',
-                  value: '5,480',
-                  accent: AfiaColors.primary,
-                  container: AfiaColors.primaryContainer,
-                ),
-              ),
-            ],
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -100,16 +144,16 @@ class ProfilePage extends StatelessWidget {
 
 class _HeroSummaryCard extends StatelessWidget {
   const _HeroSummaryCard({
-    required this.title,
-    required this.subtitle,
-    required this.accent,
-    required this.child,
+    required this.name,
+    required this.initials,
+    required this.currentGoal,
+    required this.streakDays,
   });
 
-  final String title;
-  final String subtitle;
-  final Color accent;
-  final Widget child;
+  final String name;
+  final String initials;
+  final String currentGoal;
+  final int streakDays;
 
   @override
   Widget build(BuildContext context) {
@@ -124,17 +168,15 @@ class _HeroSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.14),
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
+              CircleAvatar(
+                radius: 28,
+                backgroundColor: AfiaColors.primaryContainer,
                 child: Text(
-                  'SK',
-                  style: AfiaTypography.cardTitle.copyWith(color: accent),
+                  initials,
+                  style: AfiaTypography.cardTitle.copyWith(
+                    color: AfiaColors.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(width: AfiaSpacing.md),
@@ -142,45 +184,20 @@ class _HeroSummaryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(title, style: AfiaTypography.cardTitle),
+                    Text(name, style: AfiaTypography.cardTitle),
                     const SizedBox(height: 4),
-                    Text(subtitle, style: AfiaTypography.body),
+                    Text(
+                      '$currentGoal • $streakDays day streak',
+                      style: AfiaTypography.body.copyWith(
+                        color: AfiaColors.textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AfiaSpacing.lg),
-          child,
         ],
-      ),
-    );
-  }
-}
-
-class _SmallStat extends StatelessWidget {
-  const _SmallStat({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AfiaSpacing.md),
-        decoration: BoxDecoration(
-          color: AfiaColors.scaffoldBackground,
-          borderRadius: BorderRadius.circular(18),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: AfiaTypography.label),
-            const SizedBox(height: 4),
-            Text(value, style: AfiaTypography.cardTitle),
-          ],
-        ),
       ),
     );
   }
