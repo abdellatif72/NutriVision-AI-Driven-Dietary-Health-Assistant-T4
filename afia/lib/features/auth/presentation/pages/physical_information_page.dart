@@ -351,7 +351,7 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed(RouteNames.authGoalSelection);
+                    Navigator.of(context).pushNamed(RouteNames.authGoalSelection);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AfiaColors.primary,

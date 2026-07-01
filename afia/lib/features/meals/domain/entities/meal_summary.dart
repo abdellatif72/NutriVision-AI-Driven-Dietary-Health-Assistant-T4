@@ -7,6 +7,7 @@ class MealSummary extends Equatable {
     required this.emoji,
     required this.servingLabel,
     required this.calories,
+    this.tags = const [],
   });
 
   final String id;
@@ -14,7 +15,8 @@ class MealSummary extends Equatable {
   final String emoji;
   final String servingLabel;
   final int calories;
+  final List<String> tags;
 
   @override
-  List<Object?> get props => [id, name, emoji, servingLabel, calories];
+  List<Object?> get props => [id, name, emoji, servingLabel, calories, tags];
 }

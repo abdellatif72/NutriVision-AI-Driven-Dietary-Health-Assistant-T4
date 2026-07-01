@@ -302,6 +302,14 @@ class _HomeViewState extends State<_HomeView> {
             items: _navItems,
             selectedIndex: _selectedNavIndex,
             onSelected: (index) {
+              if (index == 1) {
+                Navigator.pushNamed(context, RouteNames.meals);
+                return;
+              }
+              if (index == 2) {
+                Navigator.pushNamed(context, RouteNames.ai);
+                return;
+              }
               if (index == 3) {
                 Navigator.push(
                   context,

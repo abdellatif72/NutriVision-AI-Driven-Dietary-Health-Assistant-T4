@@ -85,7 +85,9 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                 ),
               ),
               const SizedBox(height: 16),
-              Row(
+              SizedBox(
+                height: 120,
+                child: Row(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Expanded(child: _AmountDisplay(amountMl: _amountMl)),
@@ -112,6 +114,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                     ),
                   ),
                 ],
+              ),
               ),
               const SizedBox(height: 16),
               Row(

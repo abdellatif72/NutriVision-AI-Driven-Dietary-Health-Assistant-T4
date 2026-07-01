@@ -12,7 +12,7 @@ Afia is a **Flutter-based nutrition and wellness mobile app** targeting **Arabic
 - **Target users**: Arabic-speaking adults
 - **Language/RTL**: Arabic primary, RTL layout (localization infrastructure exists but is not wired yet)
 - **Project type**: Graduation project (team of 4)
-- **Current stage**: UI shell + mock data complete. Backend and data layer not yet started.
+- **Current stage**: UI shell + mock data complete. Auth flow UI is largely built (6 screens). AI chat UI is built with voice/image/history. Meals UI is fully built. More feature has the most complete architecture (models, use cases, entities). Backend and data layer not yet started. ⚠️ Potential compile errors (see section 9).
 
 ---
 
@@ -144,29 +144,51 @@ features/meals/
 
 **Pattern**: Manual `onGenerateRoute` switch/case (no `go_router`)
 
-**Route names** (`lib/app/router/route_names.dart`):
+**Route names** (`lib/app/router/route_names.dart`) — 31 routes:
 
 ```dart
 abstract final class RouteNames {
-  static const auth       = '/auth';
-  static const onboard    = '/onboard';
-  static const main       = '/main';
-  static const meals      = '/meals';
-  static const mealSearch = '/meals/search';
-  static const water      = '/water';
-  static const ai         = '/ai';
-  static const explore    = '/explore';
-  static const more       = '/more';
-  static const profile    = '/more/profile';
-  static const goals      = '/more/goals';
-  static const progress   = '/more/progress';
-  static const reminders  = '/more/reminders';
-  static const settings   = '/more/settings';
-  static const helpSupport = '/more/help-support';
+  // Auth
+  static const auth                  = '/auth';
+  static const authLogin             = '/auth/login';
+  static const authSignup            = '/auth/signup';
+  static const authPhysicalInformation = '/auth/physical-information';
+  static const authGoalSelection     = '/auth/goal-selection';
+  static const authForgotPassword    = '/auth/forgot-password';
+  // Onboard
+  static const onboard               = '/onboard';
+  // Main
+  static const main                  = '/main';
+  // Meals
+  static const meals                 = '/meals';
+  static const mealSearch            = '/meals/search';
+  // Water
+  static const water                 = '/water';
+  // AI
+  static const ai                    = '/ai';
+  // Explore
+  static const explore               = '/explore';
+  // More
+  static const more                  = '/more';
+  static const profile               = '/more/profile';
+  static const editProfile           = '/more/profile/edit';
+  static const personalInformation   = '/more/personal-information';
+  static const dietPreferences       = '/more/diet-preferences';
+  static const goals                 = '/more/goals';
+  static const progress              = '/more/progress';
+  static const reminders             = '/more/reminders';
+  static const notifications         = '/more/notifications';
+  static const connectedApps         = '/more/connected-apps';
+  static const settings              = '/more/settings';
+  static const changePassword        = '/more/change-password';
+  static const helpSupport           = '/more/help-support';
+  static const faqs                  = '/more/faqs';
+  static const help                  = '/more/help';
+  static const about                 = '/more/about';
 }
 ```
 
-**Initial route**: `/main` (temporary — skips onboarding/auth; was `/onboard`)
+**Initial route**: `/onboard` (set in `app_router.dart:31`)
 
 **Navigation**: `Navigator.pushReplacementNamed()` or `Navigator.pushNamed()` — no deep linking yet.
 
@@ -187,6 +209,10 @@ abstract final class InjectionContainer {
 **Status**: ⚠️ Empty — nothing is registered yet. When adding a feature's data layer, register all its components here.
 
 No third-party DI package (like `get_it`) is installed yet. Choose and add one when starting the data layer.
+
+**Packages already in pubspec.yaml**: `google_fonts ^6.2.1`, `flutter_bloc ^8.1.6`, `equatable ^2.0.5`, `bloc_concurrency ^0.2.5`, `stream_transform ^2.1.0`, `shared_preferences ^2.5.5`, `image_picker ^1.2.3`, `speech_to_text ^7.4.0`, `dartz ^0.10.1`, `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage`, `google_sign_in`, `sign_in_with_apple`. Dev: `flutter_lints ^6.0.0`, `flutter_launcher_icons ^0.13.1`, `mocktail ^1.0.4`, `injectable_generator`, `build_runner`.
+
+**Still missing**: `injectable_generator` (dev), `build_runner` (dev), `google_sign_in`, `sign_in_with_apple`.
 
 ---
 
@@ -293,41 +319,45 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | Feature | What exists |
 |---------|------------|
 | **Design system** | Colors, typography, spacing, theme — all token files complete |
-| **Routing** | All 9 named routes defined and wired |
-| **Onboarding** | Logo, hero text, CTAs, navigates to auth |
-| **Home dashboard** | Metrics (steps, water, heart rate), calories ring, daily progress, meals list — all with mock data |
+| **Routing** | All 31 named routes defined and wired |
+| **Onboarding** | Logo, hero text, CTAs, navigates to auth. Full `OnboardBloc`, 4 widget files |
+| **Home dashboard** | Metrics (steps, water, heart rate), calories ring, daily progress, meals list — all with mock data via `HomeCubit` |
 | **Progress page** | Calories bar chart, water bar chart, macro breakdown, weight trend, weekly/monthly/yearly toggle — mock data. Charts use design system tokens. |
-| **Main shell** | Simplified — renders `HomePage` directly. Removed duplicate bottom nav (`_MainBottomNav`). |
+| **Main shell** | `MainShellPage` with `MainShellCubit` and `AfiaBottomNav` (5 tabs: home, meals, water, ai, more) |
 | **Water logging** | Preset buttons (250ml, 500ml, custom), progress ring, entry list — mock data via `WaterRecordingCubit` |
-| **Meal search UI** | Search TextField, `MealSearchBloc`, result tiles, mock results |
-| **More / profile flow** | More hub, profile entry, goals, progress, reminders, connected apps, help/support, logout flow |
-| **Settings screen** | Dedicated settings page with preferences, account, and about sections |
 | **Shared widgets** | `AfiaBarChartCard`, `AfiaMetricStatCard`, `AfiaMiniMetricCard`, `AfiaWeekCalendar`, `AfiaWeeklyProgressCard` |
 | **Domain entity** | `MealSummary` (id, name, emoji, calories, serving) |
 | **Error infrastructure** | `Failure`, `ServerFailure`, `CacheFailure`, `ServerException`, `CacheException` |
 
 ### ⚠️ Partial
 
-| Feature | What's missing |
-|---------|---------------|
-| **Meals** | Main meals listing page is placeholder. No data layer, repository, or use cases |
-| **Localization** | Infrastructure files exist (`l10n.dart`, `locale_cubit.dart`) but no translations and no l10n package added |
-| **More screen internals** | The destination pages are UI-only mock screens; they are routed but not backed by state or data |
+| Feature | What exists | What's missing |
+|---------|-------------|---------------|
+| **Auth** | Real UI: `LoginPage` (235 lines, email/password fields, Google/Apple buttons), `SignupPage` (210 lines, name/email/password/dob/gender), `ForgotPasswordPage` (94 lines), `GoalSelectionPage` (4 goal cards), `PhysicalInformationPage` (gender/weight/height with unit conversion). 6 auth routes wired. | `AuthPage` entry point is a placeholder. `AuthBloc` is an empty stub. `AuthRepository` is an empty abstract. No Firebase, no real auth logic. |
+| **AI Chat** | Full chat interface (558 lines) with speech-to-text (`speech_to_text`), image picker (`image_picker`), SharedPreferences-based history persistence, mock responses, bottom nav integration. | `AiBloc` is an empty stub. `AiService` (`core/services/ai_service.dart`) is an empty stub. No real LLM/API integration. |
+| **Meals** | `MealsPage` (764 lines): full meal logging UI with date selector, summary card, quick actions (breakfast/lunch/dinner/snack), AI suggestion card, meal log cards. `MealsCubit` + `MealsState` with mock data. `MealSearchBloc`/`Event`/`State` with mock results. 6 widget files. | NO `data/` directory at all — no datasources, no models, no repository implementations, no use cases. Domain layer only has the entity. |
+| **More / profile** | Most complete feature. **Data layer**: 4 model files (`UserProfileModel`, `AppPreferencesModel`, `DietPreferencesModel`, `NotificationPreferencesModel`), abstract datasource interfaces (local + remote). **Domain layer**: 4 entities, abstract repository, 5 use cases. **Presentation**: 14 page files (MorePage, ProfilePage, SettingsPage, EditProfilePage, PersonalInformationPage, DietPreferencesPage, NotificationsPage, ChangePasswordPage, ProgressSettingsPage, AboutPage, HelpPage, FaqsPage), 8 widget files, 8 cubit files. | Datasources are unimplemented interfaces. `MoreRepositoryImpl` is an empty stub. UI uses mock data from cubits. |
+| **Localization** | Infrastructure files exist (`l10n.dart` defines `supported = ['en', 'ar']`, `locale_cubit.dart` exists). | No translation strings, no `.arb` files, no `flutter_localizations` or `intl` packages. App is not wired with `LocalizationsDelegate` or `supportedLocales`. |
 
 ### ❌ Not Started
 
 | Feature | Notes |
 |---------|-------|
-| **Auth** | `AuthBloc` is empty stub. Page shows placeholder. No login/register UI |
-| **AI** | Feature folder exists, page is placeholder. No logic |
-| **Explore** | Feature folder exists, page is placeholder |
-| **Firebase** | Not added — no packages, no `google-services.json`, no init code |
-| **Data layer** | No datasources, no model classes, no repository implementations anywhere |
-| **DI wiring** | `InjectionContainer.init()` is empty |
-| **Real API integration** | No HTTP client added, no API keys, no env config |
+| **Explore** | Feature folder exists, page is a `FeaturePlaceholderPage`. `ExploreBloc` is empty stub. No logic, no UI. |
+| **Firebase** | Not added — no `firebase_*` packages, no `google-services.json`, no `GoogleService-Info.plist`, no init code |
+| **Data layer (except more)** | `auth` has an empty repo impl but no datasources/models. `meals` has NO data dir at all. All other features have no data layer. |
+| **DI wiring** | `InjectionContainer.init()` is empty. No DI package added (`get_it` / `injectable` not installed). |
+| **Real API integration** | No HTTP client (`dio`/`http`), no API keys, no environment config. `ApiClient` and `NetworkInfo` are empty stubs. |
+| **Core services** | `AuthService`, `AiService`, `AnalyticsService` — all empty stubs. `LocalStorage`, `SecureStorage` — all empty stubs. |
 | **Dark theme** | Not implemented |
 | **Push notifications** | Not implemented |
-| **Tests** | Only one basic widget test. No unit or integration tests |
+
+### 🔧 Known Issues / Risks
+
+| Issue | Details |
+|-------|---------|
+| **No DI package** | `InjectionContainer` expects DI registration but no DI framework is installed. |
+| **AI page bypasses service layer** | `ai_page.dart` directly uses `speech_to_text`, `image_picker`, and `shared_preferences` instead of going through the stub service layer. |
 
 ---
 
@@ -339,7 +369,7 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 - **Nutrition API**: Layered — USDA FoodData Central (primary), Nutritionix (Arabic/branded foods), Open Food Facts (fallback)
 - **AI feature**: Anthropic Claude API or Gemini for recipe parsing and meal suggestions
 - **HTTP client**: `dio` (to be added)
-- **Local storage**: `hive` or `shared_preferences` (to be decided)
+- **Local storage**: `shared_preferences` ^2.5.5 (already added, used by AI page). `hive` (not added).
 - **DI**: `get_it` + `injectable` (to be decided)
 
 ---
@@ -354,3 +384,61 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 6. **Register new routes** in both `route_names.dart` and `app_router.dart`.
 7. **Do not add packages** without confirming they belong in `pubspec.yaml` (several stubs assume packages not yet installed).
 8. **Mock data** lives inside cubits/blocs for now — real data sources will replace it once the data layer is built.
+9. **Fix known issues first** if working on compilation: add `dartz` to pubspec.yaml (imported by `more_repository.dart`) and define `AfiaRadius` (referenced by auth pages).
+10. **Meals has no `data/` directory** — unlike the reference folder structure, the meals feature has zero data layer files. Create from scratch if needed.
+
+
+---
+
+## What's Next to Work On
+
+> Last updated: 2026-07-01. Derived from gap analysis against the DEPI project proposal.
+
+### 🔴 Phase 1 — Foundation & Critical Fixes
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ✅ | Fix compile error: add `dartz` to `pubspec.yaml` | Added `dartz ^0.10.1` to `pubspec.yaml` and ran `flutter pub get` |
+| ✅ | Define `AfiaRadius` in theme (`afia_radius.dart` or `afia_theme.dart`) | Already exists in `lib/core/theme/afia_spacing.dart:26-33`. Was out of date in AGENTS.md. ✅ |
+| ✅ | Add all missing packages to `pubspec.yaml` | `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage` added |
+| ❌ | Firebase project setup | Add `google-services.json` / `GoogleService-Info.plist`, `firebase_options.dart`, call `Firebase.initializeApp()` in `main.dart` |
+| ❌ | Implement `InjectionContainer` with `get_it` | Register all existing cubits, blocs, repos, and datasources |
+| ❌ | Implement `AuthBloc` | Wire Firebase Auth — email/password + Google Sign-In |
+| ❌ | Implement `AuthRepositoryImpl` + `AuthRemoteDataSource` | Firebase Auth backend |
+| ❌ | Auth session guard in `AuthPage` / router | Check token on cold start → route to `/main` or `/auth/login` |
+| ❌ | BMR/TDEE `CalculateDailyCalories` use case + unit tests | ≥50% coverage required by KPI. Inputs exist in `PhysicalInformationPage`. |
+| ❌ | Persist BMR result + user profile to Firestore on onboarding complete | |
+| ❌ | Dio setup with interceptors (auth token, retry on 401, timeout handling) | |
+
+### 🟡 Phase 2 — Data Layers & AI Integration
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ❌ | `meals` data layer: `MealModel`, `MealRemoteDataSource`, `MealLocalDataSource`, `MealRepositoryImpl` | No `data/` dir exists at all |
+| ❌ | Meals use cases: `AddMeal`, `DeleteMeal`, `GetMealsForDay`, `SearchMeals` | |
+| ❌ | Wire `MealsCubit` to repository — replace mock data | |
+| ❌ | `water` data layer + wire `WaterRecordingCubit` to Firestore | |
+| ❌ | Implement `AiService` — Gemini Text API: Recipe Converter + Snack Discovery | Mario's responsibility per proposal |
+| ❌ | Refactor `ai_page.dart` to use `AiBloc` events (remove direct SDK calls) | Currently bypasses service layer |
+| ❌ | "Snap Your Plate" — Gemini Vision API image recognition → `Meal` entity | Core proposal objective |
+| ❌ | AI meal confirmation bottom sheet with manual calorie override before save | Required by risk mitigation plan |
+| ❌ | `ExploreBloc` + `ExplorePage` — category grid, search, meal detail, "Add to Log" | Currently a placeholder |
+| ❌ | `MoreRepositoryImpl` — implement all datasource interfaces, wire cubits to Firestore | |
+| ❌ | Wire `Progress` page to real Firestore data | |
+
+### 🟢 Phase 3 — Localization, Polish & Testing
+
+| Status | Task | Notes |
+|--------|------|-------|
+| ❌ | Wire `flutter_localizations` + `intl`; create `app_en.arb` + `app_ar.arb` | Infrastructure exists, strings missing |
+| ❌ | RTL layout audit — replace all `EdgeInsets` with `EdgeInsetsDirectional` | |
+| ❌ | Dark theme color tokens + Settings toggle | |
+| ❌ | Firebase Crashlytics integration | KPI: zero crashes during demo |
+| ❌ | `AfiaEmptyState` + `AfiaErrorState` shared widgets in `core/widgets/` | |
+| ❌ | Shimmer skeleton loading (meals list, explore, AI response) | |
+| ❌ | `RemindersPage` with local notification scheduling | |
+| ❌ | Widget tests: home dashboard, meals page, water page | Week 3/4 deliverable |
+| ❌ | Integration test: 3-minute onboarding flow end-to-end | Week 5 KPI |
+| ❌ | Performance audit with Flutter DevTools | |
+| ❌ | Edge-case handling: offline banner, empty states, AI timeout fallback | |
+| ❌ | Final MVP: seed demo account, prepare presentation | Week 5 |

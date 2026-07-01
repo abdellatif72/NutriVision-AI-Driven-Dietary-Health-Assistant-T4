@@ -16,6 +16,15 @@ class QueryChanged extends MealSearchEvent {
   List<Object?> get props => [query];
 }
 
+class FilterTagChanged extends MealSearchEvent {
+  const FilterTagChanged(this.tag);
+
+  final String tag;
+
+  @override
+  List<Object?> get props => [tag];
+}
+
 class ResultSelected extends MealSearchEvent {
   const ResultSelected(this.meal);
 

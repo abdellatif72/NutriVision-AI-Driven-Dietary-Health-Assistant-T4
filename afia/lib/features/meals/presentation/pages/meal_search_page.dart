@@ -47,7 +47,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(Icons.arrow_back, color: AfiaColors.textPrimary),
+          icon: const Icon(Icons.arrow_back_rounded, color: AfiaColors.textPrimary),
         ),
         title: const Text(
           'Add a meal',
@@ -61,6 +61,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
       ),
       body: Column(
         children: [
+          // Search Field
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: TextField(
@@ -70,13 +71,13 @@ class _MealSearchViewState extends State<_MealSearchView> {
               onChanged: (value) =>
                   context.read<MealSearchBloc>().add(QueryChanged(value)),
               decoration: InputDecoration(
-                hintText: 'Turn around to eat...for example: koshari, fava beans',
+                hintText: 'Search for a meal... e.g., koshari, fava beans',
                 hintStyle: const TextStyle(
                   fontSize: 12,
                   color: AfiaColors.textSecondary,
                 ),
                 prefixIcon: const Icon(
-                  Icons.search,
+                  Icons.search_rounded,
                   color: AfiaColors.textSecondary,
                 ),
                 suffixIcon: ValueListenableBuilder<TextEditingValue>(
@@ -85,7 +86,7 @@ class _MealSearchViewState extends State<_MealSearchView> {
                     if (value.text.isEmpty) return const SizedBox.shrink();
                     return IconButton(
                       icon: const Icon(
-                        Icons.close,
+                        Icons.close_rounded,
                         color: AfiaColors.textSecondary,
                       ),
                       onPressed: () {
@@ -114,13 +115,64 @@ class _MealSearchViewState extends State<_MealSearchView> {
               ),
             ),
           ),
+
+          // Filters row
+          BlocBuilder<MealSearchBloc, MealSearchState>(
+            builder: (context, state) {
+              const tags = [
+                ('all', 'All'),
+                ('arabic', 'Arabic 🇪🇬'),
+                ('western', 'Western 🍔'),
+                ('healthy', 'Healthy 🥗'),
+                ('recent', 'Recent ⏱️'),
+              ];
+              return SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: Row(
+                  children: tags.map((t) {
+                    final isSelected = state.selectedTag == t.$1;
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: ChoiceChip(
+                        label: Text(t.$2),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          if (selected) {
+                            context.read<MealSearchBloc>().add(FilterTagChanged(t.$1));
+                          }
+                        },
+                        selectedColor: AfiaColors.primary,
+                        backgroundColor: AfiaColors.surface,
+                        labelStyle: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                          color: isSelected ? Colors.white : AfiaColors.textPrimary,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(
+                            color: isSelected ? Colors.transparent : AfiaColors.divider,
+                          ),
+                        ),
+                        elevation: 0,
+                        pressElevation: 0,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              );
+            },
+          ),
+
+          // Search results
           Expanded(
             child: BlocBuilder<MealSearchBloc, MealSearchState>(
               builder: (context, state) {
                 switch (state.status) {
                   case MealSearchStatus.idle:
                     return const _CenteredHint(
-                      icon: Icons.restaurant_menu,
+                      icon: Icons.restaurant_menu_rounded,
                       text: 'Search for a meal to log it.',
                     );
                   case MealSearchStatus.loading:
@@ -132,12 +184,12 @@ class _MealSearchViewState extends State<_MealSearchView> {
                     );
                   case MealSearchStatus.empty:
                     return _CenteredHint(
-                      icon: Icons.search_off,
-                      text: 'No meals found for "${state.query}".',
+                      icon: Icons.search_off_rounded,
+                      text: 'No meals found in this category matching "${state.query}".',
                     );
                   case MealSearchStatus.failure:
                     return _CenteredHint(
-                      icon: Icons.error_outline,
+                      icon: Icons.error_outline_rounded,
                       text: state.errorMessage ?? 'Something went wrong.',
                     );
                   case MealSearchStatus.success:

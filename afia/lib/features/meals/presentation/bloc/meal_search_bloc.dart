@@ -17,8 +17,13 @@ EventTransformer<E> _debounceRestartable<E>(Duration duration) {
 }
 
 class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
-  MealSearchBloc() : super(const MealSearchState.idle()) {
+  MealSearchBloc()
+      : super(const MealSearchState(
+          status: MealSearchStatus.success,
+          results: _catalog,
+        )) {
     on<QueryChanged>(_onQueryChanged, transformer: _debounceRestartable(_debounceDuration));
+    on<FilterTagChanged>(_onFilterTagChanged);
     on<ResultSelected>(_onResultSelected);
   }
 
@@ -29,6 +34,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🍚',
       servingLabel: '1 plate · 350 g',
       calories: 420,
+      tags: ['arabic', 'recent'],
     ),
     MealSummary(
       id: 'fava-beans',
@@ -36,6 +42,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🫘',
       servingLabel: '1 bowl · 200 g',
       calories: 180,
+      tags: ['arabic', 'healthy', 'recent'],
     ),
     MealSummary(
       id: 'shawarma',
@@ -43,6 +50,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🌯',
       servingLabel: '1 wrap · 250 g',
       calories: 520,
+      tags: ['arabic'],
     ),
     MealSummary(
       id: 'falafel',
@@ -50,6 +58,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🧆',
       servingLabel: '5 pieces · 150 g',
       calories: 333,
+      tags: ['arabic'],
     ),
     MealSummary(
       id: 'molokhia',
@@ -57,6 +66,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🥬',
       servingLabel: '1 bowl · 250 g',
       calories: 210,
+      tags: ['arabic', 'healthy'],
     ),
     MealSummary(
       id: 'grilled-chicken',
@@ -64,6 +74,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🍗',
       servingLabel: '1 breast · 180 g',
       calories: 295,
+      tags: ['western', 'healthy', 'recent'],
     ),
     MealSummary(
       id: 'mahshi',
@@ -71,6 +82,7 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🍆',
       servingLabel: '6 pieces · 300 g',
       calories: 380,
+      tags: ['arabic'],
     ),
     MealSummary(
       id: 'tameya',
@@ -78,6 +90,47 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
       emoji: '🥙',
       servingLabel: '1 sandwich',
       calories: 260,
+      tags: ['arabic'],
+    ),
+    MealSummary(
+      id: 'caesar-salad',
+      name: 'Caesar Salad',
+      emoji: '🥗',
+      servingLabel: '1 bowl · 250 g',
+      calories: 250,
+      tags: ['western', 'healthy'],
+    ),
+    MealSummary(
+      id: 'beef-burger',
+      name: 'Beef Burger',
+      emoji: '🍔',
+      servingLabel: '1 burger · 220 g',
+      calories: 580,
+      tags: ['western'],
+    ),
+    MealSummary(
+      id: 'pizza-slice',
+      name: 'Pizza Slice',
+      emoji: '🍕',
+      servingLabel: '1 slice · 120 g',
+      calories: 285,
+      tags: ['western', 'recent'],
+    ),
+    MealSummary(
+      id: 'salmon-asparagus',
+      name: 'Salmon & Asparagus',
+      emoji: '🐟',
+      servingLabel: '1 plate · 200 g',
+      calories: 380,
+      tags: ['western', 'healthy'],
+    ),
+    MealSummary(
+      id: 'oatmeal',
+      name: 'Oatmeal',
+      emoji: '🥣',
+      servingLabel: '1 bowl · 150 g',
+      calories: 150,
+      tags: ['western', 'healthy', 'recent'],
     ),
   ];
 
@@ -85,26 +138,47 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
     QueryChanged event,
     Emitter<MealSearchState> emit,
   ) async {
-    final query = event.query.trim();
-    if (query.isEmpty) {
-      emit(const MealSearchState.idle());
-      return;
-    }
+    emit(state.copyWith(status: MealSearchStatus.loading, query: event.query));
+    // Simulate delay for debouncing
+    await Future<void>.delayed(const Duration(milliseconds: 150));
+    _performSearch(event.query, state.selectedTag, emit);
+  }
 
-    emit(const MealSearchState.loading());
-    try {
-      await Future<void>.delayed(const Duration(milliseconds: 250));
-      final lower = query.toLowerCase();
-      final results = _catalog
-          .where((m) => m.name.toLowerCase().contains(lower))
-          .toList();
-      if (results.isEmpty) {
-        emit(MealSearchState.empty(query));
-      } else {
-        emit(MealSearchState.success(results));
+  void _onFilterTagChanged(
+    FilterTagChanged event,
+    Emitter<MealSearchState> emit,
+  ) {
+    emit(state.copyWith(status: MealSearchStatus.loading, selectedTag: event.tag));
+    _performSearch(state.query, event.tag, emit);
+  }
+
+  void _performSearch(
+    String query,
+    String tag,
+    Emitter<MealSearchState> emit,
+  ) {
+    final cleanQuery = query.trim().toLowerCase();
+
+    final filtered = _catalog.where((meal) {
+      if (tag != 'all') {
+        if (!meal.tags.contains(tag)) return false;
       }
-    } catch (_) {
-      emit(const MealSearchState.failure('Could not search meals.'));
+      if (cleanQuery.isNotEmpty) {
+        if (!meal.name.toLowerCase().contains(cleanQuery)) return false;
+      }
+      return true;
+    }).toList();
+
+    if (filtered.isEmpty) {
+      emit(state.copyWith(
+        status: MealSearchStatus.empty,
+        results: const [],
+      ));
+    } else {
+      emit(state.copyWith(
+        status: MealSearchStatus.success,
+        results: filtered,
+      ));
     }
   }
 
@@ -112,6 +186,6 @@ class MealSearchBloc extends Bloc<MealSearchEvent, MealSearchState> {
     ResultSelected event,
     Emitter<MealSearchState> emit,
   ) {
-    // Selection is handled by the page (navigation); state untouched.
+    // Handled by navigator pop.
   }
 }

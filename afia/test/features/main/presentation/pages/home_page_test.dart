@@ -1,6 +1,8 @@
+import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:afia/features/main/presentation/pages/home_page.dart';
+import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
 import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart';
@@ -142,9 +144,9 @@ void main() {
 
       expect(find.byType(AfiaBottomNav), findsOneWidget);
       expect(find.text('Home'), findsOneWidget);
-      expect(find.text('Progress'), findsOneWidget);
-      expect(find.text('Explore'), findsOneWidget);
-      expect(find.text('Menu'), findsOneWidget);
+      expect(find.text('Meals'), findsOneWidget);
+      expect(find.text('Chat'), findsOneWidget);
+      expect(find.text('More'), findsOneWidget);
       expect(find.byIcon(Icons.add_rounded), findsOneWidget);
     });
 
@@ -154,6 +156,26 @@ void main() {
 
       final homeTab = tester.widget<Icon>(find.byIcon(Icons.home_rounded));
       expect(homeTab.color, AfiaColors.primary);
+    });
+
+    testWidgets('tapping Meals tab navigates to the meals screen', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: const HomePage(),
+          routes: {
+            RouteNames.meals: (_) => const MealsPage(),
+          },
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Meals'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MealsPage), findsOneWidget);
+      expect(find.text('Meals'), findsWidgets);
     });
   });
 }

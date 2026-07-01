@@ -11,7 +11,18 @@ import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
 import 'package:afia/features/main/presentation/pages/progress_page.dart';
 import 'package:afia/features/meals/presentation/pages/meal_search_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
+import 'package:afia/features/more/presentation/pages/about_page.dart';
+import 'package:afia/features/more/presentation/pages/change_password_page.dart';
+import 'package:afia/features/more/presentation/pages/diet_preferences_page.dart';
+import 'package:afia/features/more/presentation/pages/edit_profile_page.dart';
+import 'package:afia/features/more/presentation/pages/faqs_page.dart';
+import 'package:afia/features/more/presentation/pages/help_page.dart';
 import 'package:afia/features/more/presentation/pages/more_page.dart';
+import 'package:afia/features/more/presentation/pages/notifications_page.dart';
+import 'package:afia/features/more/presentation/pages/personal_information_page.dart';
+import 'package:afia/features/more/presentation/pages/profile_page.dart';
+import 'package:afia/features/more/presentation/pages/progress_settings_page.dart';
+import 'package:afia/features/more/presentation/pages/settings_page.dart';
 import 'package:afia/features/onboard/presentation/pages/onboard_page.dart';
 import 'package:afia/features/water/presentation/pages/water_recording_page.dart';
 import 'package:flutter/material.dart';
@@ -97,17 +108,61 @@ abstract final class AppRouter {
           settings: settings,
         );
       case RouteNames.profile:
-      case RouteNames.goals:
-      case RouteNames.reminders:
-      case RouteNames.connectedApps:
-      case RouteNames.helpSupport:
         return MaterialPageRoute<void>(
-          builder: (_) => MoreSectionPage(title: _titleForRoute(settings.name)),
+          builder: (_) => const ProfilePage(),
+          settings: settings,
+        );
+      case RouteNames.editProfile:
+        return MaterialPageRoute<void>(
+          builder: (_) => const EditProfilePage(),
+          settings: settings,
+        );
+      case RouteNames.personalInformation:
+        return MaterialPageRoute<void>(
+          builder: (_) => const PersonalInformationPage(),
+          settings: settings,
+        );
+      case RouteNames.dietPreferences:
+        return MaterialPageRoute<void>(
+          builder: (_) => const DietPreferencesPage(),
           settings: settings,
         );
       case RouteNames.settings:
         return MaterialPageRoute<void>(
           builder: (_) => const SettingsPage(),
+          settings: settings,
+        );
+      case RouteNames.notifications:
+        return MaterialPageRoute<void>(
+          builder: (_) => const NotificationsPage(),
+          settings: settings,
+        );
+      case RouteNames.changePassword:
+        return MaterialPageRoute<void>(
+          builder: (_) => const ChangePasswordPage(),
+          settings: settings,
+        );
+      case RouteNames.faqs:
+        return MaterialPageRoute<void>(
+          builder: (_) => const FaqsPage(),
+          settings: settings,
+        );
+      case RouteNames.help:
+        return MaterialPageRoute<void>(
+          builder: (_) => const HelpPage(),
+          settings: settings,
+        );
+      case RouteNames.about:
+        return MaterialPageRoute<void>(
+          builder: (_) => const AboutPage(),
+          settings: settings,
+        );
+      case RouteNames.goals:
+      case RouteNames.reminders:
+      case RouteNames.connectedApps:
+      case RouteNames.helpSupport:
+        return MaterialPageRoute<void>(
+          builder: (_) => const MorePage(),
           settings: settings,
         );
       default:
@@ -116,25 +171,6 @@ abstract final class AppRouter {
               const Scaffold(body: Center(child: Text('Route not found'))),
           settings: settings,
         );
-    }
-  }
-
-  static String _titleForRoute(String? routeName) {
-    switch (routeName) {
-      case RouteNames.profile:
-        return 'Profile';
-      case RouteNames.goals:
-        return 'Goals';
-      case RouteNames.progress:
-        return 'Progress';
-      case RouteNames.reminders:
-        return 'Reminders';
-      case RouteNames.connectedApps:
-        return 'Connected Apps';
-      case RouteNames.helpSupport:
-        return 'Help & Support';
-      default:
-        return 'More';
     }
   }
 }

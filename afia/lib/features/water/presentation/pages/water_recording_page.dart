@@ -163,7 +163,7 @@ class _WaterRecordingView extends StatelessWidget {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _WaterAmountButton(
-                      label: '+750 ml',
+                      label: 'Custom',
                       onTap: () => _onAmountTap(context, 750),
                     ),
                   ),

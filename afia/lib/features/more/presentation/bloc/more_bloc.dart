@@ -1,3 +1,0 @@
-class MoreBloc {
-  const MoreBloc();
-}
