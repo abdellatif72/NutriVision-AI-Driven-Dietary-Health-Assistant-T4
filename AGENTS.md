@@ -206,13 +206,9 @@ abstract final class InjectionContainer {
 }
 ```
 
-**Status**: ⚠️ Empty — nothing is registered yet. When adding a feature's data layer, register all its components here.
-
-No third-party DI package (like `get_it`) is installed yet. Choose and add one when starting the data layer.
+**Status**: ⚠️ Partially complete. `get_it` and `injectable` are installed. Currently, only the **Auth** feature is registered (manually). As we build out the remaining data layers (Meals, Water, Explore, More), we need to transition to using `@injectable` annotations and `build_runner` to auto-generate the DI graph.
 
 **Packages already in pubspec.yaml**: `google_fonts ^6.2.1`, `flutter_bloc ^8.1.6`, `equatable ^2.0.5`, `bloc_concurrency ^0.2.5`, `stream_transform ^2.1.0`, `shared_preferences ^2.5.5`, `image_picker ^1.2.3`, `speech_to_text ^7.4.0`, `dartz ^0.10.1`, `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage`, `google_sign_in`, `sign_in_with_apple`. Dev: `flutter_lints ^6.0.0`, `flutter_launcher_icons ^0.13.1`, `mocktail ^1.0.4`, `injectable_generator`, `build_runner`.
-
-**Still missing**: `injectable_generator` (dev), `build_runner` (dev), `google_sign_in`, `sign_in_with_apple`.
 
 ---
 
@@ -355,7 +351,6 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 
 | Issue | Details |
 |-------|---------|
-| **No DI package** | `InjectionContainer` expects DI registration but no DI framework is installed. |
 | **AI page bypasses service layer** | `ai_page.dart` directly uses `speech_to_text`, `image_picker`, and `shared_preferences` instead of going through the stub service layer. |
 
 ---
@@ -383,61 +378,54 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 6. **Register new routes** in both `route_names.dart` and `app_router.dart`.
 7. **Do not add packages** without confirming they belong in `pubspec.yaml` (several stubs assume packages not yet installed).
 8. **Mock data** lives inside cubits/blocs for now — real data sources will replace it once the data layer is built.
-9. **Fix known issues first** if working on compilation: add `dartz` to pubspec.yaml (imported by `more_repository.dart`) and define `AfiaRadius` (referenced by auth pages).
-10. **Meals has no `data/` directory** — unlike the reference folder structure, the meals feature has zero data layer files. Create from scratch if needed.
+9. **Meals has no `data/` directory** — unlike the reference folder structure, the meals feature has zero data layer files. Create from scratch if needed.
 
 
 ---
 
 ## What's Next to Work On
 
-> Last updated: 2026-07-01. Derived from gap analysis against the DEPI project proposal.
+> Last updated: 2026-07-09. 3-Day Sprint Plan to Final Demo.
 
-### 🔴 Phase 1 — Foundation & Critical Fixes
+### 🔴 Day 1 — Core Data Layers & Backend Integrations
 
-| Status | Task | Notes |
-|--------|------|-------|
-| ✅ | Fix compile error: add `dartz` to `pubspec.yaml` | Added `dartz ^0.10.1` to `pubspec.yaml` and ran `flutter pub get` |
-| ✅ | Define `AfiaRadius` in theme (`afia_radius.dart` or `afia_theme.dart`) | Already exists in `lib/core/theme/afia_spacing.dart:26-33`. Was out of date in AGENTS.md. ✅ |
-| ✅ | Add all missing packages to `pubspec.yaml` | `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage` added |
-| ✅ | Firebase project setup | Added `google-services.json` / `GoogleService-Info.plist`, `firebase_options.dart`, call `Firebase.initializeApp()` in `main.dart` |
-| ✅ | Implement `InjectionContainer` with `get_it` | Registered Auth components. GetIt initialized in main.dart. |
-| ✅ | Implement `AuthBloc` | Wired Firebase Auth — email/password + Google/Apple Sign-In events |
-| ✅ | Implement `AuthRepositoryImpl` + `AuthRemoteDataSource` | Firebase Auth backend implemented |
-| ✅ | Auth session guard in `AuthPage` / router | Check token on cold start → route to `/main` or `/auth/login` |
-| ❌ | BMR/TDEE `CalculateDailyCalories` use case + unit tests | ≥50% coverage required by KPI. Inputs exist in `PhysicalInformationPage`. |
-| ❌ | Persist BMR result + user profile to Firestore on onboarding complete | |
-| ❌ | Dio setup with interceptors (auth token, retry on 401, timeout handling) | |
+| Assignee | Task | Notes |
+|----------|------|-------|
+| **Abdellatif** | ✅ Supabase Setup | Run `database_design.md` SQL scripts to create tables. (DONE) |
+| **Abdellatif** | API Configuration | Add Supabase URL/Anon Key to `app_constants.dart`. |
+| **Abdellatif** | Dio Client | Configure `dio` package with interceptors for external nutrition APIs. |
+| **Abdellatif** | BMR Logic | Implement `CalculateDailyCalories` use case with unit tests (50% coverage KPI). |
+| **Yusuf** | Gemini Text API | Implement `AiService` for "Recipe Converter" and "Snack Discovery". |
+| **Yusuf** | "Snap Your Plate" | Implement Gemini Vision API for image recognition mapping to `Meal` entity. |
+| **Yusuf** | AI UI Refactoring | Move logic from `ai_page.dart` to `AiBloc` events (Clean Architecture). |
+| **Mario** | Meals Data Layer | Create `MealModel`, `MealRemoteDataSource`, `MealRepositoryImpl` (Supabase). |
+| **Mario** | Meals UI Wiring | Wire `AddMeal` and `SearchMeals` to `MealsCubit`. |
+| **Mario** | Water Data Layer | Create water data layer and wire `WaterRecordingCubit` to Supabase. |
 
-### 🟡 Phase 2 — Data Layers & AI Integration
+### 🟡 Day 2 — Polish, Localization, and UI Completion
 
-| Status | Task | Notes |
-|--------|------|-------|
-| ❌ | `meals` data layer: `MealModel`, `MealRemoteDataSource`, `MealLocalDataSource`, `MealRepositoryImpl` | No `data/` dir exists at all |
-| ❌ | Meals use cases: `AddMeal`, `DeleteMeal`, `GetMealsForDay`, `SearchMeals` | |
-| ❌ | Wire `MealsCubit` to repository — replace mock data | |
-| ❌ | `water` data layer + wire `WaterRecordingCubit` to Firestore | |
-| ❌ | Implement `AiService` — Gemini Text API: Recipe Converter + Snack Discovery | Mario's responsibility per proposal |
-| ❌ | Refactor `ai_page.dart` to use `AiBloc` events (remove direct SDK calls) | Currently bypasses service layer |
-| ❌ | "Snap Your Plate" — Gemini Vision API image recognition → `Meal` entity | Core proposal objective |
-| ❌ | AI meal confirmation bottom sheet with manual calorie override before save | Required by risk mitigation plan |
-| ❌ | `ExploreBloc` + `ExplorePage` — category grid, search, meal detail, "Add to Log" | Currently a placeholder |
-| ❌ | `MoreRepositoryImpl` — implement all datasource interfaces, wire cubits to Firestore | |
-| ❌ | Wire `Progress` page to real Firestore data | |
+| Assignee | Task | Notes |
+|----------|------|-------|
+| **Abdellatif** | Profile Persistence | Save BMR and User Profile to Supabase `user_profiles` table on onboard complete. |
+| **Abdellatif** | Progress Page | Wire charts/trends on Progress Page to `weight_history` and `daily_metrics`. |
+| **Abdellatif** | UI Polish | Build `AfiaEmptyState` and `AfiaErrorState` shared widgets. |
+| **Yusuf** | AI Confirmation | Add Bottom Sheet for manual calorie/macro override before saving AI meals. |
+| **Yusuf** | Localization Wiring | Set up `flutter_localizations` & `intl`. Add `app_en.arb` and `app_ar.arb`. |
+| **Yusuf** | RTL Audit | Swap `EdgeInsets` to `EdgeInsetsDirectional` for proper Arabic layout. |
+| **Mario** | Explore Feature | Implement `ExploreBloc` & connect to external Nutritionix/USDA APIs. |
+| **Mario** | Health Package | Sync steps/heart rate from Apple Health/Google Fit to `daily_metrics`. |
+| **Mario** | Shimmer Loading | Add skeleton loading animations for Meals list and Explore page. |
 
-### 🟢 Phase 3 — Localization, Polish & Testing
+### 🟢 Day 3 — Testing, Documentation, & Presentation
 
-| Status | Task | Notes |
-|--------|------|-------|
-| ❌ | Wire `flutter_localizations` + `intl`; create `app_en.arb` + `app_ar.arb` | Infrastructure exists, strings missing |
-| ❌ | RTL layout audit — replace all `EdgeInsets` with `EdgeInsetsDirectional` | |
-| ❌ | Dark theme color tokens + Settings toggle | |
-| ❌ | Firebase Crashlytics integration | KPI: zero crashes during demo |
-| ❌ | `AfiaEmptyState` + `AfiaErrorState` shared widgets in `core/widgets/` | |
-| ❌ | Shimmer skeleton loading (meals list, explore, AI response) | |
-| ❌ | `RemindersPage` with local notification scheduling | |
-| ❌ | Widget tests: home dashboard, meals page, water page | Week 3/4 deliverable |
-| ❌ | Integration test: 3-minute onboarding flow end-to-end | Week 5 KPI |
-| ❌ | Performance audit with Flutter DevTools | |
-| ❌ | Edge-case handling: offline banner, empty states, AI timeout fallback | |
-| ❌ | Final MVP: seed demo account, prepare presentation | Week 5 |
+| Assignee | Task | Notes |
+|----------|------|-------|
+| **Abdellatif** | Integration Test | Write the 3-minute E2E integration test for onboarding flow (Week 5 KPI). |
+| **Abdellatif** | Performance Audit | Run Flutter DevTools. Ensure smooth scrolling and no memory leaks. |
+| **Abdellatif** | Bug Squashing | Fix any final crashes. |
+| **Yusuf** | Demo Seeding | Seed a Demo User account in Supabase with realistic mock data for the demo. |
+| **Yusuf** | Presentation | Draft final presentation slides (Architecture, Supabase, Gemini AI). |
+| **Yusuf** | Demo Rehearsal | Rehearse live demo. Test "Snap Your Plate" on a real device. |
+| **Mario** | Widget Testing | Write widget tests for Home, Meals, and Water pages (Week 3/4 deliverable). |
+| **Mario** | Reminders | Implement `RemindersPage` using `flutter_local_notifications`. |
+| **Mario** | Documentation | Finalize DEPI project document and update `README.md`. |

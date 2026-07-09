@@ -16,7 +16,7 @@ erDiagram
 
     %% User Profiles
     user_profiles {
-        uuid id PK, FK "references auth.users"
+        string id PK "Firebase UID"
         string name
         string photo_url
         integer age
@@ -32,7 +32,7 @@ erDiagram
 
     %% Preferences
     diet_preferences {
-        uuid user_id PK, FK "references user_profiles"
+        string user_id PK, FK "references user_profiles"
         string diet_style
         string goal_type
         integer calorie_target
@@ -49,7 +49,7 @@ erDiagram
     }
 
     notification_preferences {
-        uuid user_id PK, FK "references user_profiles"
+        string user_id PK, FK "references user_profiles"
         boolean enabled
         boolean water_reminder
         integer water_interval_hours
@@ -63,7 +63,7 @@ erDiagram
     }
 
     app_preferences {
-        uuid user_id PK, FK "references user_profiles"
+        string user_id PK, FK "references user_profiles"
         string theme_mode
         string language
         string units
@@ -73,11 +73,16 @@ erDiagram
     %% Logs
     logged_meals {
         uuid id PK
-        uuid user_id FK "references user_profiles"
-        string name
+        string user_id FK "references user_profiles"
+        string name_en
+        string name_ar
         string emoji
-        string serving_label
+        string serving_label_en
+        string serving_label_ar
         integer calories
+        integer protein_g
+        integer carbs_g
+        integer fat_g
         string_array tags
         string slot_type
         date logged_date
@@ -86,7 +91,7 @@ erDiagram
 
     water_logs {
         uuid id PK
-        uuid user_id FK "references user_profiles"
+        string user_id FK "references user_profiles"
         integer amount_ml
         string preset
         timestamp logged_at
@@ -94,14 +99,14 @@ erDiagram
 
     weight_history {
         uuid id PK
-        uuid user_id FK "references user_profiles"
+        string user_id FK "references user_profiles"
         numeric weight_kg
         timestamp recorded_at
     }
 
     daily_metrics {
         uuid id PK
-        uuid user_id FK "references user_profiles"
+        string user_id FK "references user_profiles"
         date date
         integer steps
         integer steps_goal
@@ -134,7 +139,7 @@ create extension if not exists "uuid-ossp";
 -- 1. USER PROFILES
 -- =========================================================================
 create table public.user_profiles (
-    id uuid references auth.users(id) on delete cascade primary key,
+    id text primary key, -- Firebase UID
     name text not null,
     photo_url text,
     age integer,
@@ -155,7 +160,7 @@ comment on table public.user_profiles is 'Physical and biometric profiles for au
 -- 2. DIET PREFERENCES
 -- =========================================================================
 create table public.diet_preferences (
-    user_id uuid references public.user_profiles(id) on delete cascade primary key,
+    user_id text references public.user_profiles(id) on delete cascade primary key,
     diet_style text default 'balanced' not null,
     goal_type text default 'maintain' not null,
     calorie_target integer,
@@ -176,7 +181,7 @@ create table public.diet_preferences (
 -- 3. NOTIFICATION PREFERENCES
 -- =========================================================================
 create table public.notification_preferences (
-    user_id uuid references public.user_profiles(id) on delete cascade primary key,
+    user_id text references public.user_profiles(id) on delete cascade primary key,
     enabled boolean default true not null,
     water_reminder boolean default true not null,
     water_interval_hours integer default 2 not null,
@@ -193,7 +198,7 @@ create table public.notification_preferences (
 -- 4. APP PREFERENCES
 -- =========================================================================
 create table public.app_preferences (
-    user_id uuid references public.user_profiles(id) on delete cascade primary key,
+    user_id text references public.user_profiles(id) on delete cascade primary key,
     theme_mode text default 'system' not null check (theme_mode in ('light', 'dark', 'system')),
     language text default 'ar' not null,
     units text default 'metric' not null check (units in ('metric', 'imperial')),
@@ -205,11 +210,16 @@ create table public.app_preferences (
 -- =========================================================================
 create table public.logged_meals (
     id uuid default gen_random_uuid() primary key,
-    user_id uuid references public.user_profiles(id) on delete cascade not null,
-    name text not null,
+    user_id text references public.user_profiles(id) on delete cascade not null,
+    name_en text not null,
+    name_ar text not null,
     emoji text not null,
-    serving_label text not null,
+    serving_label_en text not null,
+    serving_label_ar text not null,
     calories integer not null,
+    protein_g integer not null default 0,
+    carbs_g integer not null default 0,
+    fat_g integer not null default 0,
     tags text[] default '{}'::text[] not null,
     slot_type text not null check (slot_type in ('breakfast', 'lunch', 'dinner', 'snack')),
     logged_date date default current_date not null,
@@ -221,7 +231,7 @@ create table public.logged_meals (
 -- =========================================================================
 create table public.water_logs (
     id uuid default gen_random_uuid() primary key,
-    user_id uuid references public.user_profiles(id) on delete cascade not null,
+    user_id text references public.user_profiles(id) on delete cascade not null,
     amount_ml integer not null,
     preset text default 'custom' not null check (preset in ('cup', 'pint', 'custom')),
     logged_at timestamp with time zone default timezone('utc'::text, now()) not null
@@ -232,7 +242,7 @@ create table public.water_logs (
 -- =========================================================================
 create table public.weight_history (
     id uuid default gen_random_uuid() primary key,
-    user_id uuid references public.user_profiles(id) on delete cascade not null,
+    user_id text references public.user_profiles(id) on delete cascade not null,
     weight_kg numeric(5,2) not null,
     recorded_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -242,7 +252,7 @@ create table public.weight_history (
 -- =========================================================================
 create table public.daily_metrics (
     id uuid default gen_random_uuid() primary key,
-    user_id uuid references public.user_profiles(id) on delete cascade not null,
+    user_id text references public.user_profiles(id) on delete cascade not null,
     date date default current_date not null,
     steps integer default 0 not null,
     steps_goal integer default 10000 not null,
