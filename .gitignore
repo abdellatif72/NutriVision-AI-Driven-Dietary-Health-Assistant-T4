@@ -43,3 +43,15 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Secrets Configuration
+lib/core/constants/app_secrets.dart
+
+# Planning & Documentation
+AGENTS.md
+database_design.md
+AUTH_WORKFLOW.md
+discussions.md
+DESIGN_SYSTEM.md
+BUILD_ISSUES.md
+ROADMAP.md

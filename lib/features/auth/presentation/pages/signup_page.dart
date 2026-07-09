@@ -2,7 +2,11 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -58,7 +62,23 @@ class _SignupPageState extends State<SignupPage> {
       child: Scaffold(
         backgroundColor: AfiaColors.surface,
         body: SafeArea(
-          child: SingleChildScrollView(
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is AuthAuthenticated) {
+                Navigator.of(context).pushReplacementNamed(
+                  RouteNames.authPhysicalInformation,
+                );
+              } else if (state is AuthError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
+            },
+            builder: (context, state) {
+              return SingleChildScrollView(
             padding: const EdgeInsets.symmetric(
               horizontal: AfiaSpacing.pageMargin,
             ),
@@ -146,15 +166,34 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 const SizedBox(height: AfiaSpacing.xxxl),
-                SizedBox(
+                 SizedBox(
                   width: double.infinity,
                   height: 56,
                   child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(
-                        RouteNames.authPhysicalInformation,
-                      );
-                    },
+                    onPressed: state is AuthLoading
+                        ? null
+                        : () {
+                            final name = _fullNameController.text.trim();
+                            final email = _emailController.text.trim();
+                            final password = _passwordController.text.trim();
+                            if (name.isNotEmpty &&
+                                email.isNotEmpty &&
+                                password.isNotEmpty) {
+                              context.read<AuthBloc>().add(
+                                    SignUpRequested(
+                                      email: email,
+                                      password: password,
+                                      name: name,
+                                    ),
+                                  );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Please fill out all fields'),
+                                ),
+                              );
+                            }
+                          },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AfiaColors.primary,
                       foregroundColor: AfiaColors.onPrimary,
@@ -166,7 +205,16 @@ class _SignupPageState extends State<SignupPage> {
                         color: AfiaColors.onPrimary,
                       ),
                     ),
-                    child: const Text('Sign Up'),
+                    child: state is AuthLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : const Text('Sign Up'),
                   ),
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
@@ -190,7 +238,13 @@ class _SignupPageState extends State<SignupPage> {
                   children: [
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: state is AuthLoading
+                            ? null
+                            : () {
+                                context
+                                    .read<AuthBloc>()
+                                    .add(GoogleSignInRequested());
+                              },
                         icon: const Icon(
                           Icons.g_mobiledata,
                           color: Colors.black,
@@ -215,7 +269,13 @@ class _SignupPageState extends State<SignupPage> {
                     const SizedBox(width: AfiaSpacing.lg),
                     Expanded(
                       child: OutlinedButton.icon(
-                        onPressed: () {},
+                        onPressed: state is AuthLoading
+                            ? null
+                            : () {
+                                context
+                                    .read<AuthBloc>()
+                                    .add(AppleSignInRequested());
+                              },
                         icon: const Icon(Icons.apple, color: Colors.black),
                         label: Text(
                           'Apple',
@@ -263,11 +323,13 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
                 const SizedBox(height: AfiaSpacing.xxxl),
-              ],
-            ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
+        );
+      },
+     ),
+    ),
+   ),
+  );
+ }
 }

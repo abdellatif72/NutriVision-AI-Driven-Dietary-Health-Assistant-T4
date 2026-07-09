@@ -2,6 +2,12 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/di/injection_container.dart';
+import 'package:afia/features/auth/domain/usecases/calculate_daily_calories.dart';
+import 'package:afia/features/more/domain/entities/user_profile.dart';
+import 'package:afia/features/more/domain/entities/diet_preferences.dart';
+import 'package:afia/features/more/domain/repositories/more_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 
 class GoalSelectionPage extends StatefulWidget {
@@ -13,6 +19,105 @@ class GoalSelectionPage extends StatefulWidget {
 
 class _GoalSelectionPageState extends State<GoalSelectionPage> {
   final List<String> _selectedGoals = [];
+  bool _isLoading = false;
+
+  Future<void> _saveOnboardingData(BuildContext context) async {
+    if (_selectedGoals.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please select at least one goal')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      final gender = args?['gender'] as String? ?? 'male';
+      final weightKg = args?['weightKg'] as double? ?? 70.0;
+      final heightCm = args?['heightCm'] as double? ?? 170.0;
+
+      // Map goal
+      String goalType = 'maintain';
+      String currentGoal = 'stay_healthy';
+      if (_selectedGoals.contains('lose_weight')) {
+        goalType = 'lose';
+        currentGoal = 'lose_weight';
+      } else if (_selectedGoals.contains('build_muscle')) {
+        goalType = 'gain';
+        currentGoal = 'build_muscle';
+      } else if (_selectedGoals.contains('nutrition')) {
+        currentGoal = 'nutrition';
+      }
+
+      // Calculate BMR and daily calorie target
+      final calculator = CalculateDailyCalories();
+      final calcResult = calculator.call(CalculateDailyCaloriesParams(
+        weightKg: weightKg,
+        heightCm: heightCm,
+        age: 25, // Default age since not collected on page
+        gender: gender,
+        activityLevel: 'moderately_active', // Default activity level
+        goal: goalType,
+      ));
+
+      final currentUser = firebase_auth.FirebaseAuth.instance.currentUser;
+      final userId = currentUser?.uid ?? '';
+      final name = currentUser?.displayName ?? 'Afia User';
+
+      // 1. Save User Profile
+      final profile = UserProfile(
+        id: userId,
+        name: name,
+        age: 25,
+        gender: gender,
+        heightCm: heightCm,
+        weightKg: weightKg,
+        activityLevel: 'moderately_active',
+        currentGoal: currentGoal,
+        streakDays: 0,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      // 2. Save Diet Preferences
+      final dietPrefs = DietPreferences(
+        dietStyle: 'balanced',
+        goalType: goalType,
+        calorieTarget: calcResult.calorieTarget,
+        carbsPct: 50,
+        proteinPct: 20,
+        fatPct: 30,
+        waterGoalMl: 2500,
+      );
+
+      // Save using repository
+      final moreRepo = sl<MoreRepository>();
+      await moreRepo.updateProfile(profile);
+      await moreRepo.updateDietPreferences(dietPrefs);
+
+      if (context.mounted) {
+        Navigator.of(context).pushNamedAndRemoveUntil(
+          RouteNames.main,
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error saving profile: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   void _toggleGoal(String goal) {
     setState(() {
@@ -321,23 +426,29 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
+               SizedBox(
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      RouteNames.main,
-                      (route) => false,
-                    );
-                  },
+                  onPressed: _isLoading
+                      ? null
+                      : () => _saveOnboardingData(context),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AfiaColors.primary,
                     foregroundColor: AfiaColors.onPrimary,
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                   ),
-                  child: Text('Continue', style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary)),
+                  child: _isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2.5,
+                            color: AfiaColors.onPrimary,
+                          ),
+                        )
+                      : Text('Continue', style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary)),
                 ),
               ),
               const SizedBox(height: AfiaSpacing.lg),

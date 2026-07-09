@@ -351,7 +351,27 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                 height: 56,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed(RouteNames.authGoalSelection);
+                    final weightVal = double.tryParse(_weightController.text.trim());
+                    final heightVal = double.tryParse(_heightController.text.trim());
+                    if (weightVal == null || heightVal == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please enter valid weight and height')),
+                      );
+                      return;
+                    }
+
+                    // Convert weight to kg and height to cm if they were entered in imperial units
+                    final weightKg = _isWeightKg ? weightVal : weightVal / 2.20462;
+                    final heightCm = _isHeightCm ? heightVal : heightVal * 30.48;
+
+                    Navigator.of(context).pushNamed(
+                      RouteNames.authGoalSelection,
+                      arguments: {
+                        'gender': _selectedGender.toLowerCase(),
+                        'weightKg': weightKg,
+                        'heightCm': heightCm,
+                      },
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AfiaColors.primary,
