@@ -2,7 +2,11 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +32,24 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: AfiaColors.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthAuthenticated) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                RouteNames.main,
+                (route) => false,
+              );
+            } else if (state is AuthError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
           padding: const EdgeInsets.symmetric(
             horizontal: AfiaSpacing.pageMargin,
           ),
@@ -173,9 +194,26 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed(RouteNames.main);
-                  },
+                  onPressed: state is AuthLoading
+                      ? null
+                      : () {
+                          final email = _emailController.text.trim();
+                          final password = _passwordController.text.trim();
+                          if (email.isNotEmpty && password.isNotEmpty) {
+                            context.read<AuthBloc>().add(
+                                  LoginRequested(
+                                    email: email,
+                                    password: password,
+                                  ),
+                                );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please enter email and password'),
+                              ),
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AfiaColors.primary,
                     foregroundColor: AfiaColors.onPrimary,
@@ -187,7 +225,16 @@ class _LoginPageState extends State<LoginPage> {
                       color: AfiaColors.onPrimary,
                     ),
                   ),
-                  child: const Text('Log In'),
+                  child: state is AuthLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Log In'),
                 ),
               ),
 
@@ -217,7 +264,13 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: state is AuthLoading
+                          ? null
+                          : () {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(GoogleSignInRequested());
+                            },
                       icon: const Icon(Icons.g_mobiledata, color: Colors.black),
                       label: Text(
                         'Google',
@@ -239,7 +292,13 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(width: AfiaSpacing.lg),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: () {},
+                      onPressed: state is AuthLoading
+                          ? null
+                          : () {
+                              context
+                                  .read<AuthBloc>()
+                                  .add(AppleSignInRequested());
+                            },
                       icon: const Icon(Icons.apple, color: Colors.black),
                       label: Text(
                         'Apple',
@@ -292,8 +351,10 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: AfiaSpacing.xxxl),
             ],
           ),
-        ),
-      ),
-    );
-  }
+        );
+      },
+     ),
+    ),
+  );
+ }
 }

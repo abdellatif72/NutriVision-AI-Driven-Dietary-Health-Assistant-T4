@@ -2,7 +2,11 @@ import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -42,8 +46,28 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     return Scaffold(
       backgroundColor: AfiaColors.surface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
+        child: BlocConsumer<AuthBloc, AuthState>(
+          listener: (context, state) {
+            if (state is AuthPasswordResetSuccess) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Password reset link sent to your email.'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+              Navigator.of(context).pushReplacementNamed(RouteNames.authLogin);
+            } else if (state is AuthError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.redAccent,
+                ),
+              );
+            }
+          },
+          builder: (context, state) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -79,9 +103,22 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushReplacementNamed(RouteNames.authLogin);
-                  },
+                  onPressed: state is AuthLoading
+                      ? null
+                      : () {
+                          final email = _emailController.text.trim();
+                          if (email.isNotEmpty) {
+                            context.read<AuthBloc>().add(
+                                  ResetPasswordRequested(email: email),
+                                );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Please enter your email'),
+                              ),
+                            );
+                          }
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AfiaColors.primary,
                     foregroundColor: AfiaColors.onPrimary,
@@ -89,7 +126,16 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AfiaRadius.xl)),
                     textStyle: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary),
                   ),
-                  child: const Text('Send Reset Link'),
+                  child: state is AuthLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2,
+                          ),
+                        )
+                      : const Text('Send Reset Link'),
                 ),
               ),
               const SizedBox(height: AfiaSpacing.xxxl),
@@ -104,7 +150,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               ),
               const SizedBox(height: AfiaSpacing.xxxl),
             ],
-          ),
+           );
+          },
+         ),
         ),
       ),
     );
