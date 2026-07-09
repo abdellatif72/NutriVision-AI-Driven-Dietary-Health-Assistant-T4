@@ -328,27 +328,26 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | **Shared widgets** | `AfiaBarChartCard`, `AfiaMetricStatCard`, `AfiaMiniMetricCard`, `AfiaWeekCalendar`, `AfiaWeeklyProgressCard` |
 | **Domain entity** | `MealSummary` (id, name, emoji, calories, serving) |
 | **Error infrastructure** | `Failure`, `ServerFailure`, `CacheFailure`, `ServerException`, `CacheException` |
+| **Auth** | Fully implemented. Includes `AuthUserModel`, `AuthRemoteDataSource`, `AuthRepositoryImpl`, `AuthBloc`, and fully wired UI screens (`LoginPage`, `SignupPage`, `ForgotPasswordPage`, `AuthPage` session guard). Firebase initialized. |
 
 ### ⚠️ Partial
 
 | Feature | What exists | What's missing |
 |---------|-------------|---------------|
-| **Auth** | Real UI: `LoginPage` (235 lines, email/password fields, Google/Apple buttons), `SignupPage` (210 lines, name/email/password/dob/gender), `ForgotPasswordPage` (94 lines), `GoalSelectionPage` (4 goal cards), `PhysicalInformationPage` (gender/weight/height with unit conversion). 6 auth routes wired. | `AuthPage` entry point is a placeholder. `AuthBloc` is an empty stub. `AuthRepository` is an empty abstract. No Firebase, no real auth logic. |
 | **AI Chat** | Full chat interface (558 lines) with speech-to-text (`speech_to_text`), image picker (`image_picker`), SharedPreferences-based history persistence, mock responses, bottom nav integration. | `AiBloc` is an empty stub. `AiService` (`core/services/ai_service.dart`) is an empty stub. No real LLM/API integration. |
 | **Meals** | `MealsPage` (764 lines): full meal logging UI with date selector, summary card, quick actions (breakfast/lunch/dinner/snack), AI suggestion card, meal log cards. `MealsCubit` + `MealsState` with mock data. `MealSearchBloc`/`Event`/`State` with mock results. 6 widget files. | NO `data/` directory at all — no datasources, no models, no repository implementations, no use cases. Domain layer only has the entity. |
 | **More / profile** | Most complete feature. **Data layer**: 4 model files (`UserProfileModel`, `AppPreferencesModel`, `DietPreferencesModel`, `NotificationPreferencesModel`), abstract datasource interfaces (local + remote). **Domain layer**: 4 entities, abstract repository, 5 use cases. **Presentation**: 14 page files (MorePage, ProfilePage, SettingsPage, EditProfilePage, PersonalInformationPage, DietPreferencesPage, NotificationsPage, ChangePasswordPage, ProgressSettingsPage, AboutPage, HelpPage, FaqsPage), 8 widget files, 8 cubit files. | Datasources are unimplemented interfaces. `MoreRepositoryImpl` is an empty stub. UI uses mock data from cubits. |
 | **Localization** | Infrastructure files exist (`l10n.dart` defines `supported = ['en', 'ar']`, `locale_cubit.dart` exists). | No translation strings, no `.arb` files, no `flutter_localizations` or `intl` packages. App is not wired with `LocalizationsDelegate` or `supportedLocales`. |
+| **DI wiring** | GetIt is installed and `InjectionContainer` is initialized in `main.dart` for Auth. | Other features are not registered yet. |
 
 ### ❌ Not Started
 
 | Feature | Notes |
 |---------|-------|
 | **Explore** | Feature folder exists, page is a `FeaturePlaceholderPage`. `ExploreBloc` is empty stub. No logic, no UI. |
-| **Firebase** | Not added — no `firebase_*` packages, no `google-services.json`, no `GoogleService-Info.plist`, no init code |
-| **Data layer (except more)** | `auth` has an empty repo impl but no datasources/models. `meals` has NO data dir at all. All other features have no data layer. |
-| **DI wiring** | `InjectionContainer.init()` is empty. No DI package added (`get_it` / `injectable` not installed). |
+| **Data layer (except auth/more)** | `meals` has NO data dir at all. All other features have no data layer. |
 | **Real API integration** | No HTTP client (`dio`/`http`), no API keys, no environment config. `ApiClient` and `NetworkInfo` are empty stubs. |
-| **Core services** | `AuthService`, `AiService`, `AnalyticsService` — all empty stubs. `LocalStorage`, `SecureStorage` — all empty stubs. |
+| **Core services** | `AuthService` (might be deprecated by `AuthBloc`), `AiService`, `AnalyticsService` — all empty stubs. `LocalStorage`, `SecureStorage` — all empty stubs. |
 | **Dark theme** | Not implemented |
 | **Push notifications** | Not implemented |
 
@@ -401,11 +400,11 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | ✅ | Fix compile error: add `dartz` to `pubspec.yaml` | Added `dartz ^0.10.1` to `pubspec.yaml` and ran `flutter pub get` |
 | ✅ | Define `AfiaRadius` in theme (`afia_radius.dart` or `afia_theme.dart`) | Already exists in `lib/core/theme/afia_spacing.dart:26-33`. Was out of date in AGENTS.md. ✅ |
 | ✅ | Add all missing packages to `pubspec.yaml` | `dio`, `get_it`, `injectable`, `firebase_core`, `firebase_auth`, `cloud_firestore`, `firebase_storage`, `firebase_crashlytics`, `intl`, `flutter_localizations`, `connectivity_plus`, `flutter_secure_storage` added |
-| ❌ | Firebase project setup | Add `google-services.json` / `GoogleService-Info.plist`, `firebase_options.dart`, call `Firebase.initializeApp()` in `main.dart` |
-| ❌ | Implement `InjectionContainer` with `get_it` | Register all existing cubits, blocs, repos, and datasources |
-| ❌ | Implement `AuthBloc` | Wire Firebase Auth — email/password + Google Sign-In |
-| ❌ | Implement `AuthRepositoryImpl` + `AuthRemoteDataSource` | Firebase Auth backend |
-| ❌ | Auth session guard in `AuthPage` / router | Check token on cold start → route to `/main` or `/auth/login` |
+| ✅ | Firebase project setup | Added `google-services.json` / `GoogleService-Info.plist`, `firebase_options.dart`, call `Firebase.initializeApp()` in `main.dart` |
+| ✅ | Implement `InjectionContainer` with `get_it` | Registered Auth components. GetIt initialized in main.dart. |
+| ✅ | Implement `AuthBloc` | Wired Firebase Auth — email/password + Google/Apple Sign-In events |
+| ✅ | Implement `AuthRepositoryImpl` + `AuthRemoteDataSource` | Firebase Auth backend implemented |
+| ✅ | Auth session guard in `AuthPage` / router | Check token on cold start → route to `/main` or `/auth/login` |
 | ❌ | BMR/TDEE `CalculateDailyCalories` use case + unit tests | ≥50% coverage required by KPI. Inputs exist in `PhysicalInformationPage`. |
 | ❌ | Persist BMR result + user profile to Firestore on onboarding complete | |
 | ❌ | Dio setup with interceptors (auth token, retry on 401, timeout handling) | |
