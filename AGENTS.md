@@ -219,7 +219,7 @@ abstract final class RouteNames {
 }
 ```
 
-**Initial route**: `/onboard` (set in `app_router.dart:31`)
+**Initial route**: `/auth` (set in `app_router.dart:31`)
 
 **Navigation**: `Navigator.pushReplacementNamed()` or `Navigator.pushNamed()` — no deep linking yet.
 
