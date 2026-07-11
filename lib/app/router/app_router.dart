@@ -28,7 +28,7 @@ import 'package:afia/features/water/presentation/pages/water_recording_page.dart
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
-  static const initialRoute = RouteNames.onboard;
+  static const initialRoute = RouteNames.auth;
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {

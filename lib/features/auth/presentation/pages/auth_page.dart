@@ -27,7 +27,7 @@ class _AuthPageState extends State<AuthPage> {
         if (state is AuthAuthenticated) {
           Navigator.of(context).pushReplacementNamed(RouteNames.main);
         } else if (state is AuthUnauthenticated || state is AuthError) {
-          Navigator.of(context).pushReplacementNamed(RouteNames.authLogin);
+          Navigator.of(context).pushReplacementNamed(RouteNames.onboard);
         }
       },
       child: const Scaffold(
