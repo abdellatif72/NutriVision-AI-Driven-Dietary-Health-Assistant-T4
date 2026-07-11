@@ -4,6 +4,7 @@ import 'package:afia/features/auth/domain/entities/auth_user.dart';
 import 'package:afia/features/auth/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase;
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthUser;
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource _remoteDataSource;
@@ -23,17 +24,34 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  Future<void> _syncSupabaseSession() async {
+    final firebaseUser = firebase.FirebaseAuth.instance.currentUser;
+    if (firebaseUser != null) {
+      final firebaseToken = await firebaseUser.getIdToken();
+      if (firebaseToken != null) {
+        await Supabase.instance.client.auth.setSession(firebaseToken);
+      }
+    }
+  }
+
   @override
   Future<Either<Failure, AuthUser>> signUpWithEmailAndPassword({
     required String email,
     required String password,
     required String name,
   }) async {
-    return _handleException(() => _remoteDataSource.signUpWithEmailAndPassword(
+    final result = await _handleException(() => _remoteDataSource.signUpWithEmailAndPassword(
           email: email,
           password: password,
           name: name,
         ));
+    return result.fold(
+      (failure) => Left(failure),
+      (user) async {
+        await _syncSupabaseSession();
+        return Right(user);
+      },
+    );
   }
 
   @override
@@ -41,20 +59,45 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) async {
-    return _handleException(() => _remoteDataSource.signInWithEmailAndPassword(
+    final result = await _handleException(() => _remoteDataSource.signInWithEmailAndPassword(
           email: email,
           password: password,
         ));
+    return result.fold(
+      (failure) => Left(failure),
+      (user) async {
+        await _syncSupabaseSession();
+        return Right(user);
+      },
+    );
   }
 
   @override
   Future<Either<Failure, void>> signOut() async {
-    return _handleException(() => _remoteDataSource.signOut());
+    final result = await _handleException(() => _remoteDataSource.signOut());
+    return result.fold(
+      (failure) => Left(failure),
+      (_) async {
+        try {
+          await Supabase.instance.client.auth.signOut();
+        } catch (_) {}
+        return const Right(null);
+      },
+    );
   }
 
   @override
   Future<Either<Failure, AuthUser?>> getCurrentUser() async {
-    return _handleException(() => _remoteDataSource.getCurrentUser());
+    final result = await _handleException(() => _remoteDataSource.getCurrentUser());
+    return result.fold(
+      (failure) => Left(failure),
+      (user) async {
+        if (user != null) {
+          await _syncSupabaseSession();
+        }
+        return Right(user);
+      },
+    );
   }
 
   @override
@@ -64,14 +107,29 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, AuthUser>> signInWithGoogle() async {
-    return _handleException(() => _remoteDataSource.signInWithGoogle());
+    final result = await _handleException(() => _remoteDataSource.signInWithGoogle());
+    return result.fold(
+      (failure) => Left(failure),
+      (user) async {
+        await _syncSupabaseSession();
+        return Right(user);
+      },
+    );
   }
 
   @override
   Future<Either<Failure, AuthUser>> signInWithApple() async {
-    return _handleException(() => _remoteDataSource.signInWithApple());
+    final result = await _handleException(() => _remoteDataSource.signInWithApple());
+    return result.fold(
+      (failure) => Left(failure),
+      (user) async {
+        await _syncSupabaseSession();
+        return Right(user);
+      },
+    );
   }
 
   @override
   Stream<AuthUser?> get authStateChanges => _remoteDataSource.authStateChanges;
 }
+
