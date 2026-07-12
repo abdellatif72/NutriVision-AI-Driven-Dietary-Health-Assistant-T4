@@ -13,7 +13,8 @@ class MealDateSelector extends StatelessWidget {
   final DateTime selectedDate;
   final ValueChanged<DateTime> onDateChanged;
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final yesterday = today.subtract(const Duration(days: 1));
@@ -21,26 +22,39 @@ class MealDateSelector extends StatelessWidget {
     final compareDate = DateTime(date.year, date.month, date.day);
 
     if (compareDate == today) {
-      return 'Today';
+      return isAr ? 'اليوم' : 'Today';
     } else if (compareDate == yesterday) {
-      return 'Yesterday';
+      return isAr ? 'أمس' : 'Yesterday';
     } else if (compareDate == tomorrow) {
-      return 'Tomorrow';
+      return isAr ? 'غداً' : 'Tomorrow';
     }
 
-    final weekday = _weekdays[date.weekday - 1];
-    final month = _months[date.month - 1];
-    return '$weekday, $month ${date.day}';
+    if (isAr) {
+      final weekday = _weekdaysAr[date.weekday - 1];
+      final month = _monthsAr[date.month - 1];
+      return '$weekday، ${date.day} $month';
+    } else {
+      final weekday = _weekdaysEn[date.weekday - 1];
+      final month = _monthsEn[date.month - 1];
+      return '$weekday, $month ${date.day}';
+    }
   }
 
-  static const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-  static const _months = [
+  static const _weekdaysEn = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  static const _monthsEn = [
     'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
     'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
   ];
 
+  static const _weekdaysAr = ['الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت', 'الأحد'];
+  static const _monthsAr = [
+    'يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو',
+    'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'
+  ];
+
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AfiaSpacing.xs),
       child: Row(
@@ -48,7 +62,7 @@ class MealDateSelector extends StatelessWidget {
         children: [
           IconButton(
             onPressed: () => onDateChanged(selectedDate.subtract(const Duration(days: 1))),
-            icon: const Icon(Icons.chevron_left_rounded),
+            icon: Icon(isAr ? Icons.chevron_right_rounded : Icons.chevron_left_rounded),
             color: AfiaColors.textPrimary,
           ),
           InkWell(
@@ -88,7 +102,7 @@ class MealDateSelector extends StatelessWidget {
                   ),
                   const SizedBox(width: AfiaSpacing.sm),
                   Text(
-                    _formatDate(selectedDate),
+                    _formatDate(context, selectedDate),
                     style: AfiaTypography.cardTitle.copyWith(
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -100,7 +114,7 @@ class MealDateSelector extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => onDateChanged(selectedDate.add(const Duration(days: 1))),
-            icon: const Icon(Icons.chevron_right_rounded),
+            icon: Icon(isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded),
             color: AfiaColors.textPrimary,
           ),
         ],

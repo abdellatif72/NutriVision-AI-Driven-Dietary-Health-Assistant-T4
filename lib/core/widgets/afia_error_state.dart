@@ -19,7 +19,7 @@ class AfiaErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(
         horizontal: AfiaSpacing.xxl,
         vertical: AfiaSpacing.xxxl,
@@ -27,7 +27,6 @@ class AfiaErrorState extends StatelessWidget {
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
           children: [
             Container(
               width: 80,
@@ -61,17 +60,23 @@ class AfiaErrorState extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AfiaSpacing.xxl),
-            ElevatedButton(
-              onPressed: onRetry,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AfiaColors.red,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AfiaSpacing.xxl,
-                  vertical: AfiaSpacing.md,
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: onRetry,
+                style: FilledButton.styleFrom(
+                  backgroundColor: AfiaColors.red,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AfiaSpacing.lg,
+                    vertical: AfiaSpacing.md,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
                 ),
+                child: Text(buttonText),
               ),
-              child: Text(buttonText),
             ),
           ],
         ),

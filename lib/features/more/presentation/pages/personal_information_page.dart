@@ -1,3 +1,4 @@
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
@@ -14,7 +15,7 @@ class PersonalInformationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => ProfileFormCubit(),
+      create: (_) => sl<ProfileFormCubit>()..loadProfile(),
       child: const _PersonalInformationView(),
     );
   }
@@ -25,6 +26,7 @@ class _PersonalInformationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
@@ -34,14 +36,14 @@ class _PersonalInformationView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Personal Information', style: AfiaTypography.screenTitle),
+        title: Text(isAr ? 'المعلومات الشخصية' : 'Personal Information', style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: BlocListener<ProfileFormCubit, ProfileFormState>(
         listener: (context, state) {
           if (state.isSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Profile updated successfully')),
+              SnackBar(content: Text(isAr ? 'تم تحديث الملف الشخصي بنجاح' : 'Profile updated successfully')),
             );
             context.read<ProfileFormCubit>().resetSuccess();
             Navigator.pop(context);
@@ -49,6 +51,14 @@ class _PersonalInformationView extends StatelessWidget {
         },
         child: BlocBuilder<ProfileFormCubit, ProfileFormState>(
           builder: (context, state) {
+            if (state.isLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AfiaColors.primary,
+                  strokeWidth: 2.4,
+                ),
+              );
+            }
             return Form(
               key: GlobalKey<FormState>(),
               child: ListView(
@@ -59,12 +69,12 @@ class _PersonalInformationView extends StatelessWidget {
                   AfiaSpacing.xxxl,
                 ),
                 children: [
-                  const SectionTitle('Personal Information'),
+                  SectionTitle(isAr ? 'المعلومات الشخصية' : 'Personal Information'),
                   const SizedBox(height: AfiaSpacing.md),
                   FormCard(
                     children: [
                       _buildTextField(
-                        label: 'Name',
+                        label: isAr ? 'الاسم' : 'Name',
                         icon: Icons.person_outline,
                         initialValue: state.name,
                         onChanged: (v) =>
@@ -72,7 +82,7 @@ class _PersonalInformationView extends StatelessWidget {
                       ),
                       const _FormDivider(),
                       _buildTextField(
-                        label: 'Age',
+                        label: isAr ? 'العمر' : 'Age',
                         icon: Icons.numbers_outlined,
                         initialValue: state.age,
                         keyboardType: TextInputType.number,
@@ -81,7 +91,7 @@ class _PersonalInformationView extends StatelessWidget {
                       ),
                       const _FormDivider(),
                       _buildTextField(
-                        label: 'Weight (kg)',
+                        label: isAr ? 'الوزن (كجم)' : 'Weight (kg)',
                         icon: Icons.monitor_weight_outlined,
                         initialValue: state.weightKg,
                         keyboardType: TextInputType.numberWithOptions(
@@ -92,7 +102,7 @@ class _PersonalInformationView extends StatelessWidget {
                       ),
                       const _FormDivider(),
                       _buildTextField(
-                        label: 'Height (cm)',
+                        label: isAr ? 'الطول (سم)' : 'Height (cm)',
                         icon: Icons.straighten_rounded,
                         initialValue: state.heightCm,
                         keyboardType: TextInputType.numberWithOptions(
@@ -104,7 +114,7 @@ class _PersonalInformationView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AfiaSpacing.xl),
-                  const SectionTitle('Gender'),
+                  SectionTitle(isAr ? 'الجنس' : 'Gender'),
                   const SizedBox(height: AfiaSpacing.md),
                   FormCard(
                     children: [
@@ -114,18 +124,24 @@ class _PersonalInformationView extends StatelessWidget {
                             .read<ProfileFormCubit>()
                             .updateGender(v ?? state.gender),
                         child: Column(
-                          children: ['Female', 'Male', 'Prefer not to say'].map(
-                            (gender) {
+                          children: [
+                            {'key': 'Female', 'ar': 'أنثى'},
+                            {'key': 'Male', 'ar': 'ذكر'},
+                            {'key': 'Prefer not to say', 'ar': 'أفضل عدم الإفصاح'},
+                          ].map(
+                            (genderMap) {
+                              final genderKey = genderMap['key']!;
+                              final genderLabel = isAr ? genderMap['ar']! : genderKey;
                               return Column(
                                 children: [
-                                  if (gender != 'Female') const _FormDivider(),
+                                  if (genderKey != 'Female') const _FormDivider(),
                                   ListTile(
                                     leading: Radio<String>(
-                                      value: gender,
+                                      value: genderKey,
                                       activeColor: AfiaColors.primary,
                                     ),
                                     title: Text(
-                                      gender,
+                                      genderLabel,
                                       style: AfiaTypography.cardTitle,
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
@@ -141,29 +157,31 @@ class _PersonalInformationView extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: AfiaSpacing.xl),
-                  const SectionTitle('Allergies'),
+                  SectionTitle(isAr ? 'الحساسيات الغذائية' : 'Allergies'),
                   const SizedBox(height: AfiaSpacing.md),
                   FormCard(
                     children:
                         [
-                          'Gluten',
-                          'Dairy',
-                          'Nuts',
-                          'Eggs',
-                          'Soy',
-                          'Seafood',
-                        ].map((allergy) {
-                          final selected = state.allergies.contains(allergy);
+                          {'key': 'Gluten', 'ar': 'الجلوتين'},
+                          {'key': 'Dairy', 'ar': 'منتجات الألبان'},
+                          {'key': 'Nuts', 'ar': 'المكسرات'},
+                          {'key': 'Eggs', 'ar': 'البيض'},
+                          {'key': 'Soy', 'ar': 'الصويا'},
+                          {'key': 'Seafood', 'ar': 'المأكولات البحرية'},
+                        ].map((allergyMap) {
+                          final allergyKey = allergyMap['key']!;
+                          final allergyLabel = isAr ? allergyMap['ar']! : allergyKey;
+                          final selected = state.allergies.contains(allergyKey);
                           return Column(
                             children: [
-                              if (allergy != 'Gluten') const _FormDivider(),
+                              if (allergyKey != 'Gluten') const _FormDivider(),
                               CheckboxListTile(
                                 value: selected,
                                 onChanged: (_) => context
                                     .read<ProfileFormCubit>()
-                                    .toggleAllergy(allergy),
+                                    .toggleAllergy(allergyKey),
                                 title: Text(
-                                  allergy,
+                                  allergyLabel,
                                   style: AfiaTypography.cardTitle,
                                 ),
                                 activeColor: AfiaColors.primary,
@@ -197,7 +215,7 @@ class _PersonalInformationView extends StatelessWidget {
                             ),
                           )
                         : Text(
-                            'Save Changes',
+                            isAr ? 'حفظ التغييرات' : 'Save Changes',
                             style: AfiaTypography.cardTitle.copyWith(
                               color: AfiaColors.onPrimary,
                             ),

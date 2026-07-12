@@ -1,7 +1,10 @@
+import 'package:afia/app/localization/locale_cubit.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
 import 'package:afia/features/more/presentation/cubit/more_state.dart';
 import 'package:afia/features/more/presentation/widgets/more_profile_card.dart';
@@ -16,8 +19,14 @@ class MorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authState = context.read<AuthBloc>().state;
+    final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
     return BlocProvider(
-      create: (_) => MoreCubit()..loadProfile(),
+      create: (_) {
+        final cubit = MoreCubit()..loadProfile();
+        if (userName.isNotEmpty) cubit.updateName(userName);
+        return cubit;
+      },
       child: const _MoreView(),
     );
   }
@@ -34,16 +43,23 @@ class _MoreView extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: false,
-        title: Text('More', style: AfiaTypography.screenTitle),
+        automaticallyImplyLeading: false,
+        title: Text(
+          Localizations.localeOf(context).languageCode == 'ar' ? 'المزيد' : 'More',
+          style: AfiaTypography.screenTitle,
+        ),
       ),
       body: BlocBuilder<MoreCubit, MoreState>(
         builder: (context, state) {
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(
+          return Builder(
+            builder: (ctx) {
+              final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
+              return ListView(
+            padding: EdgeInsets.fromLTRB(
               AfiaSpacing.pageMargin,
               AfiaSpacing.sm,
               AfiaSpacing.pageMargin,
-              AfiaSpacing.xxxl,
+              80.0 + MediaQuery.paddingOf(ctx).bottom,
             ),
             children: [
               MoreProfileCard(
@@ -54,105 +70,94 @@ class _MoreView extends StatelessWidget {
                 onTap: () => Navigator.pushNamed(context, RouteNames.profile),
               ),
               const SizedBox(height: AfiaSpacing.xl),
-              const SectionTitle('Health & Goals'),
+              SectionTitle(isAr ? 'الصحة والأهداف' : 'Health & Goals'),
               const SizedBox(height: AfiaSpacing.md),
               MoreSectionCard(
                 children: [
                   MoreTile(
                     icon: Icons.person_outline,
-                    title: 'Personal Information',
-                    subtitle: 'Age, gender, height, weight',
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      RouteNames.personalInformation,
-                    ),
+                    title: isAr ? 'المعلومات الشخصية' : 'Personal Information',
+                    subtitle: isAr ? 'العمر، الجنس، الطول، الوزن' : 'Age, gender, height, weight',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.personalInformation),
                   ),
                   MoreTile(
                     icon: Icons.restaurant_outlined,
-                    title: 'Diet Preferences',
-                    subtitle: 'Allergies, diet type, macros',
-                    onTap: () => Navigator.pushNamed(
-                      context,
-                      RouteNames.dietPreferences,
-                    ),
+                    title: isAr ? 'التفضيلات الغذائية' : 'Diet Preferences',
+                    subtitle: isAr ? 'الحساسية، نوع النظام الغذائي' : 'Allergies, diet type, macros',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.dietPreferences),
                   ),
                   MoreTile(
                     icon: Icons.bar_chart_outlined,
-                    title: 'Progress',
-                    subtitle: 'Weight trends, history, milestones',
-                    onTap: () =>
-                        Navigator.pushNamed(context, RouteNames.progress),
+                    title: isAr ? 'التقدم' : 'Progress',
+                    subtitle: isAr ? 'اتجاهات الوزن والتاريخ' : 'Weight trends, history, milestones',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.progress),
                   ),
                 ],
               ),
               const SizedBox(height: AfiaSpacing.xl),
-              const SectionTitle('Preferences'),
+              SectionTitle(isAr ? 'التفضيلات' : 'Preferences'),
               const SizedBox(height: AfiaSpacing.md),
               MoreSectionCard(
                 children: [
                   MoreTile(
                     icon: Icons.notifications_none_rounded,
-                    title: 'Notifications',
-                    subtitle: 'Reminders for water, meals, weigh-in',
-                    onTap: () =>
-                        Navigator.pushNamed(context, RouteNames.notifications),
+                    title: isAr ? 'الإشعارات' : 'Notifications',
+                    subtitle: isAr ? 'تذكيرات الماء والوجبات والوزن' : 'Reminders for water, meals, weigh-in',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.notifications),
                   ),
                   MoreTile(
                     icon: Icons.palette_outlined,
-                    title: 'Theme',
-                    subtitle: 'Light, Dark, System',
-                    onTap: () =>
-                        Navigator.pushNamed(context, RouteNames.settings),
+                    title: isAr ? 'المظهر' : 'Theme',
+                    subtitle: isAr ? 'فاتح، داكن، النظام' : 'Light, Dark, System',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.settings),
                   ),
                   MoreTile(
                     icon: Icons.language_rounded,
-                    title: 'Language',
+                    title: isAr ? 'اللغة' : 'Language',
                     subtitle: 'العربية, English',
-                    onTap: () =>
-                        Navigator.pushNamed(context, RouteNames.settings),
+                    onTap: () => _showLanguageSheet(context),
                   ),
                 ],
               ),
               const SizedBox(height: AfiaSpacing.xl),
-              const SectionTitle('Security'),
+              SectionTitle(isAr ? 'الأمان' : 'Security'),
               const SizedBox(height: AfiaSpacing.md),
               MoreSectionCard(
                 children: [
                   MoreTile(
                     icon: Icons.lock_outline_rounded,
-                    title: 'Change Password',
-                    onTap: () =>
-                        Navigator.pushNamed(context, RouteNames.changePassword),
+                    title: isAr ? 'تغيير كلمة المرور' : 'Change Password',
+                    onTap: () => Navigator.pushNamed(context, RouteNames.changePassword),
                   ),
                 ],
               ),
               const SizedBox(height: AfiaSpacing.xl),
-              const SectionTitle('Support'),
+              SectionTitle(isAr ? 'الدعم' : 'Support'),
               const SizedBox(height: AfiaSpacing.md),
               MoreSectionCard(
                 children: [
                   MoreTile(
                     icon: Icons.help_outline_rounded,
-                    title: 'FAQs',
-                    subtitle: 'Frequently asked questions',
+                    title: isAr ? 'الأسئلة الشائعة' : 'FAQs',
+                    subtitle: isAr ? 'الأسئلة المتكررة' : 'Frequently asked questions',
                     onTap: () => Navigator.pushNamed(context, RouteNames.faqs),
                   ),
                   MoreTile(
                     icon: Icons.headset_mic_outlined,
-                    title: 'Help',
-                    subtitle: 'Contact support',
+                    title: isAr ? 'المساعدة' : 'Help',
+                    subtitle: isAr ? 'تواصل مع الدعم' : 'Contact support',
                     onTap: () => Navigator.pushNamed(context, RouteNames.help),
                   ),
                 ],
               ),
               const SizedBox(height: AfiaSpacing.xl),
-              const SectionTitle('About'),
+              SectionTitle(isAr ? 'عن التطبيق' : 'About'),
               const SizedBox(height: AfiaSpacing.md),
               MoreSectionCard(
                 children: [
                   MoreTile(
                     icon: Icons.info_outline_rounded,
-                    title: 'About Afia',
+                    title: isAr ? 'عن عافية' : 'About Afia',
                     subtitle: 'Version 1.0.0',
                     onTap: () => Navigator.pushNamed(context, RouteNames.about),
                   ),
@@ -162,7 +167,7 @@ class _MoreView extends StatelessWidget {
               TextButton.icon(
                 onPressed: () => _showLogoutDialog(context),
                 icon: const Icon(Icons.logout_rounded),
-                label: const Text('Log Out'),
+                label: Text(isAr ? 'تسجيل الخروج' : 'Log Out'),
                 style: TextButton.styleFrom(
                   foregroundColor: AfiaColors.red,
                   alignment: Alignment.centerLeft,
@@ -177,24 +182,89 @@ class _MoreView extends StatelessWidget {
               ),
             ],
           );
+            },
+          );
         },
       ),
     );
   }
 
+  void _showLanguageSheet(BuildContext context) {
+    final localeCubit = context.read<LocaleCubit>();
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: AfiaColors.surface,
+      builder: (_) {
+        return BlocBuilder<LocaleCubit, Locale>(
+          bloc: localeCubit,
+          builder: (ctx, currentLocale) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 32,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AfiaColors.divider,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Text('App Language', style: AfiaTypography.screenTitle),
+                    const SizedBox(height: 12),
+                    ...[
+                      ('ar', 'العربية', '🇸🇦'),
+                      ('en', 'English', '🇺🇸'),
+                    ].map(
+                      (entry) => ListTile(
+                        leading: Text(entry.$3,
+                            style: const TextStyle(fontSize: 24)),
+                        title: Text(entry.$2, style: AfiaTypography.cardTitle),
+                        trailing: currentLocale.languageCode == entry.$1
+                            ? const Icon(Icons.check_circle_rounded,
+                                color: AfiaColors.primary)
+                            : null,
+                        onTap: () {
+                          localeCubit.setLocale(entry.$1);
+                          Navigator.pop(ctx);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _showLogoutDialog(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     showDialog<void>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: const Text('Log out?'),
-          content: const Text(
-            'This will return you to the authentication screen.',
+          title: Text(isAr ? 'تسجيل الخروج؟' : 'Log out?'),
+          content: Text(
+            isAr
+                ? 'سيتم إرجاعك إلى شاشة تسجيل الدخول.'
+                : 'This will return you to the authentication screen.',
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('Cancel'),
+              child: Text(isAr ? 'إلغاء' : 'Cancel'),
             ),
             FilledButton(
               onPressed: () {
@@ -205,7 +275,7 @@ class _MoreView extends StatelessWidget {
                   (_) => false,
                 );
               },
-              child: const Text('Log out'),
+              child: Text(isAr ? 'خروج' : 'Log out'),
             ),
           ],
         );

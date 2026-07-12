@@ -25,6 +25,7 @@ class AfiaTheme {
     return ThemeData(
       useMaterial3: true,
       colorScheme: colorScheme,
+      canvasColor: Colors.transparent,
       scaffoldBackgroundColor: AfiaColors.scaffoldBackground,
       fontFamily: AfiaTypography.fontFamily,
       textTheme: AfiaTypography.textTheme,
@@ -66,7 +67,7 @@ class AfiaTheme {
         ),
       ),
       bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-        backgroundColor: AfiaColors.surface,
+        backgroundColor: Colors.transparent,
         selectedItemColor: AfiaColors.primary,
         unselectedItemColor: AfiaColors.textMuted,
         showSelectedLabels: true,

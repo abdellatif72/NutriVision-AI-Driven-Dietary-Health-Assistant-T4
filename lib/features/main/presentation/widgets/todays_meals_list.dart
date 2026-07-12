@@ -19,7 +19,9 @@ class TodaysMealsList extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Today's Meals",
+                Localizations.localeOf(context).languageCode == 'ar'
+                    ? 'وجبات اليوم'
+                    : "Today's Meals",
                 style: AfiaTypography.cardTitle.copyWith(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -29,7 +31,9 @@ class TodaysMealsList extends StatelessWidget {
               GestureDetector(
                 onTap: () {},
                 child: Text(
-                  'See all',
+                  Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'عرض الكل'
+                      : 'See all',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -54,6 +58,22 @@ class _MealRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logged = meal.isLogged;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    String title = meal.title;
+    if (isAr) {
+      if (title.toLowerCase() == 'breakfast') title = 'الفطور';
+      if (title.toLowerCase() == 'lunch') title = 'الغداء';
+      if (title.toLowerCase() == 'dinner') title = 'العشاء';
+      if (title.toLowerCase() == 'snack') title = 'وجبة خفيفة';
+    }
+
+    String? description = meal.description;
+    if (isAr && description != null) {
+      if (description == 'Oatmeal with berries') description = 'شوفان بالتوت البري';
+      if (description == 'Koshari + salad') description = 'كشري مع سلطة';
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       padding: const EdgeInsets.all(12),
@@ -107,17 +127,17 @@ class _MealRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  meal.title,
+                  title,
                   style: AfiaTypography.cardTitle.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                     color: AfiaColors.textPrimary,
                   ),
                 ),
-                if (logged && meal.description != null) ...[
+                if (logged && description != null) ...[
                   const SizedBox(height: 3),
                   Text(
-                    meal.description!,
+                    description,
                     style: AfiaTypography.body.copyWith(
                       fontSize: 12,
                       color: AfiaColors.textSecondary,
@@ -129,7 +149,13 @@ class _MealRow extends StatelessWidget {
                 ],
                 const SizedBox(height: 3),
                 Text(
-                  logged ? '${meal.calories} kcal' : 'Not logged yet',
+                  logged
+                      ? (Localizations.localeOf(context).languageCode == 'ar'
+                          ? '${meal.calories} سعرة حرارية'
+                          : '${meal.calories} kcal')
+                      : (Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'لم تسجل بعد'
+                          : 'Not logged yet'),
                   style: AfiaTypography.caption.copyWith(
                     fontSize: 11,
                     color: logged ? AfiaColors.textMuted : AfiaColors.textSecondary.withOpacity(0.7),

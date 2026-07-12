@@ -1,4 +1,5 @@
 import 'package:afia/core/error/exceptions.dart';
+import 'package:afia/core/network/retry_on_429_interceptor.dart';
 import 'package:afia/core/utils/app_logger.dart';
 import 'package:dio/dio.dart';
 
@@ -22,6 +23,7 @@ class ApiClient {
         'Accept': 'application/json',
       };
 
+    _dio.interceptors.add(RetryOn429Interceptor(dio: _dio));
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {

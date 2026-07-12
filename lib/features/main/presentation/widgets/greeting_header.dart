@@ -15,7 +15,7 @@ class GreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 18, 20, 12),
+      padding: const EdgeInsets.fromLTRB(20, 18, 4, 12),
       color: Colors.transparent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -27,7 +27,9 @@ class GreetingHeader extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      'Hi, $userName',
+                      Localizations.localeOf(context).languageCode == 'ar'
+                          ? 'مرحباً، $userName'
+                          : 'Hi, $userName',
                       style: AfiaTypography.screenTitle.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,
@@ -53,10 +55,14 @@ class GreetingHeader extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
-            Icons.notifications_none_rounded,
-            color: AfiaColors.textPrimary,
-            size: 26,
+          IconButton(
+            onPressed: () =>
+                Navigator.pushNamed(context, '/more/notifications'),
+            icon: const Icon(
+              Icons.notifications_none_rounded,
+              color: AfiaColors.textPrimary,
+              size: 26,
+            ),
           ),
         ],
       ),

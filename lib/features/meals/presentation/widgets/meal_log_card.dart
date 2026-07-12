@@ -19,6 +19,17 @@ class MealLogCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    // Translate slot name
+    String slotName = slot.name;
+    if (isAr) {
+      if (slotName.toLowerCase() == 'breakfast') slotName = 'الفطور';
+      if (slotName.toLowerCase() == 'lunch') slotName = 'الغداء';
+      if (slotName.toLowerCase() == 'dinner') slotName = 'العشاء';
+      if (slotName.toLowerCase() == 'snack') slotName = 'وجبة خفيفة';
+    }
+
     if (!slot.isLogged) {
       // Unlogged Slot Card
       return Container(
@@ -57,12 +68,12 @@ class MealLogCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          slot.name,
+                          slotName,
                           style: AfiaTypography.cardTitle.copyWith(fontSize: 14),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Add a meal',
+                          isAr ? 'إضافة وجبة' : 'Add a meal',
                           style: AfiaTypography.body.copyWith(
                             fontSize: 12,
                             color: AfiaColors.textSecondary,
@@ -96,6 +107,21 @@ class MealLogCard extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: slot.loggedMeals.map((meal) {
+        // Translate meal details
+        String mealName = meal.name;
+        String servingLabel = meal.servingLabel;
+
+        if (isAr) {
+          if (mealName == 'Oatmeal with berries') mealName = 'شوفان بالتوت البري';
+          if (mealName == 'Koshari + salad') mealName = 'كشري مع سلطة';
+          
+          if (servingLabel == '1 bowl · 150g') servingLabel = 'زبدية واحدة · ١٥٠ غرام';
+          if (servingLabel == '1 plate · 350g') servingLabel = 'طبق واحد · ٣٥٠ غرام';
+          if (servingLabel.contains('serving')) {
+            servingLabel = servingLabel.replaceAll('serving', 'حصة').replaceAll('1', '١').replaceAll('2', '٢');
+          }
+        }
+
         return Container(
           margin: const EdgeInsets.only(bottom: AfiaSpacing.md),
           decoration: BoxDecoration(
@@ -132,12 +158,12 @@ class MealLogCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            slot.name,
+                            slotName,
                             style: AfiaTypography.cardTitle.copyWith(fontSize: 14),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${meal.name} · ${meal.servingLabel}',
+                            '$mealName · $servingLabel',
                             style: AfiaTypography.body.copyWith(
                               fontSize: 12,
                               color: AfiaColors.textSecondary,
@@ -150,7 +176,7 @@ class MealLogCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${meal.calories} kcal',
+                          isAr ? '${meal.calories} سعرة' : '${meal.calories} kcal',
                           style: AfiaTypography.caption.copyWith(
                             color: AfiaColors.primary,
                             fontWeight: FontWeight.w700,
