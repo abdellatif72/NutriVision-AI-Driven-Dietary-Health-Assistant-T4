@@ -352,8 +352,12 @@ class _AnalysisCard extends StatelessWidget {
               value: '${result.proteinG.toStringAsFixed(1)} g',
             ),
             _MetricRow(
-              label: isAr ? 'الكالسيوم' : 'Calcium',
-              value: '${result.calciumMg} mg',
+              label: isAr ? 'الكربوهيدرات' : 'Carbs',
+              value: '${result.carbsG.toStringAsFixed(1)} g',
+            ),
+            _MetricRow(
+              label: isAr ? 'الدهون' : 'Fat',
+              value: '${result.fatG.toStringAsFixed(1)} g',
             ),
             const SizedBox(height: AfiaSpacing.lg),
             Text(

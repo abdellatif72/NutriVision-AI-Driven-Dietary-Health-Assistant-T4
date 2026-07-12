@@ -6,6 +6,8 @@ class PlateAnalysisResult extends Equatable {
     required this.estimatedQuantityG,
     required this.calories,
     required this.proteinG,
+    required this.carbsG,
+    required this.fatG,
     required this.calciumMg,
     required this.vitamins,
   });
@@ -14,6 +16,8 @@ class PlateAnalysisResult extends Equatable {
   final int estimatedQuantityG;
   final int calories;
   final double proteinG;
+  final double carbsG;
+  final double fatG;
   final int calciumMg;
   final List<String> vitamins;
 
@@ -22,6 +26,8 @@ class PlateAnalysisResult extends Equatable {
     int? estimatedQuantityG,
     int? calories,
     double? proteinG,
+    double? carbsG,
+    double? fatG,
     int? calciumMg,
     List<String>? vitamins,
   }) {
@@ -30,6 +36,8 @@ class PlateAnalysisResult extends Equatable {
       estimatedQuantityG: estimatedQuantityG ?? this.estimatedQuantityG,
       calories: calories ?? this.calories,
       proteinG: proteinG ?? this.proteinG,
+      carbsG: carbsG ?? this.carbsG,
+      fatG: fatG ?? this.fatG,
       calciumMg: calciumMg ?? this.calciumMg,
       vitamins: vitamins ?? this.vitamins,
     );
@@ -41,6 +49,8 @@ class PlateAnalysisResult extends Equatable {
         estimatedQuantityG,
         calories,
         proteinG,
+        carbsG,
+        fatG,
         calciumMg,
         vitamins,
       ];

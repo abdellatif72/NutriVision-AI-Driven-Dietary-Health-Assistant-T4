@@ -6,6 +6,8 @@ class PlateAnalysisResultModel extends PlateAnalysisResult {
     required super.estimatedQuantityG,
     required super.calories,
     required super.proteinG,
+    required super.carbsG,
+    required super.fatG,
     required super.calciumMg,
     required super.vitamins,
   });
@@ -21,6 +23,8 @@ class PlateAnalysisResultModel extends PlateAnalysisResult {
           0,
       calories: (json['calories'] as num?)?.toInt() ?? 0,
       proteinG: (json['protein_g'] as num?)?.toDouble() ?? 0.0,
+      carbsG: (json['carbs_g'] as num?)?.toDouble() ?? 0.0,
+      fatG: (json['fat_g'] as num?)?.toDouble() ?? 0.0,
       calciumMg: (json['calcium_mg'] as num?)?.toInt() ?? 0,
       vitamins: (json['vitamins'] as List<dynamic>?)
               ?.map((v) => v.toString())

@@ -35,6 +35,8 @@ class _AiConfirmationSheetState extends State<AiConfirmationSheet> {
   late final TextEditingController _quantityController;
   late final TextEditingController _caloriesController;
   late final TextEditingController _proteinController;
+  late final TextEditingController _carbsController;
+  late final TextEditingController _fatController;
   late final TextEditingController _calciumController;
   late PlateAnalysisResult _result;
 
@@ -52,6 +54,12 @@ class _AiConfirmationSheetState extends State<AiConfirmationSheet> {
     _proteinController = TextEditingController(
       text: _result.proteinG.toString(),
     );
+    _carbsController = TextEditingController(
+      text: _result.carbsG.toString(),
+    );
+    _fatController = TextEditingController(
+      text: _result.fatG.toString(),
+    );
     _calciumController = TextEditingController(
       text: _result.calciumMg.toString(),
     );
@@ -63,6 +71,8 @@ class _AiConfirmationSheetState extends State<AiConfirmationSheet> {
     _quantityController.dispose();
     _caloriesController.dispose();
     _proteinController.dispose();
+    _carbsController.dispose();
+    _fatController.dispose();
     _calciumController.dispose();
     super.dispose();
   }
@@ -78,6 +88,8 @@ class _AiConfirmationSheetState extends State<AiConfirmationSheet> {
             _result.estimatedQuantityG,
         calories: int.tryParse(_caloriesController.text) ?? _result.calories,
         proteinG: double.tryParse(_proteinController.text) ?? _result.proteinG,
+        carbsG: double.tryParse(_carbsController.text) ?? _result.carbsG,
+        fatG: double.tryParse(_fatController.text) ?? _result.fatG,
         calciumMg: int.tryParse(_calciumController.text) ?? _result.calciumMg,
       );
     });
@@ -168,8 +180,15 @@ class _AiConfirmationSheetState extends State<AiConfirmationSheet> {
             ),
             const SizedBox(height: AfiaSpacing.md),
             _buildTextField(
-              isAr ? 'الكالسيوم (ملجم)' : 'Calcium (mg)',
-              _calciumController,
+              isAr ? 'الكربوهيدرات (جرام)' : 'Carbs (g)',
+              _carbsController,
+              keyboardType: TextInputType.number,
+              onChanged: _updateResult,
+            ),
+            const SizedBox(height: AfiaSpacing.md),
+            _buildTextField(
+              isAr ? 'الدهون (جرام)' : 'Fat (g)',
+              _fatController,
               keyboardType: TextInputType.number,
               onChanged: _updateResult,
             ),
