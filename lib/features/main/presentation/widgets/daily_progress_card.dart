@@ -36,7 +36,9 @@ class DailyProgressCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Daily Progress',
+                  Localizations.localeOf(context).languageCode == 'ar'
+                      ? 'التقدم اليومي'
+                      : 'Daily Progress',
                   style: AfiaTypography.label.copyWith(
                     fontWeight: FontWeight.w700,
                     color: AfiaColors.green900.withOpacity(0.7),

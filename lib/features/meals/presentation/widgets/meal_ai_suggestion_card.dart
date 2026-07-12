@@ -13,6 +13,7 @@ class MealAiSuggestionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Container(
       decoration: BoxDecoration(
         color: AfiaColors.surface,
@@ -54,12 +55,14 @@ class MealAiSuggestionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Need inspiration?',
+                        isAr ? 'هل تحتاج إلى إلهام؟' : 'Need inspiration?',
                         style: AfiaTypography.cardTitle.copyWith(fontSize: 14),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Try a quick meal suggestion from Afia AI.',
+                        isAr
+                            ? 'جرّب اقتراح وجبة سريع من مساعد عافية الذكي.'
+                            : 'Try a quick meal suggestion from Afia AI.',
                         style: AfiaTypography.body.copyWith(
                           fontSize: 12,
                           color: AfiaColors.textSecondary,
@@ -68,8 +71,8 @@ class MealAiSuggestionCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.chevron_right_rounded,
+                Icon(
+                  isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
                   color: AfiaColors.textMuted,
                   size: 20,
                 ),

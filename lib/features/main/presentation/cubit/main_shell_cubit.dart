@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum MainTab {
   home(indexInStack: 0),
-  progress(indexInStack: 1);
+  meals(indexInStack: 1),
+  chat(indexInStack: 2),
+  more(indexInStack: 3);
 
   const MainTab({required this.indexInStack});
 

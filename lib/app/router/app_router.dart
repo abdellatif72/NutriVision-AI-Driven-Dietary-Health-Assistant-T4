@@ -7,31 +7,30 @@ import 'package:afia/features/auth/presentation/pages/goal_selection_page.dart';
 import 'package:afia/features/auth/presentation/pages/physical_information_page.dart';
 import 'package:afia/features/auth/presentation/pages/signup_page.dart';
 import 'package:afia/features/explore/presentation/pages/explore_page.dart';
+import 'package:afia/features/main/presentation/cubit/main_shell_cubit.dart';
 import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
 import 'package:afia/features/main/presentation/pages/progress_page.dart';
 import 'package:afia/features/meals/presentation/pages/meal_search_page.dart';
-import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:afia/features/more/presentation/pages/about_page.dart';
 import 'package:afia/features/more/presentation/pages/change_password_page.dart';
 import 'package:afia/features/more/presentation/pages/diet_preferences_page.dart';
 import 'package:afia/features/more/presentation/pages/edit_profile_page.dart';
 import 'package:afia/features/more/presentation/pages/faqs_page.dart';
 import 'package:afia/features/more/presentation/pages/help_page.dart';
-import 'package:afia/features/more/presentation/pages/more_page.dart';
 import 'package:afia/features/more/presentation/pages/notifications_page.dart';
 import 'package:afia/features/more/presentation/pages/personal_information_page.dart';
 import 'package:afia/features/more/presentation/pages/profile_page.dart';
-import 'package:afia/features/more/presentation/pages/progress_settings_page.dart';
 import 'package:afia/features/more/presentation/pages/settings_page.dart';
 import 'package:afia/features/onboard/presentation/pages/onboard_page.dart';
 import 'package:afia/features/water/presentation/pages/water_recording_page.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppRouter {
-  static const initialRoute = RouteNames.onboard;
+  static const initialRoute = '/';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case '/':
       case RouteNames.auth:
         return MaterialPageRoute<void>(
           builder: (_) => const AuthPage(),
@@ -74,7 +73,7 @@ abstract final class AppRouter {
         );
       case RouteNames.meals:
         return MaterialPageRoute<void>(
-          builder: (_) => const MealsPage(),
+          builder: (_) => const MainShellPage(initialTab: MainTab.meals),
           settings: settings,
         );
       case RouteNames.mealSearch:
@@ -92,6 +91,11 @@ abstract final class AppRouter {
           builder: (_) => const AiPage(),
           settings: settings,
         );
+      case RouteNames.chat:
+        return MaterialPageRoute<void>(
+          builder: (_) => const MainShellPage(initialTab: MainTab.chat),
+          settings: settings,
+        );
       case RouteNames.explore:
         return MaterialPageRoute<void>(
           builder: (_) => const ExplorePage(),
@@ -99,7 +103,7 @@ abstract final class AppRouter {
         );
       case RouteNames.more:
         return MaterialPageRoute<void>(
-          builder: (_) => const MorePage(),
+          builder: (_) => const MainShellPage(initialTab: MainTab.more),
           settings: settings,
         );
       case RouteNames.progress:
@@ -162,7 +166,7 @@ abstract final class AppRouter {
       case RouteNames.connectedApps:
       case RouteNames.helpSupport:
         return MaterialPageRoute<void>(
-          builder: (_) => const MorePage(),
+          builder: (_) => const MainShellPage(initialTab: MainTab.more),
           settings: settings,
         );
       default:

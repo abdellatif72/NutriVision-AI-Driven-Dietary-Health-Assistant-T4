@@ -66,7 +66,9 @@ class CaloriesProgressCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Calories',
+                            Localizations.localeOf(context).languageCode == 'ar'
+                                ? 'السعرات الحرارية'
+                                : 'Calories',
                             style: AfiaTypography.label.copyWith(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -88,7 +90,9 @@ class CaloriesProgressCard extends StatelessWidget {
                               ),
                               const SizedBox(width: 4),
                               Text(
-                                '/ $goal kcal',
+                                Localizations.localeOf(context).languageCode == 'ar'
+                                    ? '/ $goal سعرة حرارية'
+                                    : '/ $goal kcal',
                                 style: AfiaTypography.unit.copyWith(
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,

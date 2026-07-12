@@ -35,6 +35,11 @@ class MealsSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final remainingText = isAr
+        ? 'الهدف: $calorieGoal سعرة · متبقي $remainingCalories'
+        : 'Goal: $calorieGoal kcal · $remainingCalories left';
+
     return Container(
       padding: const EdgeInsets.all(AfiaSpacing.lg),
       decoration: BoxDecoration(
@@ -52,7 +57,7 @@ class MealsSummaryCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Today’s meals',
+                      isAr ? 'وجبات اليوم' : 'Today’s meals',
                       style: AfiaTypography.cardTitle.copyWith(
                         color: AfiaColors.onPrimaryContainer,
                         fontSize: 16,
@@ -60,7 +65,9 @@ class MealsSummaryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AfiaSpacing.xs),
                     Text(
-                      '$mealsLoggedCount of $mealsTotalCount meals logged',
+                      isAr
+                          ? 'تم تسجيل $mealsLoggedCount من $mealsTotalCount وجبات'
+                          : '$mealsLoggedCount of $mealsTotalCount meals logged',
                       style: AfiaTypography.body.copyWith(
                         color: AfiaColors.textSecondary,
                         fontSize: 12,
@@ -68,7 +75,7 @@ class MealsSummaryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AfiaSpacing.md),
                     Text(
-                      '$consumedCalories kcal',
+                      isAr ? '$consumedCalories سعرة حرارية' : '$consumedCalories kcal',
                       style: AfiaTypography.statValue.copyWith(
                         fontSize: 28,
                         color: AfiaColors.textPrimary,
@@ -76,7 +83,7 @@ class MealsSummaryCard extends StatelessWidget {
                     ),
                     const SizedBox(height: AfiaSpacing.xs),
                     Text(
-                      'Goal: $calorieGoal kcal · $remainingCalories left',
+                      remainingText,
                       style: AfiaTypography.label.copyWith(
                         color: AfiaColors.textSecondary,
                         fontSize: 12,
@@ -117,7 +124,7 @@ class MealsSummaryCard extends StatelessWidget {
             children: [
               Expanded(
                 child: _MacroProgress(
-                  label: 'Carbs',
+                  label: isAr ? 'الكربوهيدرات' : 'Carbs',
                   value: carbs,
                   goal: carbsGoal,
                   color: AfiaColors.primary,
@@ -126,7 +133,7 @@ class MealsSummaryCard extends StatelessWidget {
               const SizedBox(width: AfiaSpacing.md),
               Expanded(
                 child: _MacroProgress(
-                  label: 'Protein',
+                  label: isAr ? 'البروتين' : 'Protein',
                   value: protein,
                   goal: proteinGoal,
                   color: AfiaColors.orange,
@@ -135,7 +142,7 @@ class MealsSummaryCard extends StatelessWidget {
               const SizedBox(width: AfiaSpacing.md),
               Expanded(
                 child: _MacroProgress(
-                  label: 'Fat',
+                  label: isAr ? 'الدهون' : 'Fat',
                   value: fat,
                   goal: fatGoal,
                   color: AfiaColors.red,
@@ -164,6 +171,7 @@ class _MacroProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final percent = goal <= 0 ? 0.0 : (value / goal).clamp(0.0, 1.0);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,7 +187,7 @@ class _MacroProgress extends StatelessWidget {
               ),
             ),
             Text(
-              '${value}g',
+              isAr ? '$value جرام' : '${value}g',
               style: AfiaTypography.caption.copyWith(
                 fontWeight: FontWeight.w700,
                 color: AfiaColors.textPrimary,

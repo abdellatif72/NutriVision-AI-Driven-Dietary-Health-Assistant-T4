@@ -1,5 +1,7 @@
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
@@ -88,19 +90,24 @@ class _ActionSheetTile extends StatelessWidget {
 }
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  const HomePage({super.key, this.showBottomNav = true});
+  final bool showBottomNav;
 
   @override
   Widget build(BuildContext context) {
+    // Read the real user name from the global AuthBloc
+    final authState = context.read<AuthBloc>().state;
+    final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
     return BlocProvider(
-      create: (_) => HomeCubit()..loadMockDashboard(),
-      child: const _HomeView(),
+      create: (_) => HomeCubit(userName: userName)..loadMockDashboard(),
+      child: _HomeView(showBottomNav: showBottomNav),
     );
   }
 }
 
 class _HomeView extends StatefulWidget {
-  const _HomeView();
+  const _HomeView({this.showBottomNav = true});
+  final bool showBottomNav;
 
   @override
   State<_HomeView> createState() => _HomeViewState();
@@ -228,20 +235,35 @@ class _HomeViewState extends State<_HomeView> {
             ? '/${state.water!.goalLiters.toStringAsFixed(1)} L'
             : '/2.5 L';
 
+        final isAr = Localizations.localeOf(context).languageCode == 'ar';
+        final stepsTitle = isAr ? 'الخطوات' : 'Steps';
+        final waterTitle = isAr ? 'الماء' : 'Water';
+        final heartRateTitle = isAr ? 'نبضات القلب' : 'Heart Rate';
+        final heartStatus = state.heartRateStatus == 'Resting'
+            ? (isAr ? 'الراحة' : 'Resting')
+            : (state.heartRateStatus ?? (isAr ? 'الراحة' : 'Resting'));
+
+        // Bottom padding = nav bar height (80) + device safe-area so content
+        // isn't hidden behind the Stack-overlaid bottom navigation bar.
+        final navBottomPadding = 80.0 + MediaQuery.paddingOf(context).bottom;
+
         return Scaffold(
           backgroundColor: AfiaColors.scaffoldBackground,
           body: SafeArea(
+            bottom: false, // we manage bottom inset manually via padding below
             child: ListView(
-              padding: const EdgeInsets.only(bottom: 18),
+              padding: EdgeInsets.only(bottom: navBottomPadding),
               physics: const BouncingScrollPhysics(),
               children: [
                 GreetingHeader(
-                  greeting: state.greeting,
+                  greeting: isAr ? 'لنبدأ يوماً رائعاً معاً!' : state.greeting,
                   userName: state.userName,
                 ),
-                const DailyProgressCard(
+                DailyProgressCard(
                   percent: 0.78,
-                  description: "Great job! You're\non track today.",
+                  description: isAr
+                      ? 'عمل رائع! أنت\nعلى المسار الصحيح اليوم.'
+                      : "Great job! You're\non track today.",
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
@@ -254,7 +276,7 @@ class _HomeViewState extends State<_HomeView> {
                         child: MetricCard(
                           kind: AfiaMetricKind.steps,
                           icon: Icons.directions_walk_rounded,
-                          title: 'Steps',
+                          title: stepsTitle,
                           value: stepsText,
                           subtext: stepsGoalText,
                         ),
@@ -264,10 +286,10 @@ class _HomeViewState extends State<_HomeView> {
                         child: MetricCard(
                           kind: AfiaMetricKind.water,
                           icon: Icons.water_drop_rounded,
-                          title: 'Water',
+                          title: waterTitle,
                           value: waterText,
-                          valueUnit: 'L',
-                          subtext: waterGoalText,
+                          valueUnit: isAr ? 'لتر' : 'L',
+                          subtext: isAr ? '/٢.٥ لتر' : waterGoalText,
                           onTap: () => Navigator.pushNamed(
                             context,
                             RouteNames.water,
@@ -279,12 +301,12 @@ class _HomeViewState extends State<_HomeView> {
                         child: MetricCard(
                           kind: AfiaMetricKind.heartRate,
                           icon: Icons.favorite_rounded,
-                          title: 'Heart Rate',
+                          title: heartRateTitle,
                           value: state.heartRate != null
                               ? '${state.heartRate}'
                               : '72',
-                          valueUnit: 'bpm',
-                          subtext: state.heartRateStatus ?? 'Resting',
+                          valueUnit: isAr ? 'ن/د' : 'bpm',
+                          subtext: heartStatus,
                         ),
                       ),
                     ],
@@ -298,30 +320,32 @@ class _HomeViewState extends State<_HomeView> {
               ],
             ),
           ),
-          bottomNavigationBar: AfiaBottomNav(
-            items: _navItems,
-            selectedIndex: _selectedNavIndex,
-            onSelected: (index) {
-              if (index == 1) {
-                Navigator.pushNamed(context, RouteNames.meals);
-                return;
-              }
-              if (index == 2) {
-                Navigator.pushNamed(context, RouteNames.ai);
-                return;
-              }
-              if (index == 3) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const MorePage()),
-                );
-                return;
-              }
-              setState(() => _selectedNavIndex = index);
-            },
-            centerIcon: Icons.add_rounded,
-            onCenterTap: () => _showActionBottomSheet(context),
-          ),
+          bottomNavigationBar: widget.showBottomNav
+              ? AfiaBottomNav(
+                  items: _navItems,
+                  selectedIndex: _selectedNavIndex,
+                  onSelected: (index) {
+                    if (index == 1) {
+                      Navigator.pushNamed(context, RouteNames.meals);
+                      return;
+                    }
+                    if (index == 2) {
+                      Navigator.pushNamed(context, RouteNames.chat);
+                      return;
+                    }
+                    if (index == 3) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const MorePage()),
+                      );
+                      return;
+                    }
+                    setState(() => _selectedNavIndex = index);
+                  },
+                  centerIcon: Icons.add_rounded,
+                  onCenterTap: () => _showActionBottomSheet(context),
+                )
+              : null,
         );
       },
     );

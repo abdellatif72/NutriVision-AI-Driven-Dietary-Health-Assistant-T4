@@ -11,6 +11,7 @@ abstract final class RouteNames {
   static const mealSearch = '/meals/search';
   static const water = '/water';
   static const ai = '/ai';
+  static const chat = '/chat';
   static const explore = '/explore';
   static const more = '/more';
   static const profile = '/more/profile';

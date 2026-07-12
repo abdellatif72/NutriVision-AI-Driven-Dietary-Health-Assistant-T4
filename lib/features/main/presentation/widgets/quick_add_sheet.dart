@@ -16,6 +16,7 @@ class _QuickAddSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Container(
       decoration: const BoxDecoration(
         color: AfiaColors.surface,
@@ -36,9 +37,9 @@ class _QuickAddSheet extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 14),
-            const Text(
-              'Add new',
-              style: TextStyle(
+            Text(
+              isAr ? 'إضافة جديد' : 'Add new',
+              style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
                 color: AfiaColors.textPrimary,
@@ -47,16 +48,23 @@ class _QuickAddSheet extends StatelessWidget {
             const SizedBox(height: 14),
             _QuickAddOption(
               icon: '📸',
-              title: 'Film your food',
-              subtitle: 'AI will recognize food and calculate calories',
+              title: isAr ? 'صوّر وجبتك' : 'Film your food',
+              subtitle: isAr
+                  ? 'سيتعرف الذكاء الاصطناعي على الطعام ويحسب السعرات'
+                  : 'AI will recognize food and calculate calories',
               filled: true,
-              onTap: () => Navigator.pop(context),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, RouteNames.ai);
+              },
             ),
             const SizedBox(height: 8),
             _QuickAddOption(
               icon: '📝',
-              title: 'Manual recording',
-              subtitle: 'Write the name of the food and the calories yourself',
+              title: isAr ? 'تسجيل يدوي' : 'Manual recording',
+              subtitle: isAr
+                  ? 'اكتب اسم الطعام والسعرات الحرارية بنفسك'
+                  : 'Write the name of the food and the calories yourself',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, RouteNames.mealSearch);
@@ -65,8 +73,10 @@ class _QuickAddSheet extends StatelessWidget {
             const SizedBox(height: 8),
             _QuickAddOption(
               icon: '💧',
-              title: 'Record water',
-              subtitle: 'Quick registration (cup, pint, or custom)',
+              title: isAr ? 'تسجيل شرب الماء' : 'Record water',
+              subtitle: isAr
+                  ? 'تسجيل سريع (كوب، زجاجة، أو مخصص)'
+                  : 'Quick registration (cup, pint, or custom)',
               onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, RouteNames.water);
