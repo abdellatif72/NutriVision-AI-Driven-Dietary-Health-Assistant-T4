@@ -4,6 +4,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
 import 'package:afia/features/more/presentation/cubit/more_state.dart';
@@ -269,6 +270,7 @@ class _MoreView extends StatelessWidget {
             FilledButton(
               onPressed: () {
                 Navigator.pop(dialogContext);
+                context.read<AuthBloc>().add(SignOutRequested());
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   RouteNames.auth,
