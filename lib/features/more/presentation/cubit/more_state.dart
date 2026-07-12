@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 class MoreState extends Equatable {
   const MoreState({
-    this.name = 'Sara Khan',
-    this.initials = 'SK',
+    this.name = '',
+    this.initials = '',
     this.currentGoal = 'Balanced',
     this.streakDays = 14,
     this.weightKg = 62.4,

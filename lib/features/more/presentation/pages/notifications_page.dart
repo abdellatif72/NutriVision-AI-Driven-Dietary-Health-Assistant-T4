@@ -25,6 +25,7 @@ class _NotificationsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
@@ -34,7 +35,7 @@ class _NotificationsView extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Notifications', style: AfiaTypography.screenTitle),
+        title: Text(isAr ? 'الإشعارات' : 'Notifications', style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body:
@@ -57,36 +58,38 @@ class _NotificationsView extends StatelessWidget {
                         .read<NotificationPreferencesCubit>()
                         .toggleEnabled(),
                     title: Text(
-                      'Enable Notifications',
+                      isAr ? 'تفعيل الإشعارات' : 'Enable Notifications',
                       style: AfiaTypography.cardTitle,
                     ),
-                    subtitle: Text('Master toggle', style: AfiaTypography.body),
+                    subtitle: Text(isAr ? 'مفتاح التحكم الرئيسي' : 'Master toggle', style: AfiaTypography.body),
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: AfiaSpacing.lg,
                       vertical: 4,
                     ),
                   ),
                   const SizedBox(height: AfiaSpacing.xl),
-                  const SectionTitle('Reminders'),
+                  SectionTitle(isAr ? 'التذكيرات' : 'Reminders'),
                   const SizedBox(height: AfiaSpacing.md),
                   MoreSectionCard(
                     children: [
                       _buildSwitchTile(
                         context,
-                        title: 'Water Reminder',
-                        subtitle: 'Every ${state.waterIntervalHours} hours',
+                        title: isAr ? 'تذكير بشرب الماء' : 'Water Reminder',
+                        subtitle: isAr
+                            ? 'كل ${state.waterIntervalHours} ساعات'
+                            : 'Every ${state.waterIntervalHours} hours',
                         value: state.waterReminder && state.enabled,
                         onChanged: (v) => context
                             .read<NotificationPreferencesCubit>()
                             .toggleWaterReminder(),
                       ),
                       if (state.waterReminder && state.enabled) ...[
-                        _buildIntervalSelector(context, state),
+                        _buildIntervalSelector(context, state, isAr),
                       ],
                       _buildSwitchTile(
                         context,
-                        title: 'Meal Logging Reminder',
-                        subtitle: 'Breakfast, lunch, dinner',
+                        title: isAr ? 'تذكير بتسجيل الوجبات' : 'Meal Logging Reminder',
+                        subtitle: isAr ? 'إفطار، غداء، عشاء' : 'Breakfast, lunch, dinner',
                         value: state.mealReminder && state.enabled,
                         onChanged: (v) => context
                             .read<NotificationPreferencesCubit>()
@@ -94,7 +97,7 @@ class _NotificationsView extends StatelessWidget {
                       ),
                       _buildSwitchTile(
                         context,
-                        title: 'Weekly Weigh-In',
+                        title: isAr ? 'قياس الوزن الأسبوعي' : 'Weekly Weigh-In',
                         subtitle: state.weighInDay,
                         value: state.weighInReminder && state.enabled,
                         onChanged: (v) => context
@@ -103,10 +106,10 @@ class _NotificationsView extends StatelessWidget {
                       ),
                       _buildSwitchTile(
                         context,
-                        title: 'Progress Summary',
+                        title: isAr ? 'ملخص التقدم' : 'Progress Summary',
                         subtitle: state.summaryFrequency == 'weekly'
-                            ? 'Weekly summary'
-                            : 'Monthly summary',
+                            ? (isAr ? 'ملخص أسبوعي' : 'Weekly summary')
+                            : (isAr ? 'ملخص شهري' : 'Monthly summary'),
                         value: state.progressSummary && state.enabled,
                         onChanged: (v) => context
                             .read<NotificationPreferencesCubit>()
@@ -143,6 +146,7 @@ class _NotificationsView extends StatelessWidget {
   Widget _buildIntervalSelector(
     BuildContext context,
     NotificationPreferencesState state,
+    bool isAr,
   ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
@@ -153,13 +157,13 @@ class _NotificationsView extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Text('Every ', style: AfiaTypography.body),
+          Text(isAr ? 'كل ' : 'Every ', style: AfiaTypography.body),
           SizedBox(
             width: 80,
             child: DropdownButtonFormField<int>(
               initialValue: state.waterIntervalHours,
               items: [1, 2, 3, 4].map((h) {
-                return DropdownMenuItem(value: h, child: Text('$h h'));
+                return DropdownMenuItem(value: h, child: Text(isAr ? '$h س' : '$h h'));
               }).toList(),
               onChanged: (v) {
                 if (v != null) {

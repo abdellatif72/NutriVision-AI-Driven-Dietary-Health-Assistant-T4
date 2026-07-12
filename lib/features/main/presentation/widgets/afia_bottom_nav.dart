@@ -26,10 +26,12 @@ class AfiaBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
     final mid = items.length ~/ 2;
 
-    return SizedBox(
-      height: 80,
+    return Container(
+      color: Colors.transparent,
+      height: 80 + bottomPadding,
       child: Stack(
         clipBehavior: Clip.none,
         alignment: Alignment.topCenter,
@@ -37,6 +39,7 @@ class AfiaBottomNav extends StatelessWidget {
           Positioned.fill(
             top: 12,
             child: Container(
+              padding: EdgeInsets.only(bottom: bottomPadding),
               decoration: BoxDecoration(
                 color: AfiaColors.surface,
                 borderRadius: const BorderRadius.vertical(

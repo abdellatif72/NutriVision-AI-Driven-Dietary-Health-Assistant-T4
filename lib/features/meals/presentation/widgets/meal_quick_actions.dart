@@ -15,13 +15,14 @@ class MealQuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Row(
       children: [
         Expanded(
           child: ElevatedButton.icon(
             onPressed: onAddMealTap,
             icon: const Icon(Icons.add_rounded, size: 18),
-            label: const Text('Add meal'),
+            label: Text(isAr ? 'إضافة وجبة' : 'Add meal'),
             style: ElevatedButton.styleFrom(
               backgroundColor: AfiaColors.primary,
               foregroundColor: Colors.white,
@@ -41,7 +42,7 @@ class MealQuickActions extends StatelessWidget {
           child: OutlinedButton.icon(
             onPressed: onSavedMealsTap,
             icon: const Icon(Icons.bookmark_outline_rounded, size: 18),
-            label: const Text('Saved meals'),
+            label: Text(isAr ? 'وجبات محفوظة' : 'Saved meals'),
             style: OutlinedButton.styleFrom(
               foregroundColor: AfiaColors.textPrimary,
               side: const BorderSide(color: AfiaColors.divider),

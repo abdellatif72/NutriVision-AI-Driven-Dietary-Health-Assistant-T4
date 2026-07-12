@@ -1,8 +1,8 @@
 import 'dart:math' as math;
 
-import 'package:afia/app/router/route_names.dart';
+import 'package:afia/app/localization/l10n.dart';
+
 import 'package:afia/core/theme/afia_colors.dart';
-import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:afia/features/water/presentation/widgets/custom_water_amount_sheet.dart';
 import 'package:flutter/material.dart';
@@ -20,40 +20,32 @@ class WaterRecordingPage extends StatelessWidget {
   }
 }
 
-class _WaterRecordingView extends StatelessWidget {
+class _WaterRecordingView extends StatefulWidget {
   const _WaterRecordingView();
 
-  Future<void> _onAmountTap(BuildContext context, int amountMl) async {
+  @override
+  State<_WaterRecordingView> createState() => _WaterRecordingViewState();
+}
+
+class _WaterRecordingViewState extends State<_WaterRecordingView> {
+  void _onAmountTap(BuildContext context, int amountMl) {
     final cubit = context.read<WaterRecordingCubit>();
     if (amountMl == 750) {
-      final amount = await showCustomWaterAmountSheet(context);
-      if (amount != null) {
-        cubit.addAmount(amount);
-      }
+      // Custom amount
+      showCustomWaterAmountSheet(context).then((amount) {
+        if (amount != null) {
+          cubit.addAmount(amount);
+        }
+      });
       return;
     }
     cubit.addAmount(amountMl);
   }
 
-  void _onNavTap(BuildContext context, int index) {
-    switch (index) {
-      case 0:
-        Navigator.maybePop(context);
-        return;
-      case 1:
-        Navigator.pushNamed(context, RouteNames.meals);
-        return;
-      case 2:
-        Navigator.pushNamed(context, RouteNames.ai);
-        return;
-      case 3:
-        Navigator.pushNamed(context, RouteNames.more);
-        return;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAF7),
       appBar: AppBar(
@@ -67,24 +59,15 @@ class _WaterRecordingView extends StatelessWidget {
             color: AfiaColors.textPrimary,
           ),
         ),
-        title: const Text(
-          'Water',
-          style: TextStyle(
+        title: Text(
+          AppLocalizations.of(context).translate('water_tracker'),
+          style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,
             color: AfiaColors.textPrimary,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () => Navigator.pushNamed(context, RouteNames.settings),
-            icon: const Icon(
-              Icons.settings_outlined,
-              color: AfiaColors.textPrimary,
-            ),
-          ),
-          const SizedBox(width: 6),
-        ],
+        actions: const [],
       ),
       body: BlocBuilder<WaterRecordingCubit, WaterRecordingState>(
         builder: (context, state) {
@@ -112,7 +95,9 @@ class _WaterRecordingView extends StatelessWidget {
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          '${consumedLiters.toStringAsFixed(1)} L',
+                          isAr
+                              ? '${consumedLiters.toStringAsFixed(1)} لتر'
+                              : '${consumedLiters.toStringAsFixed(1)} L',
                           style: const TextStyle(
                             fontSize: 38,
                             height: 1,
@@ -122,7 +107,9 @@ class _WaterRecordingView extends StatelessWidget {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'of ${goalLiters.toStringAsFixed(1)} L',
+                          isAr
+                              ? 'من ${goalLiters.toStringAsFixed(1)} لتر'
+                              : 'of ${goalLiters.toStringAsFixed(1)} L',
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w500,
@@ -136,7 +123,9 @@ class _WaterRecordingView extends StatelessWidget {
               ),
               Center(
                 child: Text(
-                  '${(percent * 100).round()}% of daily goal',
+                  isAr
+                      ? '${(percent * 100).round()}% من الهدف اليومي'
+                      : '${(percent * 100).round()}% of daily goal',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -149,30 +138,30 @@ class _WaterRecordingView extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _WaterAmountButton(
-                      label: '+250 ml',
+                      label: isAr ? '+٢٥٠ مل' : '+250 ml',
                       onTap: () => _onAmountTap(context, 250),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: _WaterAmountButton(
-                      label: '+500 ml',
+                      label: isAr ? '+٥٠٠ مل' : '+500 ml',
                       onTap: () => _onAmountTap(context, 500),
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: _WaterAmountButton(
-                      label: 'Custom',
+                      label: isAr ? 'مخصص' : 'Custom',
                       onTap: () => _onAmountTap(context, 750),
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 18),
-              const Text(
-                'Today\'s Log',
-                style: TextStyle(
+              Text(
+                isAr ? 'سجل اليوم' : "Today's Log",
+                style: const TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w800,
                   color: AfiaColors.textPrimary,
@@ -197,6 +186,7 @@ class _WaterRecordingView extends StatelessWidget {
                     for (int i = 0; i < state.entries.length; i++) ...[
                       _WaterLogRow(
                         entry: state.entries[i],
+                        isAr: isAr,
                         onAdd: () => context
                             .read<WaterRecordingCubit>()
                             .addAmount(state.entries[i].amountMl),
@@ -215,22 +205,6 @@ class _WaterRecordingView extends StatelessWidget {
             ],
           );
         },
-      ),
-      bottomNavigationBar: AfiaBottomNav(
-        items: const [
-          AfiaNavItem(icon: Icons.home_rounded, label: 'Home'),
-          AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: 'Meals'),
-          AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: 'Chat'),
-          AfiaNavItem(icon: Icons.more_horiz_rounded, label: 'More'),
-        ],
-        selectedIndex: 0,
-        onSelected: (index) => _onNavTap(context, index),
-        centerIcon: Icons.add_rounded,
-        onCenterTap: () => showCustomWaterAmountSheet(context).then((amount) {
-          if (amount != null) {
-            context.read<WaterRecordingCubit>().addAmount(amount);
-          }
-        }),
       ),
     );
   }
@@ -309,16 +283,19 @@ class _WaterAmountButton extends StatelessWidget {
 }
 
 class _WaterLogRow extends StatelessWidget {
-  const _WaterLogRow({required this.entry, required this.onAdd});
+  const _WaterLogRow({required this.entry, required this.isAr, required this.onAdd});
 
   final WaterEntry entry;
+  final bool isAr;
   final VoidCallback onAdd;
 
   String _formatTime(DateTime time) {
     final hour12 = time.hour == 0
         ? 12
         : (time.hour > 12 ? time.hour - 12 : time.hour);
-    final period = time.hour >= 12 ? 'PM' : 'AM';
+    final period = time.hour >= 12
+        ? (isAr ? 'م' : 'PM')
+        : (isAr ? 'ص' : 'AM');
     final minutes = time.minute.toString().padLeft(2, '0');
     return '$hour12:$minutes $period';
   }
@@ -342,8 +319,8 @@ class _WaterLogRow extends StatelessWidget {
           ),
           Expanded(
             child: Text(
-              '${entry.amountMl} ml',
-              textAlign: TextAlign.right,
+              isAr ? '${entry.amountMl} مل' : '${entry.amountMl} ml',
+              textAlign: isAr ? TextAlign.left : TextAlign.right,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -370,3 +347,4 @@ class _WaterLogRow extends StatelessWidget {
     );
   }
 }
+

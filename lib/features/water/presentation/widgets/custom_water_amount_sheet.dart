@@ -44,6 +44,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.viewInsetsOf(context).bottom,
@@ -68,18 +69,18 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                 ),
               ),
               const SizedBox(height: 14),
-              const Text(
-                'Add custom quantity',
-                style: TextStyle(
+              Text(
+                isAr ? 'إضافة كمية مخصصة' : 'Add custom quantity',
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   color: AfiaColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
-                'In ml (e.g. 350)',
-                style: TextStyle(
+              Text(
+                isAr ? 'بالملي لتر (مثال: ٣٥٠)' : 'In ml (e.g. 350)',
+                style: const TextStyle(
                   fontSize: 11,
                   color: AfiaColors.textSecondary,
                 ),
@@ -88,40 +89,40 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
               SizedBox(
                 height: 120,
                 child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Expanded(child: _AmountDisplay(amountMl: _amountMl)),
-                  const SizedBox(width: 10),
-                  SizedBox(
-                    width: 56,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: _StepButton(
-                            symbol: '+',
-                            highlighted: true,
-                            onTap: _increment,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(child: _AmountDisplay(amountMl: _amountMl)),
+                    const SizedBox(width: 10),
+                    SizedBox(
+                      width: 56,
+                      child: Column(
+                        children: [
+                          Expanded(
+                            child: _StepButton(
+                              symbol: '+',
+                              highlighted: true,
+                              onTap: _increment,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Expanded(
-                          child: _StepButton(
-                            symbol: '−',
-                            onTap: _decrement,
+                          const SizedBox(height: 8),
+                          Expanded(
+                            child: _StepButton(
+                              symbol: '−',
+                              onTap: _decrement,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
               ),
               const SizedBox(height: 16),
               Row(
                 children: [
                   Expanded(
                     child: _SheetButton(
-                      label: 'Add',
+                      label: isAr ? 'إضافة' : 'Add',
                       filled: true,
                       onTap: () => Navigator.pop(context, _amountMl),
                     ),
@@ -129,7 +130,7 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: _SheetButton(
-                      label: 'Cancel',
+                      label: isAr ? 'إلغاء' : 'Cancel',
                       onTap: () => Navigator.pop(context),
                     ),
                   ),
@@ -150,6 +151,7 @@ class _AmountDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 14),
       decoration: BoxDecoration(
@@ -159,9 +161,9 @@ class _AmountDisplay extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Text(
-            'Quantity',
-            style: TextStyle(
+          Text(
+            isAr ? 'الكمية' : 'Quantity',
+            style: const TextStyle(
               fontSize: 11,
               color: AfiaColors.textSecondary,
             ),
@@ -177,9 +179,9 @@ class _AmountDisplay extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          const Text(
-            'ml',
-            style: TextStyle(
+          Text(
+            isAr ? 'مل' : 'ml',
+            style: const TextStyle(
               fontSize: 11,
               color: AfiaColors.textSecondary,
             ),

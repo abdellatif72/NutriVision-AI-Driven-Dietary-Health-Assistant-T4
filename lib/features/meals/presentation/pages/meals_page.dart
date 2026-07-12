@@ -1,3 +1,4 @@
+import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -15,19 +16,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MealsPage extends StatelessWidget {
-  const MealsPage({super.key});
+  const MealsPage({super.key, this.showBottomNav = true});
+  final bool showBottomNav;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => MealsCubit(),
-      child: const _MealsPageView(),
+      child: _MealsPageView(showBottomNav: showBottomNav),
     );
   }
 }
 
 class _MealsPageView extends StatelessWidget {
-  const _MealsPageView();
+  const _MealsPageView({this.showBottomNav = true});
+  final bool showBottomNav;
 
   void _onNavTap(BuildContext context, int index) {
     switch (index) {
@@ -38,7 +41,7 @@ class _MealsPageView extends StatelessWidget {
         // Already on meals page
         return;
       case 2:
-        Navigator.pushReplacementNamed(context, RouteNames.ai);
+        Navigator.pushReplacementNamed(context, RouteNames.chat);
         return;
       case 3:
         Navigator.pushReplacementNamed(context, RouteNames.more);
@@ -47,6 +50,7 @@ class _MealsPageView extends StatelessWidget {
   }
 
   void _showSlotSelectionSheet(BuildContext context, MealSummary meal) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -70,19 +74,19 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  'Add to which meal slot?',
+                  isAr ? 'أضف إلى أي وجبة؟' : 'Add to which meal slot?',
                   style: AfiaTypography.cardTitle,
                 ),
                 const SizedBox(height: 16),
                 _SlotSelectionTile(
                   emoji: '🥣',
-                  title: 'Breakfast',
+                  title: isAr ? 'إفطار' : 'Breakfast',
                   onTap: () {
                     context.read<MealsCubit>().addMealToSlot('breakfast', meal);
                     Navigator.pop(sheetContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${meal.name} added to Breakfast'),
+                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الإفطار' : '${meal.name} added to Breakfast'),
                         backgroundColor: AfiaColors.primary,
                       ),
                     );
@@ -90,13 +94,13 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 _SlotSelectionTile(
                   emoji: '🥗',
-                  title: 'Lunch',
+                  title: isAr ? 'غداء' : 'Lunch',
                   onTap: () {
                     context.read<MealsCubit>().addMealToSlot('lunch', meal);
                     Navigator.pop(sheetContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${meal.name} added to Lunch'),
+                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الغداء' : '${meal.name} added to Lunch'),
                         backgroundColor: AfiaColors.primary,
                       ),
                     );
@@ -104,13 +108,13 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 _SlotSelectionTile(
                   emoji: '🍛',
-                  title: 'Dinner',
+                  title: isAr ? 'عشاء' : 'Dinner',
                   onTap: () {
                     context.read<MealsCubit>().addMealToSlot('dinner', meal);
                     Navigator.pop(sheetContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${meal.name} added to Dinner'),
+                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى العشاء' : '${meal.name} added to Dinner'),
                         backgroundColor: AfiaColors.primary,
                       ),
                     );
@@ -118,13 +122,13 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 _SlotSelectionTile(
                   emoji: '🍎',
-                  title: 'Snack',
+                  title: isAr ? 'وجبة خفيفة' : 'Snack',
                   onTap: () {
                     context.read<MealsCubit>().addMealToSlot('snack', meal);
                     Navigator.pop(sheetContext);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text('${meal.name} added to Snack'),
+                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الوجبات الخفيفة' : '${meal.name} added to Snack'),
                         backgroundColor: AfiaColors.primary,
                       ),
                     );
@@ -139,6 +143,13 @@ class _MealsPageView extends StatelessWidget {
   }
 
   void _showAddMealBottomSheet(BuildContext context, [String? preSelectedSlot]) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final Map<String, String> slotNames = isAr
+        ? {'breakfast': 'الإفطار', 'lunch': 'الغداء', 'dinner': 'العشاء', 'snack': 'الوجبات الخفيفة'}
+        : {'breakfast': 'Breakfast', 'lunch': 'Lunch', 'dinner': 'Dinner', 'snack': 'Snack'};
+    final slotLabel = preSelectedSlot != null
+        ? (slotNames[preSelectedSlot] ?? (isAr ? preSelectedSlot : '${preSelectedSlot[0].toUpperCase()}${preSelectedSlot.substring(1)}'))
+        : null;
     showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -162,16 +173,16 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 const SizedBox(height: 20),
                 Text(
-                  preSelectedSlot != null
-                      ? 'Add to ${preSelectedSlot[0].toUpperCase()}${preSelectedSlot.substring(1)}'
-                      : 'Log a Meal',
+                  slotLabel != null
+                      ? (isAr ? 'أضف إلى $slotLabel' : 'Add to $slotLabel')
+                      : (isAr ? 'تسجيل وجبة' : 'Log a Meal'),
                   style: AfiaTypography.cardTitle,
                 ),
                 const SizedBox(height: 16),
                 _ActionSheetTile(
                   icon: Icons.search_rounded,
-                  title: 'Search Food',
-                  subtitle: 'Search the food catalog',
+                  title: isAr ? 'البحث عن طعام' : 'Search Food',
+                  subtitle: isAr ? 'ابحث في قاعدة بيانات الأطعمة' : 'Search the food catalog',
                   onTap: () async {
                     Navigator.pop(sheetContext);
                     final meal = await Navigator.pushNamed<dynamic>(
@@ -184,7 +195,9 @@ class _MealsPageView extends StatelessWidget {
                           context.read<MealsCubit>().addMealToSlot(preSelectedSlot, meal);
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
-                              content: Text('${meal.name} added to ${preSelectedSlot[0].toUpperCase()}${preSelectedSlot.substring(1)}'),
+                              content: Text(isAr
+                                  ? 'تمت إضافة ${meal.name} إلى ${slotNames[preSelectedSlot] ?? preSelectedSlot}'
+                                  : '${meal.name} added to $slotLabel'),
                               backgroundColor: AfiaColors.primary,
                             ),
                           );
@@ -217,8 +230,8 @@ class _MealsPageView extends StatelessWidget {
                       ),
                     ],
                   ),
-                  title: 'AI Smart Scan / Suggestion',
-                  subtitle: 'Get nutrition suggestion using AI',
+                  title: isAr ? 'مسح / اقتراح بالذكاء الاصطناعي' : 'AI Smart Scan / Suggestion',
+                  subtitle: isAr ? 'احصل على اقتراح غذائي بالذكاء الاصطناعي' : 'Get nutrition suggestion using AI',
                   onTap: () {
                     Navigator.pop(sheetContext);
                     Navigator.pushNamed(context, RouteNames.ai);
@@ -227,30 +240,30 @@ class _MealsPageView extends StatelessWidget {
                 const SizedBox(height: 8),
                 _ActionSheetTile(
                   icon: Icons.bookmark_outline_rounded,
-                  title: 'Saved Meals',
-                  subtitle: 'Log from your saved favorites',
+                  title: isAr ? 'وجبات محفوظة' : 'Saved Meals',
+                  subtitle: isAr ? 'سجّل من وجباتك المفضلة' : 'Log from your saved favorites',
                   onTap: () {
                     Navigator.pop(sheetContext);
                     _showPlaceholderSheet(
                       context,
-                      'Saved Meals',
-                      'Quickly log your favorite meals in one tap.',
-                      'This feature is coming soon in the next update!',
+                      isAr ? 'وجبات محفوظة' : 'Saved Meals',
+                      isAr ? 'سجّل وجباتك المفضلة بضغطة واحدة.' : 'Quickly log your favorite meals in one tap.',
+                      isAr ? 'هذه الميزة ستكون متوفرة قريباً في التحديث القادم!' : 'This feature is coming soon in the next update!',
                     );
                   },
                 ),
                 const SizedBox(height: 8),
                 _ActionSheetTile(
                   icon: Icons.edit_note_rounded,
-                  title: 'Manual Entry',
-                  subtitle: 'Log custom meal calories',
+                  title: isAr ? 'إدخال يدوي' : 'Manual Entry',
+                  subtitle: isAr ? 'سجّل سعرات وجبة مخصصة' : 'Log custom meal calories',
                   onTap: () {
                     Navigator.pop(sheetContext);
                     _showPlaceholderSheet(
                       context,
-                      'Manual Entry',
-                      'Log custom calories and nutrients.',
-                      'Manual logging will be available in the next version.',
+                      isAr ? 'إدخال يدوي' : 'Manual Entry',
+                      isAr ? 'سجّل سعرات ومغذيات مخصصة.' : 'Log custom calories and nutrients.',
+                      isAr ? 'سيكون التسجيل اليدوي متاحاً في الإصدار القادم.' : 'Manual logging will be available in the next version.',
                     );
                   },
                 ),
@@ -340,7 +353,12 @@ class _MealsPageView extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                     ),
-                    child: const Text('Got it'),
+                    child: Builder(
+                      builder: (ctx) {
+                        final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
+                        return Text(isAr ? 'حسناً' : 'Got it');
+                      },
+                    ),
                   ),
                 ),
               ],
@@ -408,12 +426,21 @@ class _MealsPageView extends StatelessWidget {
                             style: AfiaTypography.cardTitle.copyWith(fontSize: 18),
                           ),
                           const SizedBox(height: 4),
-                          Text(
-                            '${slot.name} Slot',
-                            style: AfiaTypography.body.copyWith(
-                              color: AfiaColors.textSecondary,
-                              fontWeight: FontWeight.w600,
-                            ),
+                          Builder(
+                            builder: (ctx) {
+                              final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
+                              final Map<String, String> slotNames = isAr
+                                  ? {'breakfast': 'الإفطار', 'lunch': 'الغداء', 'dinner': 'العشاء', 'snack': 'الوجبات الخفيفة'}
+                                  : {'breakfast': 'Breakfast', 'lunch': 'Lunch', 'dinner': 'Dinner', 'snack': 'Snack'};
+                              final localizedSlot = slotNames[slot.type] ?? slot.name;
+                              return Text(
+                                isAr ? 'وجبة $localizedSlot' : '$localizedSlot Slot',
+                                style: AfiaTypography.body.copyWith(
+                                  color: AfiaColors.textSecondary,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
@@ -423,77 +450,91 @@ class _MealsPageView extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Divider(color: AfiaColors.divider, height: 1),
                 const SizedBox(height: 16),
-                _buildDetailRow(
-                  icon: Icons.local_fire_department_rounded,
-                  iconColor: AfiaColors.orange,
-                  label: 'Calories',
-                  value: '${meal.calories} kcal',
-                ),
-                const SizedBox(height: 12),
-                _buildDetailRow(
-                  icon: Icons.scale_rounded,
-                  iconColor: AfiaColors.primary,
-                  label: 'Serving Size',
-                  value: meal.servingLabel,
-                ),
-                const SizedBox(height: 12),
-                _buildDetailRow(
-                  icon: Icons.access_time_rounded,
-                  iconColor: AfiaColors.blue,
-                  label: 'Logged Time',
-                  value: 'Today',
+                Builder(
+                  builder: (ctx) {
+                    final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
+                    return Column(
+                      children: [
+                        _buildDetailRow(
+                          icon: Icons.local_fire_department_rounded,
+                          iconColor: AfiaColors.orange,
+                          label: isAr ? 'السعرات' : 'Calories',
+                          value: '${meal.calories} ${isAr ? 'سعرة' : 'kcal'}',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailRow(
+                          icon: Icons.scale_rounded,
+                          iconColor: AfiaColors.primary,
+                          label: isAr ? 'حجم الحصة' : 'Serving Size',
+                          value: meal.servingLabel,
+                        ),
+                        const SizedBox(height: 12),
+                        _buildDetailRow(
+                          icon: Icons.access_time_rounded,
+                          iconColor: AfiaColors.blue,
+                          label: isAr ? 'وقت التسجيل' : 'Logged Time',
+                          value: isAr ? 'اليوم' : 'Today',
+                        ),
+                      ],
+                    );
+                  },
                 ),
                 const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.pop(sheetContext);
-                          _showPlaceholderSheet(
-                            context,
-                            'Edit Meal',
-                            'Modify serving details.',
-                            'Editing logged meals will be available in the next version.',
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: AfiaColors.textPrimary,
-                          side: const BorderSide(color: AfiaColors.divider),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
-                        child: const Text('Edit'),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          context.read<MealsCubit>().deleteMealFromSlot(slot.type, meal.id);
-                          Navigator.pop(sheetContext);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text('Removed ${meal.name}'),
-                              backgroundColor: AfiaColors.red,
+                Builder(
+                  builder: (ctx) {
+                    final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              Navigator.pop(sheetContext);
+                              _showPlaceholderSheet(
+                                context,
+                                isAr ? 'تعديل الوجبة' : 'Edit Meal',
+                                isAr ? 'تعديل تفاصيل الحصة.' : 'Modify serving details.',
+                                isAr ? 'تعديل الوجبات المسجلة سيكون متاحاً في الإصدار القادم.' : 'Editing logged meals will be available in the next version.',
+                              );
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AfiaColors.textPrimary,
+                              side: const BorderSide(color: AfiaColors.divider),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
                             ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AfiaColors.red,
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            child: Text(isAr ? 'تعديل' : 'Edit'),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        child: const Text('Delete'),
-                      ),
-                    ),
-                  ],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.read<MealsCubit>().deleteMealFromSlot(slot.type, meal.id);
+                              Navigator.pop(sheetContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(isAr ? 'تمت إزالة ${meal.name}' : 'Removed ${meal.name}'),
+                                  backgroundColor: AfiaColors.red,
+                                ),
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AfiaColors.red,
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            child: Text(isAr ? 'حذف' : 'Delete'),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -536,6 +577,7 @@ class _MealsPageView extends StatelessWidget {
     return BlocBuilder<MealsCubit, MealsState>(
       builder: (context, state) {
         final loggedCount = state.slots.where((s) => s.isLogged).length;
+        final isAr = Localizations.localeOf(context).languageCode == 'ar';
 
         return Scaffold(
           backgroundColor: AfiaColors.scaffoldBackground,
@@ -543,16 +585,12 @@ class _MealsPageView extends StatelessWidget {
             backgroundColor: AfiaColors.scaffoldBackground,
             elevation: 0,
             centerTitle: true,
+            automaticallyImplyLeading: false,
             title: Text(
-              'Meals',
+              AppLocalizations.of(context).translate('meals'),
               style: AfiaTypography.screenTitle,
             ),
-            actions: [
-              IconButton(
-                onPressed: () => Navigator.pushNamed(context, RouteNames.settings),
-                icon: const Icon(Icons.settings_outlined, color: AfiaColors.textPrimary),
-              ),
-            ],
+            actions: const [],
           ),
           body: state.status == MealsStatus.loading
               ? const Center(
@@ -562,9 +600,11 @@ class _MealsPageView extends StatelessWidget {
                   ),
                 )
               : ListView(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AfiaSpacing.pageMargin,
-                    vertical: AfiaSpacing.md,
+                  padding: EdgeInsets.only(
+                    left: AfiaSpacing.pageMargin,
+                    right: AfiaSpacing.pageMargin,
+                    top: AfiaSpacing.md,
+                    bottom: 80.0 + MediaQuery.paddingOf(context).bottom,
                   ),
                   children: [
                     // Date Selector
@@ -599,9 +639,9 @@ class _MealsPageView extends StatelessWidget {
                       onSavedMealsTap: () {
                         _showPlaceholderSheet(
                           context,
-                          'Saved Meals',
-                          'Quickly log your favorite meals in one tap.',
-                          'This feature is coming soon in the next update!',
+                          isAr ? 'وجبات محفوظة' : 'Saved Meals',
+                          isAr ? 'سجّل وجباتك المفضلة بضغطة واحدة.' : 'Quickly log your favorite meals in one tap.',
+                          isAr ? 'هذه الميزة ستكون متوفرة قريباً في التحديث القادم!' : 'This feature is coming soon in the next update!',
                         );
                       },
                     ),
@@ -609,7 +649,7 @@ class _MealsPageView extends StatelessWidget {
 
                     // Today's Plan Header
                     Text(
-                      'Today’s plan',
+                      isAr ? 'خطة اليوم' : 'Today’s plan',
                       style: AfiaTypography.cardTitle.copyWith(fontSize: 16),
                     ),
                     const SizedBox(height: AfiaSpacing.sm),
@@ -631,18 +671,22 @@ class _MealsPageView extends StatelessWidget {
                     const SizedBox(height: AfiaSpacing.xxl),
                   ],
                 ),
-          bottomNavigationBar: AfiaBottomNav(
-            items: const [
-              AfiaNavItem(icon: Icons.home_rounded, label: 'Home'),
-              AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: 'Meals'),
-              AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: 'Chat'),
-              AfiaNavItem(icon: Icons.more_horiz_rounded, label: 'More'),
-            ],
-            selectedIndex: 1,
-            onSelected: (index) => _onNavTap(context, index),
-            centerIcon: Icons.add_rounded,
-            onCenterTap: () => _showAddMealBottomSheet(context),
-          ),
+          bottomNavigationBar: showBottomNav
+              ? AfiaBottomNav(
+                  items: const [
+                    AfiaNavItem(icon: Icons.home_rounded, label: 'Home'),
+                    AfiaNavItem(
+                        icon: Icons.restaurant_menu_rounded, label: 'Meals'),
+                    AfiaNavItem(
+                        icon: Icons.chat_bubble_outline_rounded, label: 'Chat'),
+                    AfiaNavItem(icon: Icons.more_horiz_rounded, label: 'More'),
+                  ],
+                  selectedIndex: 1,
+                  onSelected: (index) => _onNavTap(context, index),
+                  centerIcon: Icons.add_rounded,
+                  onCenterTap: () => _showAddMealBottomSheet(context),
+                )
+              : null,
         );
       },
     );

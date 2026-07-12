@@ -14,6 +14,8 @@ class MealSearchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final languageCode = Localizations.localeOf(context).languageCode;
+    final isAr = languageCode == 'ar';
     return InkWell(
       onTap: onTap,
       child: Padding(
@@ -37,7 +39,7 @@ class MealSearchTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    meal.name,
+                    meal.getName(languageCode),
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -46,7 +48,7 @@ class MealSearchTile extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    meal.servingLabel,
+                    meal.getServingLabel(languageCode),
                     style: const TextStyle(
                       fontSize: 11,
                       color: AfiaColors.textSecondary,
@@ -63,7 +65,7 @@ class MealSearchTile extends StatelessWidget {
                 borderRadius: BorderRadius.circular(999),
               ),
               child: Text(
-                '${meal.calories} kcal',
+                isAr ? '${meal.calories} سعرة' : '${meal.calories} kcal',
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w800,

@@ -166,14 +166,16 @@ class HomeState extends Equatable {
 }
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit() : super(const HomeState());
+  HomeCubit({this.userName}) : super(const HomeState());
+
+  final String? userName;
 
   void loadMockDashboard() {
     emit(
-      const HomeState(
+      HomeState(
         status: HomeStatus.success,
         greeting: "Let's make today amazing!",
-        userName: 'Sara',
+        userName: userName ?? '',
         calories: CalorieSummary(
           percent: 0.71,
           consumed: 1420,

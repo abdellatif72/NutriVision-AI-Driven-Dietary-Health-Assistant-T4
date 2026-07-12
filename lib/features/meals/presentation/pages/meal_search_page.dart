@@ -40,6 +40,8 @@ class _MealSearchViewState extends State<_MealSearchView> {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
@@ -49,9 +51,9 @@ class _MealSearchViewState extends State<_MealSearchView> {
           onPressed: () => Navigator.maybePop(context),
           icon: const Icon(Icons.arrow_back_rounded, color: AfiaColors.textPrimary),
         ),
-        title: const Text(
-          'Add a meal',
-          style: TextStyle(
+        title: Text(
+          isAr ? 'إضافة وجبة' : 'Add a meal',
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w800,
             color: AfiaColors.textPrimary,
@@ -71,7 +73,9 @@ class _MealSearchViewState extends State<_MealSearchView> {
               onChanged: (value) =>
                   context.read<MealSearchBloc>().add(QueryChanged(value)),
               decoration: InputDecoration(
-                hintText: 'Search for a meal... e.g., koshari, fava beans',
+                hintText: isAr
+                    ? 'ابحث عن وجبة... مثل كشري، فول'
+                    : 'Search for a meal... e.g., koshari, fava beans',
                 hintStyle: const TextStyle(
                   fontSize: 12,
                   color: AfiaColors.textSecondary,
@@ -119,12 +123,12 @@ class _MealSearchViewState extends State<_MealSearchView> {
           // Filters row
           BlocBuilder<MealSearchBloc, MealSearchState>(
             builder: (context, state) {
-              const tags = [
-                ('all', 'All'),
-                ('arabic', 'Arabic 🇪🇬'),
-                ('western', 'Western 🍔'),
-                ('healthy', 'Healthy 🥗'),
-                ('recent', 'Recent ⏱️'),
+              final tags = [
+                ('all', isAr ? 'الكل' : 'All'),
+                ('arabic', isAr ? 'عربي 🇪🇬' : 'Arabic 🇪🇬'),
+                ('western', isAr ? 'غربي 🍔' : 'Western 🍔'),
+                ('healthy', isAr ? 'صحي 🥗' : 'Healthy 🥗'),
+                ('recent', isAr ? 'مؤخراً ⏱️' : 'Recent ⏱️'),
               ];
               return SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -171,9 +175,9 @@ class _MealSearchViewState extends State<_MealSearchView> {
               builder: (context, state) {
                 switch (state.status) {
                   case MealSearchStatus.idle:
-                    return const _CenteredHint(
+                    return _CenteredHint(
                       icon: Icons.restaurant_menu_rounded,
-                      text: 'Search for a meal to log it.',
+                      text: isAr ? 'ابحث عن وجبة لتسجيلها.' : 'Search for a meal to log it.',
                     );
                   case MealSearchStatus.loading:
                     return const Center(
@@ -185,12 +189,14 @@ class _MealSearchViewState extends State<_MealSearchView> {
                   case MealSearchStatus.empty:
                     return _CenteredHint(
                       icon: Icons.search_off_rounded,
-                      text: 'No meals found in this category matching "${state.query}".',
+                      text: isAr
+                          ? 'لم نعثر على أي وجبة تطابق "${state.query}".'
+                          : 'No meals found matching "${state.query}".',
                     );
                   case MealSearchStatus.failure:
                     return _CenteredHint(
                       icon: Icons.error_outline_rounded,
-                      text: state.errorMessage ?? 'Something went wrong.',
+                      text: state.errorMessage ?? (isAr ? 'حدث خطأ ما.' : 'Something went wrong.'),
                     );
                   case MealSearchStatus.success:
                     return ListView.separated(
@@ -250,3 +256,4 @@ class _CenteredHint extends StatelessWidget {
     );
   }
 }
+
