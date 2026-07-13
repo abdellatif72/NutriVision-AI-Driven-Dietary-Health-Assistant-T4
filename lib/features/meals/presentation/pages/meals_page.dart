@@ -239,6 +239,16 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 _ActionSheetTile(
+                  icon: Icons.explore_rounded,
+                  title: isAr ? 'تصفح كتالوج الأطعمة' : 'Explore Food Catalog',
+                  subtitle: isAr ? 'تصفح الأطباق العربية والحلويات بالتصنيف' : 'Browse Arabic dishes and sweets by category',
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    Navigator.pushNamed(context, RouteNames.explore);
+                  },
+                ),
+                const SizedBox(height: 8),
+                _ActionSheetTile(
                   icon: Icons.bookmark_outline_rounded,
                   title: isAr ? 'وجبات محفوظة' : 'Saved Meals',
                   subtitle: isAr ? 'سجّل من وجباتك المفضلة' : 'Log from your saved favorites',

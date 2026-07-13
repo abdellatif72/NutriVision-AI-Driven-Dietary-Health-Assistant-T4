@@ -14,6 +14,13 @@ import 'package:afia/features/more/domain/usecases/update_user_profile.dart';
 import 'package:afia/features/more/domain/usecases/get_diet_preferences.dart';
 import 'package:afia/features/more/domain/usecases/update_diet_preferences.dart';
 import 'package:afia/features/more/presentation/cubit/profile_form_cubit.dart';
+import 'package:afia/features/explore/data/datasources/explore_remote_datasource.dart';
+import 'package:afia/features/explore/data/datasources/explore_remote_datasource_impl.dart';
+import 'package:afia/features/explore/data/repositories/explore_repository_impl.dart';
+import 'package:afia/features/explore/domain/repositories/explore_repository.dart';
+import 'package:afia/features/explore/domain/usecases/get_foods.dart';
+import 'package:afia/features/explore/domain/usecases/log_food.dart';
+import 'package:afia/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,9 +40,12 @@ abstract final class InjectionContainer {
     sl.registerLazySingleton(() => UpdateUserProfile(sl()));
     sl.registerLazySingleton(() => GetDietPreferences(sl()));
     sl.registerLazySingleton(() => UpdateDietPreferences(sl()));
+    sl.registerLazySingleton(() => GetFoods(sl()));
+    sl.registerLazySingleton(() => LogFood(sl()));
 
     // Blocs / Cubits
     sl.registerFactory(() => AuthBloc(authRepository: sl()));
+    sl.registerFactory(() => ExploreBloc(getFoods: sl(), logFood: sl()));
     sl.registerFactory(
       () => ProfileFormCubit(
         getMoreProfile: sl(),
@@ -55,6 +65,9 @@ abstract final class InjectionContainer {
         localDataSource: sl(),
       ),
     );
+    sl.registerLazySingleton<ExploreRepository>(
+      () => ExploreRepositoryImpl(remoteDataSource: sl()),
+    );
 
     // Data Sources
     sl.registerLazySingleton<AuthRemoteDataSource>(
@@ -65,6 +78,9 @@ abstract final class InjectionContainer {
     );
     sl.registerLazySingleton<MoreLocalDataSource>(
       () => MoreLocalDataSourceImpl(sharedPreferences: sl()),
+    );
+    sl.registerLazySingleton<ExploreRemoteDataSource>(
+      () => ExploreRemoteDataSourceImpl(),
     );
   }
 }
