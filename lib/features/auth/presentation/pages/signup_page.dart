@@ -5,6 +5,7 @@ import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
+import 'package:afia/core/utils/validation_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -20,6 +21,10 @@ class _SignupPageState extends State<SignupPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscure = true;
+  String? _emailError;
+  String? _passwordError;
+  String? _emailSuggestion;
+  bool _ignoredEmailSuggestion = false;
 
   @override
   void dispose() {
@@ -27,6 +32,26 @@ class _SignupPageState extends State<SignupPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _validateEmail(String val, {bool showHardErrors = false}) {
+    final error = ValidationUtils.validateEmail(val);
+    final suggestion = ValidationUtils.suggestEmailCorrection(val);
+    setState(() {
+      if (showHardErrors || _emailError != null) {
+        _emailError = error;
+      } else if (error == null) {
+        _emailError = null;
+      }
+      _emailSuggestion = suggestion;
+      _ignoredEmailSuggestion = false;
+    });
+  }
+
+  void _validatePassword(String val) {
+    setState(() {
+      _passwordError = ValidationUtils.validatePassword(val);
+    });
   }
 
   InputDecoration _inputDecoration(String hint) {
@@ -64,9 +89,21 @@ class _SignupPageState extends State<SignupPage> {
         body: SafeArea(
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is AuthAuthenticated) {
+              if (state is AuthSignUpSuccess) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      'تم إرسال رابط تفعيل إلى بريدك الإلكتروني. يرجى الضغط عليه لتفعيل حسابك.',
+                      style: AfiaTypography.body.copyWith(
+                        color: AfiaColors.onPrimary,
+                      ),
+                    ),
+                    backgroundColor: AfiaColors.green500,
+                    duration: const Duration(seconds: 6),
+                  ),
+                );
                 Navigator.of(context).pushReplacementNamed(
-                  RouteNames.authPhysicalInformation,
+                  RouteNames.authLogin,
                 );
               } else if (state is AuthError) {
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -75,6 +112,12 @@ class _SignupPageState extends State<SignupPage> {
                     backgroundColor: Colors.redAccent,
                   ),
                 );
+              } else if (state is AuthValidationError) {
+                setState(() {
+                  _emailError = state.emailError;
+                  _emailSuggestion = state.emailSuggestion;
+                  _passwordError = state.passwordError;
+                });
               }
             },
             builder: (context, state) {
@@ -143,7 +186,62 @@ class _SignupPageState extends State<SignupPage> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: _inputDecoration('you@example.com'),
+                  onChanged: (val) {
+                    _validateEmail(val, showHardErrors: false);
+                  },
                 ),
+                if (_emailSuggestion != null) ...[
+                  const SizedBox(height: AfiaSpacing.xs),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(start: AfiaSpacing.xs),
+                    child: GestureDetector(
+                      onTap: () {
+                        _emailController.text = _emailSuggestion!;
+                        _emailController.selection = TextSelection.fromPosition(
+                          TextPosition(offset: _emailSuggestion!.length),
+                        );
+                        _validateEmail(_emailSuggestion!, showHardErrors: true);
+                      },
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'هل تقصد ',
+                          style: AfiaTypography.caption.copyWith(
+                            color: AfiaColors.orange,
+                          ),
+                          children: [
+                            TextSpan(
+                              text: _emailSuggestion,
+                              style: AfiaTypography.caption.copyWith(
+                                color: AfiaColors.orange,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                            TextSpan(
+                              text: '؟',
+                              style: AfiaTypography.caption.copyWith(
+                                color: AfiaColors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.start,
+                      ),
+                    ),
+                  ),
+                ] else if (_emailError != null) ...[
+                  const SizedBox(height: AfiaSpacing.xs),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(start: AfiaSpacing.xs),
+                    child: Text(
+                      _emailError!,
+                      style: AfiaTypography.caption.copyWith(
+                        color: AfiaColors.red,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AfiaSpacing.xl),
                 Text(
                   'Password',
@@ -164,36 +262,69 @@ class _SignupPageState extends State<SignupPage> {
                       ),
                     ),
                   ),
+                  onChanged: (val) {
+                    if (_passwordError != null) {
+                      _validatePassword(val);
+                    }
+                  },
                 ),
+                if (_passwordError != null) ...[
+                  const SizedBox(height: AfiaSpacing.xs),
+                  Padding(
+                    padding: const EdgeInsetsDirectional.only(start: AfiaSpacing.xs),
+                    child: Text(
+                      _passwordError!,
+                      style: AfiaTypography.caption.copyWith(
+                        color: AfiaColors.red,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AfiaSpacing.xxxl),
                  SizedBox(
-                  width: double.infinity,
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: state is AuthLoading
-                        ? null
-                        : () {
-                            final name = _fullNameController.text.trim();
-                            final email = _emailController.text.trim();
-                            final password = _passwordController.text.trim();
-                            if (name.isNotEmpty &&
-                                email.isNotEmpty &&
-                                password.isNotEmpty) {
-                              context.read<AuthBloc>().add(
-                                    SignUpRequested(
-                                      email: email,
-                                      password: password,
-                                      name: name,
-                                    ),
-                                  );
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Please fill out all fields'),
-                                ),
-                              );
-                            }
-                          },
+                   width: double.infinity,
+                   height: 56,
+                   child: ElevatedButton(
+                     onPressed: state is AuthLoading
+                         ? null
+                         : () {
+                             final name = _fullNameController.text.trim();
+                             final email = _emailController.text.trim();
+                             final password = _passwordController.text.trim();
+
+                             _validateEmail(email, showHardErrors: true);
+                             _validatePassword(password);
+
+                             if (name.isEmpty) {
+                               ScaffoldMessenger.of(context).showSnackBar(
+                                 const SnackBar(
+                                   content: Text('Please fill out all fields'),
+                                 ),
+                               );
+                               return;
+                             }
+
+                             if (_emailError == null && _passwordError == null) {
+                               final hasSuggestion = _emailSuggestion != null;
+                               
+                               if (hasSuggestion && !_ignoredEmailSuggestion) {
+                                 setState(() {
+                                   _ignoredEmailSuggestion = true;
+                                 });
+                                 return;
+                               }
+
+                               context.read<AuthBloc>().add(
+                                     SignUpRequested(
+                                       email: email,
+                                       password: password,
+                                       name: name,
+                                       ignoreWarnings: _ignoredEmailSuggestion,
+                                     ),
+                                   );
+                             }
+                           },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AfiaColors.primary,
                       foregroundColor: AfiaColors.onPrimary,

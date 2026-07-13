@@ -1,4 +1,5 @@
 import 'package:afia/app/di/injection_container.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/core/network/api_client.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -14,6 +15,7 @@ import 'package:afia/features/ai/presentation/bloc/ai_state.dart';
 import 'package:afia/features/ai/presentation/widgets/ai_confirmation_sheet.dart';
 import 'package:afia/features/meals/domain/entities/meal_summary.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,13 +48,60 @@ class _AiPageView extends StatefulWidget {
 class _AiPageViewState extends State<_AiPageView> {
   bool _shouldShowConfirmationSheet = false;
 
-  Future<void> _pickImage() async {
-    final bloc = context.read<AiBloc>();
-    final image = await bloc.pickImage(source: ImageSource.gallery);
-    if (image == null) return;
-
-    _shouldShowConfirmationSheet = true;
-    bloc.add(AnalyzePlateRequested(image));
+  void _pickImage() {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    showModalBottomSheet<void>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: AfiaColors.surface,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: AfiaSpacing.md),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.camera_alt, color: AfiaColors.primary),
+                  title: Text(
+                    isAr ? 'التقاط صورة' : 'Take a Photo',
+                    style: AfiaTypography.cardTitle,
+                  ),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    if (kIsWeb) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context).translate('web_camera_warning'),
+                          ),
+                        ),
+                      );
+                    }
+                    _shouldShowConfirmationSheet = true;
+                    context.read<AiBloc>().add(const PickImageEvent(ImageSource.camera));
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library, color: AfiaColors.primary),
+                  title: Text(
+                    isAr ? 'اختيار من المعرض' : 'Choose from Gallery',
+                    style: AfiaTypography.cardTitle,
+                  ),
+                  onTap: () {
+                    Navigator.pop(sheetContext);
+                    _shouldShowConfirmationSheet = true;
+                    context.read<AiBloc>().add(const PickImageEvent(ImageSource.gallery));
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _showConfirmationSheet(PlateAnalysisResult result) {

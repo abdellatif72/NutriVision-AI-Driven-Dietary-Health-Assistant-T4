@@ -5,6 +5,7 @@ abstract final class RouteNames {
   static const authPhysicalInformation = '/auth/physical-information';
   static const authGoalSelection = '/auth/goal-selection';
   static const authForgotPassword = '/auth/forgot-password';
+
   static const onboard = '/onboard';
   static const main = '/main';
   static const meals = '/meals';

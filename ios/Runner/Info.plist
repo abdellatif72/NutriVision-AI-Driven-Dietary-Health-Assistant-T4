@@ -45,6 +45,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Afia uses the camera to snap pictures of your plate for analysis.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Afia uses your photo library to let you attach food images to the chat.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>

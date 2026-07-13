@@ -27,3 +27,13 @@ class ConfirmPlateAnalysis extends AiEvent {
   @override
   List<Object?> get props => [result, slotType];
 }
+
+class PickImageEvent extends AiEvent {
+  const PickImageEvent(this.source);
+
+  final ImageSource source;
+
+  @override
+  List<Object?> get props => [source];
+}
+

@@ -9,13 +9,30 @@ import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart
 import 'package:afia/features/main/presentation/widgets/greeting_header.dart';
 import 'package:afia/features/main/presentation/widgets/metric_card.dart';
 import 'package:afia/features/main/presentation/widgets/todays_meals_list.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
+import 'package:afia/features/auth/domain/entities/auth_user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+class FakeAuthBloc extends Bloc<AuthEvent, AuthState> implements AuthBloc {
+  FakeAuthBloc(AuthState initialState) : super(initialState);
+}
+
 Widget wrapInApp(Widget child) {
-  return MaterialApp(home: child);
+  return MaterialApp(
+    home: BlocProvider<AuthBloc>.value(
+      value: FakeAuthBloc(
+        const AuthAuthenticated(
+          AuthUser(id: '1', email: 'sara@example.com', name: 'Sara'),
+        ),
+      ),
+      child: child,
+    ),
+  );
 }
 
 void main() {
@@ -162,11 +179,18 @@ void main() {
       tester,
     ) async {
       await tester.pumpWidget(
-        MaterialApp(
-          home: const HomePage(),
-          routes: {
-            RouteNames.meals: (_) => const MealsPage(),
-          },
+        BlocProvider<AuthBloc>.value(
+          value: FakeAuthBloc(
+            const AuthAuthenticated(
+              AuthUser(id: '1', email: 'sara@example.com', name: 'Sara'),
+            ),
+          ),
+          child: MaterialApp(
+            home: const HomePage(),
+            routes: {
+              RouteNames.meals: (_) => const MealsPage(),
+            },
+          ),
         ),
       );
       await tester.pumpAndSettle();

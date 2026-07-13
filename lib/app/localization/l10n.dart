@@ -48,6 +48,7 @@ class AppLocalizations {
       'support': 'Support',
       'log_out': 'Log Out',
       'change_password': 'Change Password',
+      'web_camera_warning': 'Camera is not supported on the browser, the gallery will be opened instead.',
     },
     'ar': {
       'home': 'الرئيسية',
@@ -73,6 +74,7 @@ class AppLocalizations {
       'support': 'الدعم',
       'log_out': 'تسجيل الخروج',
       'change_password': 'تغيير كلمة المرور',
+      'web_camera_warning': 'استخدام الكاميرا غير مدعوم على المتصفح، سيتم فتح المعرض بدلاً من ذلك.',
     },
   };
 

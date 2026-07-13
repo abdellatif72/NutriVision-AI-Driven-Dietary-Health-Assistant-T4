@@ -63,6 +63,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     await credential.user!.reload();
     final firebase.User updatedUser = _firebaseAuth.currentUser ?? credential.user!;
 
+    // Send email verification link natively
+    await updatedUser.sendEmailVerification();
+
+    // Sign out to prevent unverified cached sessions immediately
+    await _firebaseAuth.signOut();
+
     return AuthUserModel.fromFirebaseUser(updatedUser);
   }
 
@@ -84,7 +90,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       );
     }
 
-    return AuthUserModel.fromFirebaseUser(credential.user!);
+    final firebase.User user = credential.user!;
+    await user.reload();
+    final firebase.User reloadedUser = _firebaseAuth.currentUser ?? user;
+
+    // Check if emailVerified is true
+    if (!reloadedUser.emailVerified) {
+      await _firebaseAuth.signOut();
+      throw firebase.FirebaseAuthException(
+        code: 'email-not-verified',
+        message: 'برجاء تفعيل بريدك الإلكتروني أولاً من خلال الرابط. إذا كان البريد الإلكتروني غير صحيح، يرجى إنشاء حساب جديد ببريد صحيح.',
+      );
+    }
+
+    return AuthUserModel.fromFirebaseUser(reloadedUser);
   }
 
   @override
@@ -99,6 +118,12 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<AuthUserModel?> getCurrentUser() async {
     final firebase.User? currentUser = _firebaseAuth.currentUser;
     if (currentUser == null) return null;
+
+    if (!currentUser.emailVerified) {
+      await _firebaseAuth.signOut();
+      return null;
+    }
+
     return AuthUserModel.fromFirebaseUser(currentUser);
   }
 
@@ -169,6 +194,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Stream<AuthUserModel?> get authStateChanges {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       if (firebaseUser == null) return null;
+      if (!firebaseUser.emailVerified) return null;
       return AuthUserModel.fromFirebaseUser(firebaseUser);
     });
   }
