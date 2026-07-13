@@ -8,19 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
+  const ExplorePage({super.key, this.preSelectedSlot});
+
+  final String? preSelectedSlot;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (_) => sl<ExploreBloc>()..add(const LoadCatalog()),
-      child: const _ExploreView(),
+      child: _ExploreView(preSelectedSlot: preSelectedSlot),
     );
   }
 }
 
 class _ExploreView extends StatefulWidget {
-  const _ExploreView();
+  const _ExploreView({this.preSelectedSlot});
+
+  final String? preSelectedSlot;
 
   @override
   State<_ExploreView> createState() => _ExploreViewState();
@@ -203,11 +207,20 @@ class _ExploreViewState extends State<_ExploreView> {
                       const SizedBox(height: 32),
                     ],
 
-                    // Add to Diary button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () => _showMealSlotSelection(ctx, food),
+                        onPressed: () {
+                          if (widget.preSelectedSlot != null) {
+                            exploreBloc.add(LogFoodItem(
+                              food: food,
+                              slotType: widget.preSelectedSlot!,
+                            ));
+                            Navigator.pop(sheetContext); // Pop details bottom sheet
+                          } else {
+                            _showMealSlotSelection(ctx, food);
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AfiaColors.primary,
                           foregroundColor: Colors.white,

@@ -49,98 +49,7 @@ class _MealsPageView extends StatelessWidget {
     }
   }
 
-  void _showSlotSelectionSheet(BuildContext context, MealSummary meal) {
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      backgroundColor: AfiaColors.surface,
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AfiaColors.divider,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  isAr ? 'أضف إلى أي وجبة؟' : 'Add to which meal slot?',
-                  style: AfiaTypography.cardTitle,
-                ),
-                const SizedBox(height: 16),
-                _SlotSelectionTile(
-                  emoji: '🥣',
-                  title: isAr ? 'إفطار' : 'Breakfast',
-                  onTap: () {
-                    context.read<MealsCubit>().addMealToSlot('breakfast', meal);
-                    Navigator.pop(sheetContext);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الإفطار' : '${meal.name} added to Breakfast'),
-                        backgroundColor: AfiaColors.primary,
-                      ),
-                    );
-                  },
-                ),
-                _SlotSelectionTile(
-                  emoji: '🥗',
-                  title: isAr ? 'غداء' : 'Lunch',
-                  onTap: () {
-                    context.read<MealsCubit>().addMealToSlot('lunch', meal);
-                    Navigator.pop(sheetContext);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الغداء' : '${meal.name} added to Lunch'),
-                        backgroundColor: AfiaColors.primary,
-                      ),
-                    );
-                  },
-                ),
-                _SlotSelectionTile(
-                  emoji: '🍛',
-                  title: isAr ? 'عشاء' : 'Dinner',
-                  onTap: () {
-                    context.read<MealsCubit>().addMealToSlot('dinner', meal);
-                    Navigator.pop(sheetContext);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى العشاء' : '${meal.name} added to Dinner'),
-                        backgroundColor: AfiaColors.primary,
-                      ),
-                    );
-                  },
-                ),
-                _SlotSelectionTile(
-                  emoji: '🍎',
-                  title: isAr ? 'وجبة خفيفة' : 'Snack',
-                  onTap: () {
-                    context.read<MealsCubit>().addMealToSlot('snack', meal);
-                    Navigator.pop(sheetContext);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(isAr ? 'تمت إضافة ${meal.name} إلى الوجبات الخفيفة' : '${meal.name} added to Snack'),
-                        backgroundColor: AfiaColors.primary,
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
+
 
   void _showAddMealBottomSheet(BuildContext context, [String? preSelectedSlot]) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
@@ -180,38 +89,6 @@ class _MealsPageView extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _ActionSheetTile(
-                  icon: Icons.search_rounded,
-                  title: isAr ? 'البحث عن طعام' : 'Search Food',
-                  subtitle: isAr ? 'ابحث في قاعدة بيانات الأطعمة' : 'Search the food catalog',
-                  onTap: () async {
-                    Navigator.pop(sheetContext);
-                    final meal = await Navigator.pushNamed<dynamic>(
-                      context,
-                      RouteNames.mealSearch,
-                    );
-                    if (meal is MealSummary) {
-                      if (preSelectedSlot != null) {
-                        if (context.mounted) {
-                          context.read<MealsCubit>().addMealToSlot(preSelectedSlot, meal);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(isAr
-                                  ? 'تمت إضافة ${meal.name} إلى ${slotNames[preSelectedSlot] ?? preSelectedSlot}'
-                                  : '${meal.name} added to $slotLabel'),
-                              backgroundColor: AfiaColors.primary,
-                            ),
-                          );
-                        }
-                      } else {
-                        if (context.mounted) {
-                          _showSlotSelectionSheet(context, meal);
-                        }
-                      }
-                    }
-                  },
-                ),
-                const SizedBox(height: 8),
-                _ActionSheetTile(
                   iconWidget: Stack(
                     children: const [
                       Icon(
@@ -244,7 +121,11 @@ class _MealsPageView extends StatelessWidget {
                   subtitle: isAr ? 'تصفح الأطباق العربية والحلويات بالتصنيف' : 'Browse Arabic dishes and sweets by category',
                   onTap: () {
                     Navigator.pop(sheetContext);
-                    Navigator.pushNamed(context, RouteNames.explore);
+                    Navigator.pushNamed(
+                      context,
+                      RouteNames.explore,
+                      arguments: preSelectedSlot,
+                    );
                   },
                 ),
                 const SizedBox(height: 8),
@@ -703,44 +584,7 @@ class _MealsPageView extends StatelessWidget {
   }
 }
 
-class _SlotSelectionTile extends StatelessWidget {
-  const _SlotSelectionTile({
-    required this.emoji,
-    required this.title,
-    required this.onTap,
-  });
 
-  final String emoji;
-  final String title;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Container(
-        width: 42,
-        height: 42,
-        decoration: BoxDecoration(
-          color: AfiaColors.trackInactive.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(emoji, style: const TextStyle(fontSize: 20)),
-        ),
-      ),
-      title: Text(
-        title,
-        style: const TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-          color: AfiaColors.textPrimary,
-        ),
-      ),
-      trailing: const Icon(Icons.chevron_right_rounded, color: AfiaColors.textMuted),
-      onTap: onTap,
-    );
-  }
-}
 
 class _ActionSheetTile extends StatelessWidget {
   const _ActionSheetTile({

@@ -97,8 +97,9 @@ abstract final class AppRouter {
           settings: settings,
         );
       case RouteNames.explore:
+        final preSelectedSlot = settings.arguments as String?;
         return MaterialPageRoute<void>(
-          builder: (_) => const ExplorePage(),
+          builder: (_) => ExplorePage(preSelectedSlot: preSelectedSlot),
           settings: settings,
         );
       case RouteNames.more:
