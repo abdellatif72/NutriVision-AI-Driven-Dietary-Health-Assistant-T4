@@ -134,42 +134,68 @@ class _ExploreViewState extends State<_ExploreView> {
                     ),
                     const SizedBox(height: 16),
 
-                    _NutritionProgressRow(
-                      label: isAr ? 'السعرات الحرارية' : 'Calories',
-                      value: '${food.calories} Kcal',
-                      percentage: 1.0,
-                      color: AfiaColors.orange,
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        final cardWidth = (constraints.maxWidth - 12) / 2;
+                        return Wrap(
+                          spacing: 12,
+                          runSpacing: 12,
+                          children: [
+                            SizedBox(
+                              width: cardWidth,
+                              child: _NutritionStatCard(
+                                label: isAr ? 'السعرات الحرارية' : 'Calories',
+                                value: '${food.calories} Kcal',
+                                icon: Icons.local_fire_department_rounded,
+                                color: AfiaColors.orangeContainer,
+                                iconColor: AfiaColors.orange,
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _NutritionStatCard(
+                                label: isAr ? 'البروتين' : 'Protein',
+                                value: '${food.proteinG} g',
+                                icon: Icons.fitness_center_rounded,
+                                color: AfiaColors.redContainer,
+                                iconColor: AfiaColors.red,
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _NutritionStatCard(
+                                label: isAr ? 'الكربوهيدرات' : 'Carbs',
+                                value: '${food.carbsG} g',
+                                icon: Icons.grain_rounded,
+                                color: AfiaColors.primaryContainer,
+                                iconColor: AfiaColors.primary,
+                              ),
+                            ),
+                            SizedBox(
+                              width: cardWidth,
+                              child: _NutritionStatCard(
+                                label: isAr ? 'الدهون' : 'Fat',
+                                value: '${food.fatG} g',
+                                icon: Icons.opacity_rounded,
+                                color: AfiaColors.orangeContainer,
+                                iconColor: AfiaColors.orange,
+                              ),
+                            ),
+                            if (food.fiberG != null && food.fiberG! > 0)
+                              SizedBox(
+                                width: cardWidth,
+                                child: _NutritionStatCard(
+                                  label: isAr ? 'الألياف' : 'Fiber',
+                                  value: '${food.fiberG} g',
+                                  icon: Icons.spa_rounded,
+                                  color: AfiaColors.blueContainer,
+                                  iconColor: AfiaColors.blue,
+                                ),
+                              ),
+                          ],
+                        );
+                      },
                     ),
-                    const SizedBox(height: 12),
-                    _NutritionProgressRow(
-                      label: isAr ? 'البروتين' : 'Protein',
-                      value: '${food.proteinG} g',
-                      percentage: (food.proteinG / 50.0).clamp(0.0, 1.0),
-                      color: AfiaColors.red,
-                    ),
-                    const SizedBox(height: 12),
-                    _NutritionProgressRow(
-                      label: isAr ? 'الكربوهيدرات' : 'Carbohydrates',
-                      value: '${food.carbsG} g',
-                      percentage: (food.carbsG / 150.0).clamp(0.0, 1.0),
-                      color: AfiaColors.primary,
-                    ),
-                    const SizedBox(height: 12),
-                    _NutritionProgressRow(
-                      label: isAr ? 'الدهون' : 'Fat',
-                      value: '${food.fatG} g',
-                      percentage: (food.fatG / 70.0).clamp(0.0, 1.0),
-                      color: AfiaColors.orange,
-                    ),
-                    if (food.fiberG != null && food.fiberG! > 0) ...[
-                      const SizedBox(height: 12),
-                      _NutritionProgressRow(
-                        label: isAr ? 'الألياف' : 'Fiber',
-                        value: '${food.fiberG} g',
-                        percentage: (food.fiberG! / 30.0).clamp(0.0, 1.0),
-                        color: AfiaColors.blue,
-                      ),
-                    ],
                     const SizedBox(height: 24),
 
                     // Tags
@@ -682,53 +708,73 @@ class _ExploreViewState extends State<_ExploreView> {
   }
 }
 
-class _NutritionProgressRow extends StatelessWidget {
-  const _NutritionProgressRow({
+class _NutritionStatCard extends StatelessWidget {
+  const _NutritionStatCard({
     required this.label,
     required this.value,
-    required this.percentage,
+    required this.icon,
     required this.color,
+    required this.iconColor,
   });
 
   final String label;
   final String value;
-  final double percentage;
+  final IconData icon;
   final Color color;
+  final Color iconColor;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Text(
-              label,
-              style: AfiaTypography.body.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AfiaColors.textPrimary,
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: AfiaColors.scaffoldBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AfiaColors.divider),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
             ),
-            const Spacer(),
-            Text(
-              value,
-              style: AfiaTypography.body.copyWith(
-                fontWeight: FontWeight.w700,
-                color: AfiaColors.textPrimary,
-              ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: iconColor,
             ),
-          ],
-        ),
-        const SizedBox(height: 6),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(4),
-          child: LinearProgressIndicator(
-            value: percentage,
-            minHeight: 8,
-            backgroundColor: AfiaColors.divider,
-            valueColor: AlwaysStoppedAnimation<Color>(color),
           ),
-        ),
-      ],
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: AfiaTypography.body.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AfiaColors.textPrimary,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 1),
+                Text(
+                  label,
+                  style: AfiaTypography.body.copyWith(
+                    color: AfiaColors.textSecondary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
