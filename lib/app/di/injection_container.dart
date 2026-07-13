@@ -21,6 +21,9 @@ import 'package:afia/features/explore/domain/repositories/explore_repository.dar
 import 'package:afia/features/explore/domain/usecases/get_foods.dart';
 import 'package:afia/features/explore/domain/usecases/log_food.dart';
 import 'package:afia/features/explore/presentation/bloc/explore_bloc.dart';
+import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
+import 'package:afia/core/services/token_swap_service.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -46,6 +49,7 @@ abstract final class InjectionContainer {
     // Blocs / Cubits
     sl.registerFactory(() => AuthBloc(authRepository: sl()));
     sl.registerFactory(() => ExploreBloc(getFoods: sl(), logFood: sl()));
+    sl.registerFactory(() => MealsCubit(remoteDataSource: sl()));
     sl.registerFactory(
       () => ProfileFormCubit(
         getMoreProfile: sl(),
@@ -70,6 +74,9 @@ abstract final class InjectionContainer {
     );
 
     // Data Sources
+    sl.registerLazySingleton<MealRemoteDataSource>(
+      () => MealRemoteDataSource(),
+    );
     sl.registerLazySingleton<AuthRemoteDataSource>(
       () => AuthRemoteDataSourceImpl(),
     );
@@ -82,5 +89,8 @@ abstract final class InjectionContainer {
     sl.registerLazySingleton<ExploreRemoteDataSource>(
       () => ExploreRemoteDataSourceImpl(),
     );
+
+    // Services
+    sl.registerLazySingleton<TokenSwapService>(() => TokenSwapService());
   }
 }

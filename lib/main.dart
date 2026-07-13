@@ -1,6 +1,7 @@
 import 'package:afia/app/app.dart';
 import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/core/constants/app_constants.dart';
+import 'package:afia/core/services/token_swap_service.dart';
 import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -23,6 +24,8 @@ void main() async {
   );
 
   await InjectionContainer.init();
+  sl<TokenSwapService>().initialize();
+  
   AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
   runApp(const AfiaApp());
 }

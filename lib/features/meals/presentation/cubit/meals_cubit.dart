@@ -1,70 +1,57 @@
+import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
 import 'package:afia/features/meals/domain/entities/meal_summary.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MealsCubit extends Cubit<MealsState> {
-  MealsCubit() : super(MealsState(selectedDate: DateTime.now())) {
+  MealsCubit({required MealRemoteDataSource remoteDataSource})
+      : _remoteDataSource = remoteDataSource,
+        super(MealsState(selectedDate: DateTime.now())) {
     loadMeals();
   }
 
+  final MealRemoteDataSource _remoteDataSource;
+
   void loadMeals() async {
     emit(state.copyWith(status: MealsStatus.loading));
-    // Simulate minor delay
-    await Future<void>.delayed(const Duration(milliseconds: 150));
 
-    final isTodayDate = _isSameDay(state.selectedDate, DateTime.now());
+    try {
+      final loggedMeals = await _remoteDataSource.getLoggedMeals(state.selectedDate);
 
-    final defaultSlots = [
-      MealSlotDetail(
-        name: 'Breakfast',
-        emoji: '🥣',
-        type: 'breakfast',
-        loggedMeals: isTodayDate
-            ? const [
-                MealSummary(
-                  id: 'mock-breakfast-1',
-                  name: 'Oatmeal with berries',
-                  emoji: '🥣',
-                  servingLabel: '1 bowl · 150g',
-                  calories: 420,
-                ),
-              ]
-            : const [],
-      ),
-      MealSlotDetail(
-        name: 'Lunch',
-        emoji: '🥗',
-        type: 'lunch',
-        loggedMeals: isTodayDate
-            ? const [
-                MealSummary(
-                  id: 'mock-lunch-1',
-                  name: 'Koshari + salad',
-                  emoji: '🥗',
-                  servingLabel: '1 plate · 350g',
-                  calories: 680,
-                ),
-              ]
-            : const [],
-      ),
-      const MealSlotDetail(
-        name: 'Dinner',
-        emoji: '🍛',
-        type: 'dinner',
-        loggedMeals: [],
-      ),
-      const MealSlotDetail(
-        name: 'Snack',
-        emoji: '🍎',
-        type: 'snack',
-        loggedMeals: [],
-      ),
-    ];
+      final defaultSlots = [
+        MealSlotDetail(
+          name: 'Breakfast',
+          emoji: '🥣',
+          type: 'breakfast',
+          loggedMeals: loggedMeals.where((m) => m.slotType == 'breakfast').toList(),
+        ),
+        MealSlotDetail(
+          name: 'Lunch',
+          emoji: '🥗',
+          type: 'lunch',
+          loggedMeals: loggedMeals.where((m) => m.slotType == 'lunch').toList(),
+        ),
+        MealSlotDetail(
+          name: 'Dinner',
+          emoji: '🍛',
+          type: 'dinner',
+          loggedMeals: loggedMeals.where((m) => m.slotType == 'dinner').toList(),
+        ),
+        MealSlotDetail(
+          name: 'Snack',
+          emoji: '🍎',
+          type: 'snack',
+          loggedMeals: loggedMeals.where((m) => m.slotType == 'snack').toList(),
+        ),
+      ];
 
-    emit(state.copyWith(
-      status: defaultSlots.any((s) => s.isLogged) ? MealsStatus.success : MealsStatus.empty,
-      slots: defaultSlots,
-    ));
+      emit(state.copyWith(
+        status: defaultSlots.any((s) => s.isLogged) ? MealsStatus.success : MealsStatus.empty,
+        slots: defaultSlots,
+      ));
+    } catch (e) {
+      emit(state.copyWith(status: MealsStatus.failure));
+    }
   }
 
   void selectDate(DateTime date) {
@@ -73,44 +60,24 @@ class MealsCubit extends Cubit<MealsState> {
     loadMeals();
   }
 
-  void addMealToSlot(String slotType, MealSummary meal) {
-    final updatedSlots = state.slots.map((slot) {
-      if (slot.type == slotType) {
-        final uniqueId = '${meal.id}-${DateTime.now().millisecondsSinceEpoch}';
-        final mealWithUniqueId = MealSummary(
-          id: uniqueId,
-          name: meal.name,
-          emoji: meal.emoji,
-          servingLabel: meal.servingLabel,
-          calories: meal.calories,
-        );
-        return slot.copyWith(
-          loggedMeals: [...slot.loggedMeals, mealWithUniqueId],
-        );
-      }
-      return slot;
-    }).toList();
-
-    emit(state.copyWith(
-      slots: updatedSlots,
-      status: updatedSlots.any((s) => s.isLogged) ? MealsStatus.success : MealsStatus.empty,
-    ));
+  void addMealToSlot(String slotType, MealSummary meal) async {
+    emit(state.copyWith(status: MealsStatus.loading));
+    try {
+      await _remoteDataSource.insertMeal(meal, slotType, state.selectedDate);
+      loadMeals();
+    } catch (e) {
+      emit(state.copyWith(status: MealsStatus.failure));
+    }
   }
 
-  void deleteMealFromSlot(String slotType, String mealId) {
-    final updatedSlots = state.slots.map((slot) {
-      if (slot.type == slotType) {
-        return slot.copyWith(
-          loggedMeals: slot.loggedMeals.where((m) => m.id != mealId).toList(),
-        );
-      }
-      return slot;
-    }).toList();
-
-    emit(state.copyWith(
-      slots: updatedSlots,
-      status: updatedSlots.any((s) => s.isLogged) ? MealsStatus.success : MealsStatus.empty,
-    ));
+  void deleteMealFromSlot(String slotType, String mealId) async {
+    emit(state.copyWith(status: MealsStatus.loading));
+    try {
+      await _remoteDataSource.deleteMeal(mealId);
+      loadMeals();
+    } catch (e) {
+      emit(state.copyWith(status: MealsStatus.failure));
+    }
   }
 
   bool _isSameDay(DateTime d1, DateTime d2) {

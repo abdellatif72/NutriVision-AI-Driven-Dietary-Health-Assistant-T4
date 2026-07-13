@@ -1,3 +1,4 @@
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
@@ -22,7 +23,7 @@ class MealsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => MealsCubit(),
+      create: (_) => sl<MealsCubit>(),
       child: _MealsPageView(showBottomNav: showBottomNav),
     );
   }
@@ -112,6 +113,22 @@ class _MealsPageView extends StatelessWidget {
                   onTap: () {
                     Navigator.pop(sheetContext);
                     Navigator.pushNamed(context, RouteNames.ai);
+                  },
+                ),
+                const SizedBox(height: 8),
+                _ActionSheetTile(
+                  icon: Icons.search_rounded,
+                  title: isAr ? 'البحث عن وجبة' : 'Search for a Meal',
+                  subtitle: isAr ? 'ابحث في قاعدة بيانات الأطعمة المتاحة' : 'Search the database of available foods',
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final meal = await Navigator.pushNamed(
+                      context,
+                      RouteNames.mealSearch,
+                    );
+                    if (meal != null && meal is MealSummary && context.mounted) {
+                      context.read<MealsCubit>().addMealToSlot(preSelectedSlot ?? 'breakfast', meal);
+                    }
                   },
                 ),
                 const SizedBox(height: 8),
