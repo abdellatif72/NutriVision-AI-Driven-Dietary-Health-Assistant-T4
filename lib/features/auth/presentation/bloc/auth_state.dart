@@ -33,3 +33,21 @@ class AuthError extends AuthState {
 }
 
 class AuthPasswordResetSuccess extends AuthState {}
+
+class AuthValidationError extends AuthState {
+  final String? emailError;
+  final String? emailSuggestion;
+  final String? passwordError;
+
+  const AuthValidationError({
+    this.emailError,
+    this.emailSuggestion,
+    this.passwordError,
+  });
+
+  @override
+  List<Object?> get props => [emailError, emailSuggestion, passwordError];
+}
+
+class AuthSignUpSuccess extends AuthState {}
+
