@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'package:afia/core/utils/app_logger.dart';
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:afia/features/more/data/models/app_preferences_model.dart';
 import 'package:afia/features/more/data/models/diet_preferences_model.dart';
@@ -144,21 +145,36 @@ class MoreRemoteDataSourceImpl implements MoreRemoteDataSource {
     final fileExtension = fileName.split('.').last;
     final path = '$userId/profile.$fileExtension';
 
-    await _supabaseClient.storage.from('avatars').uploadBinary(
-          path,
-          bytes,
-          fileOptions: FileOptions(
-            upsert: true,
-            contentType: 'image/$fileExtension',
-          ),
-        );
+    try {
+      AppLogger.info('Uploading profile image of size ${bytes.length} bytes to Supabase Storage at: $path');
+      await _supabaseClient.storage.from('avatars').uploadBinary(
+            path,
+            bytes,
+            fileOptions: FileOptions(
+              upsert: true,
+              contentType: 'image/$fileExtension',
+            ),
+          );
+      AppLogger.info('Upload complete. Getting public URL...');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to upload profile image to Supabase Storage path: $path', e, stackTrace);
+      rethrow;
+    }
 
     final publicUrl = _supabaseClient.storage.from('avatars').getPublicUrl(path);
+    AppLogger.info('Profile image public URL: $publicUrl');
 
-    await _supabaseClient
-        .from('user_profiles')
-        .update({'photo_url': publicUrl})
-        .eq('id', userId);
+    try {
+      AppLogger.info('Updating user_profiles table photo_url for user ID: $userId');
+      await _supabaseClient
+          .from('user_profiles')
+          .update({'photo_url': publicUrl})
+          .eq('id', userId);
+      AppLogger.info('Database update complete.');
+    } catch (e, stackTrace) {
+      AppLogger.error('Failed to update user_profiles table photo_url', e, stackTrace);
+      rethrow;
+    }
 
     return publicUrl;
   }

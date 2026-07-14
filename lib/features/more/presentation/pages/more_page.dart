@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:afia/app/localization/locale_cubit.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
@@ -86,7 +85,7 @@ class _MoreView extends StatelessWidget {
                                 backgroundImage: state.profileImageBytes != null
                                     ? MemoryImage(state.profileImageBytes!)
                                     : (state.profileImagePath.isNotEmpty
-                                        ? (kIsWeb
+                                        ? (state.profileImagePath.startsWith('http')
                                             ? NetworkImage(state.profileImagePath)
                                             : FileImage(File(state.profileImagePath))) as ImageProvider
                                         : null),

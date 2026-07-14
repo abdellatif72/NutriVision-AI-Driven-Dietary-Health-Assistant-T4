@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -183,7 +182,7 @@ class _HeroSummaryCard extends StatelessWidget {
                 backgroundImage: profileImageBytes != null
                     ? MemoryImage(profileImageBytes!)
                     : (profileImagePath.isNotEmpty
-                        ? (kIsWeb
+                        ? (profileImagePath.startsWith('http')
                             ? NetworkImage(profileImagePath)
                             : FileImage(File(profileImagePath))) as ImageProvider
                         : null),
