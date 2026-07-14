@@ -14,8 +14,8 @@ class WaterRecordingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<WaterRecordingCubit>(),
+    return BlocProvider.value(
+      value: sl<WaterRecordingCubit>()..loadWaterData(),
       child: const _WaterRecordingView(),
     );
   }

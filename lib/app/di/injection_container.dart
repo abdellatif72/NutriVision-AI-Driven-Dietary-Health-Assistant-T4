@@ -53,13 +53,14 @@ abstract final class InjectionContainer {
     sl.registerFactory(() => AuthBloc(authRepository: sl()));
     sl.registerFactory(() => ExploreBloc(getFoods: sl(), logFood: sl()));
     sl.registerLazySingleton(() => MealsCubit(remoteDataSource: sl(), moreDataSource: sl()));
-    sl.registerFactory(() => WaterRecordingCubit(remoteDataSource: sl()));
+    sl.registerLazySingleton(() => WaterRecordingCubit(remoteDataSource: sl()));
     sl.registerFactoryParam<HomeCubit, String?, void>(
       (userName, _) => HomeCubit(
         mealDataSource: sl(),
         waterDataSource: sl(),
         moreDataSource: sl(),
         mealsCubit: sl(),
+        waterRecordingCubit: sl(),
         userName: userName,
       ),
     );

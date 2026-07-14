@@ -4,6 +4,7 @@ import 'package:afia/features/water/data/datasources/water_remote_datasource.dar
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_state.dart';
+import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -176,24 +177,31 @@ class HomeCubit extends Cubit<HomeState> {
   final WaterRemoteDataSource _waterDataSource;
   final MoreRemoteDataSource _moreDataSource;
   final MealsCubit _mealsCubit;
+  final WaterRecordingCubit _waterRecordingCubit;
   final String? userName;
   late final StreamSubscription<MealsState> _mealsSubscription;
+  late final StreamSubscription<WaterRecordingState> _waterSubscription;
 
   HomeCubit({
     required MealRemoteDataSource mealDataSource,
     required WaterRemoteDataSource waterDataSource,
     required MoreRemoteDataSource moreDataSource,
     required MealsCubit mealsCubit,
+    required WaterRecordingCubit waterRecordingCubit,
     this.userName,
   })  : _mealDataSource = mealDataSource,
         _waterDataSource = waterDataSource,
         _moreDataSource = moreDataSource,
         _mealsCubit = mealsCubit,
+        _waterRecordingCubit = waterRecordingCubit,
         super(const HomeState()) {
     _mealsSubscription = _mealsCubit.stream.listen((mealsState) {
       if (mealsState.status == MealsStatus.success || mealsState.status == MealsStatus.empty) {
         loadDashboardData();
       }
+    });
+    _waterSubscription = _waterRecordingCubit.stream.listen((waterState) {
+      loadDashboardData();
     });
   }
 
@@ -304,6 +312,7 @@ class HomeCubit extends Cubit<HomeState> {
   @override
   Future<void> close() {
     _mealsSubscription.cancel();
+    _waterSubscription.cancel();
     return super.close();
   }
 }

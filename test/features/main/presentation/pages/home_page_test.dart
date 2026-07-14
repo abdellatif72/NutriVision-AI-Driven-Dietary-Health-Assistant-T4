@@ -23,6 +23,7 @@ import 'package:afia/features/water/domain/entities/water_entry.dart';
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:afia/features/more/domain/entities/diet_preferences.dart';
 import 'package:afia/features/more/domain/entities/user_profile.dart';
+import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -38,6 +39,7 @@ class MockMealRemoteDataSource extends Mock implements MealRemoteDataSource {}
 class MockWaterRemoteDataSource extends Mock implements WaterRemoteDataSource {}
 class MockMoreRemoteDataSource extends Mock implements MoreRemoteDataSource {}
 class MockMealsCubit extends Mock implements MealsCubit {}
+class MockWaterRecordingCubit extends Mock implements WaterRecordingCubit {}
 
 Widget wrapInApp(Widget child) {
   return MaterialApp(
@@ -56,6 +58,7 @@ void main() {
   late MockMealRemoteDataSource mockMealDS;
   late MockWaterRemoteDataSource mockWaterDS;
   late MockMoreRemoteDataSource mockMoreDS;
+  late MockWaterRecordingCubit mockWaterRecordingCubit;
 
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
@@ -66,6 +69,7 @@ void main() {
     mockMealDS = MockMealRemoteDataSource();
     mockWaterDS = MockWaterRemoteDataSource();
     mockMoreDS = MockMoreRemoteDataSource();
+    mockWaterRecordingCubit = MockWaterRecordingCubit();
 
     final tDate = DateTime.now();
 
@@ -82,6 +86,7 @@ void main() {
       MealModel(id: 'm1', name: 'Oatmeal with berries', emoji: '☀️', servingLabel: '1 bowl', calories: 420, slotType: 'breakfast'),
       MealModel(id: 'm2', name: 'Koshari + salad', emoji: '🌤️', servingLabel: '1 plate', calories: 680, slotType: 'lunch'),
     ]);
+    when(() => mockWaterRecordingCubit.stream).thenAnswer((_) => const Stream<WaterRecordingState>.empty());
 
     // Register them in GetIt sl:
     final sl = GetIt.instance;
@@ -90,6 +95,7 @@ void main() {
     sl.registerLazySingleton<MealRemoteDataSource>(() => mockMealDS);
     sl.registerLazySingleton<WaterRemoteDataSource>(() => mockWaterDS);
     sl.registerLazySingleton<MoreRemoteDataSource>(() => mockMoreDS);
+    sl.registerLazySingleton<WaterRecordingCubit>(() => mockWaterRecordingCubit);
     
     sl.registerFactoryParam<HomeCubit, String?, void>(
       (userName, _) => HomeCubit(
@@ -97,6 +103,7 @@ void main() {
         waterDataSource: sl(),
         moreDataSource: sl(),
         mealsCubit: sl(),
+        waterRecordingCubit: sl(),
         userName: userName,
       ),
     );
@@ -120,6 +127,7 @@ void main() {
           waterDataSource: mockWaterDS,
           moreDataSource: mockMoreDS,
           mealsCubit: mockMealsCubit,
+          waterRecordingCubit: mockWaterRecordingCubit,
           userName: 'Sara',
         );
         expect(cubit.state.status, HomeStatus.initial);
