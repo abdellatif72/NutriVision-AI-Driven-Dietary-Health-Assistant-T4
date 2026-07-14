@@ -1,5 +1,7 @@
 import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
+import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
+import 'package:afia/features/more/domain/entities/diet_preferences.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class MockMealRemoteDataSource extends Mock implements MealRemoteDataSource {}
+class MockMoreRemoteDataSource extends Mock implements MoreRemoteDataSource {}
 
 void main() {
   setUpAll(() {
@@ -16,9 +19,14 @@ void main() {
   setUp(() {
     sl.reset();
     final mockDataSource = MockMealRemoteDataSource();
+    final mockMoreDS = MockMoreRemoteDataSource();
+
     when(() => mockDataSource.getLoggedMeals(any())).thenAnswer((_) async => const []);
+    when(() => mockMoreDS.getDietPreferences()).thenAnswer((_) async => const DietPreferences(calorieTarget: 2000));
+
     sl.registerLazySingleton<MealRemoteDataSource>(() => mockDataSource);
-    sl.registerFactory(() => MealsCubit(remoteDataSource: sl()));
+    sl.registerLazySingleton<MoreRemoteDataSource>(() => mockMoreDS);
+    sl.registerFactory(() => MealsCubit(remoteDataSource: sl(), moreDataSource: sl()));
   });
 
   testWidgets('renders meals screen summary and meal sections', (

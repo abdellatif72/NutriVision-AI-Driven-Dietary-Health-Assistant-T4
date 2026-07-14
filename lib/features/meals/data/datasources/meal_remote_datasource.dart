@@ -24,7 +24,7 @@ class MealRemoteDataSource {
   Future<List<MealModel>> getLoggedMeals(DateTime date) async {
     try {
       final userId = _currentUserId;
-      final dateStr = date.toUtc().toIso8601String().substring(0, 10);
+      final dateStr = date.toIso8601String().substring(0, 10);
 
       final response = await _supabaseClient
           .from('logged_meals')
@@ -77,7 +77,7 @@ class MealRemoteDataSource {
   Future<void> saveMealFromAi(PlateAnalysisResult result, String slotType) async {
     try {
       final userId = _currentUserId;
-      final dateStr = DateTime.now().toUtc().toIso8601String().substring(0, 10);
+      final dateStr = DateTime.now().toIso8601String().substring(0, 10);
 
       final double protein = result.proteinG;
       final double carbs = result.carbsG;

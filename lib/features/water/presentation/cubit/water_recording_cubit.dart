@@ -1,38 +1,8 @@
+import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
+import 'package:afia/features/water/domain/entities/water_entry.dart';
+export 'package:afia/features/water/domain/entities/water_entry.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-enum WaterPreset {
-  cup(amountMl: 250, label: '250 ml', sublabel: 'cup'),
-  pint(amountMl: 500, label: '500 ml', sublabel: 'pint'),
-  custom(amountMl: 0, label: 'Custom', sublabel: 'amount');
-
-  const WaterPreset({
-    required this.amountMl,
-    required this.label,
-    required this.sublabel,
-  });
-
-  final int amountMl;
-  final String label;
-  final String sublabel;
-}
-
-class WaterEntry extends Equatable {
-  const WaterEntry({
-    required this.id,
-    required this.timestamp,
-    required this.amountMl,
-    required this.preset,
-  });
-
-  final String id;
-  final DateTime timestamp;
-  final int amountMl;
-  final WaterPreset preset;
-
-  @override
-  List<Object?> get props => [id, timestamp, amountMl, preset];
-}
 
 class WaterRecordingState extends Equatable {
   const WaterRecordingState({
@@ -72,93 +42,75 @@ class WaterRecordingState extends Equatable {
 }
 
 class WaterRecordingCubit extends Cubit<WaterRecordingState> {
-  WaterRecordingCubit() : super(const WaterRecordingState()) {
-    _loadMock();
+  final WaterRemoteDataSource _remoteDataSource;
+
+  WaterRecordingCubit({required WaterRemoteDataSource remoteDataSource})
+      : _remoteDataSource = remoteDataSource,
+        super(const WaterRecordingState()) {
+    loadWaterData();
   }
 
-  void _loadMock() {
-    final today = DateTime.now();
-    DateTime at(int hour, int minute) =>
-        DateTime(today.year, today.month, today.day, hour, minute);
-    final entries = <WaterEntry>[
-      WaterEntry(
-        id: '1',
-        timestamp: at(8, 0),
-        amountMl: 250,
-        preset: WaterPreset.cup,
-      ),
-      WaterEntry(
-        id: '2',
-        timestamp: at(10, 30),
-        amountMl: 500,
-        preset: WaterPreset.pint,
-      ),
-      WaterEntry(
-        id: '3',
-        timestamp: at(16, 15),
-        amountMl: 500,
-        preset: WaterPreset.pint,
-      ),
-      WaterEntry(
-        id: '4',
-        timestamp: at(15, 30),
-        amountMl: 250,
-        preset: WaterPreset.cup,
-      ),
-    ];
-    emit(
-      WaterRecordingState(
-        goalMl: 2400,
-        consumedMl: entries.fold<int>(0, (sum, e) => sum + e.amountMl),
-        entries: entries,
-        selectedPreset: WaterPreset.pint,
-      ),
-    );
+  Future<void> loadWaterData() async {
+    try {
+      final goal = await _remoteDataSource.getWaterGoal();
+      final logs = await _remoteDataSource.getWaterLogs(DateTime.now());
+      
+      emit(WaterRecordingState(
+        goalMl: goal,
+        consumedMl: logs.fold<int>(0, (sum, e) => sum + e.amountMl),
+        entries: logs,
+      ));
+    } catch (e) {
+      // Keep existing state or handle error
+    }
   }
 
   void selectPreset(WaterPreset preset) {
     emit(state.copyWith(selectedPreset: preset));
   }
 
-  void addPreset(WaterPreset preset) {
+  Future<void> addPreset(WaterPreset preset) async {
     if (preset == WaterPreset.custom || preset.amountMl <= 0) return;
-    _addEntry(preset.amountMl, preset);
+    await _addEntry(preset.amountMl, preset);
   }
 
-  void addAmount(int amountMl) {
+  Future<void> addAmount(int amountMl) async {
     if (amountMl <= 0) return;
-    _addEntry(amountMl, WaterPreset.custom);
+    await _addEntry(amountMl, WaterPreset.custom);
   }
 
-  void addCustomAmount(int amountMl) {
+  Future<void> addCustomAmount(int amountMl) async {
     if (amountMl <= 0) return;
-    _addEntry(amountMl, WaterPreset.custom);
+    await _addEntry(amountMl, WaterPreset.custom);
   }
 
-  void deleteEntry(String id) {
-    final updated = state.entries.where((e) => e.id != id).toList();
-    emit(
-      state.copyWith(
-        entries: updated,
-        consumedMl: updated.fold<int>(0, (sum, e) => sum + e.amountMl),
-      ),
-    );
+  Future<void> deleteEntry(String id) async {
+    try {
+      await _remoteDataSource.deleteWaterLog(id);
+      await loadWaterData();
+    } catch (e) {
+      // Handle error
+    }
   }
 
-  void _addEntry(int amountMl, WaterPreset preset) {
-    final entry = WaterEntry(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      timestamp: DateTime.now(),
-      amountMl: amountMl,
-      preset: preset,
-    );
-    final updated = [...state.entries, entry];
-    emit(
-      state.copyWith(
-        entries: updated,
-        consumedMl: state.consumedMl + amountMl,
-        selectedPreset: preset,
-      ),
-    );
+  Future<void> _addEntry(int amountMl, WaterPreset preset) async {
+    try {
+      String presetStr = 'custom';
+      if (preset == WaterPreset.cup) {
+        presetStr = 'cup';
+      } else if (preset == WaterPreset.pint) {
+        presetStr = 'pint';
+      }
+
+      await _remoteDataSource.addWaterLog(
+        amountMl: amountMl,
+        preset: presetStr,
+      );
+      
+      await loadWaterData();
+      emit(state.copyWith(selectedPreset: preset));
+    } catch (e) {
+      // Handle error
+    }
   }
 }

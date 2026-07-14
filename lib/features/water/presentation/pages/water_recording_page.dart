@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:afia/app/localization/l10n.dart';
 
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:afia/features/water/presentation/widgets/custom_water_amount_sheet.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ class WaterRecordingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => WaterRecordingCubit(),
+    return BlocProvider.value(
+      value: sl<WaterRecordingCubit>()..loadWaterData(),
       child: const _WaterRecordingView(),
     );
   }
@@ -30,16 +31,18 @@ class _WaterRecordingView extends StatefulWidget {
 class _WaterRecordingViewState extends State<_WaterRecordingView> {
   void _onAmountTap(BuildContext context, int amountMl) {
     final cubit = context.read<WaterRecordingCubit>();
-    if (amountMl == 750) {
+    if (amountMl == 250) {
+      cubit.addPreset(WaterPreset.cup);
+    } else if (amountMl == 500) {
+      cubit.addPreset(WaterPreset.pint);
+    } else if (amountMl == 750) {
       // Custom amount
       showCustomWaterAmountSheet(context).then((amount) {
         if (amount != null) {
-          cubit.addAmount(amount);
+          cubit.addCustomAmount(amount);
         }
       });
-      return;
     }
-    cubit.addAmount(amountMl);
   }
 
   @override
@@ -187,9 +190,19 @@ class _WaterRecordingViewState extends State<_WaterRecordingView> {
                       _WaterLogRow(
                         entry: state.entries[i],
                         isAr: isAr,
-                        onAdd: () => context
+                        onAdd: () {
+                          final entry = state.entries[i];
+                          if (entry.preset == WaterPreset.cup) {
+                            context.read<WaterRecordingCubit>().addPreset(WaterPreset.cup);
+                          } else if (entry.preset == WaterPreset.pint) {
+                            context.read<WaterRecordingCubit>().addPreset(WaterPreset.pint);
+                          } else {
+                            context.read<WaterRecordingCubit>().addCustomAmount(entry.amountMl);
+                          }
+                        },
+                        onDelete: () => context
                             .read<WaterRecordingCubit>()
-                            .addAmount(state.entries[i].amountMl),
+                            .deleteEntry(state.entries[i].id),
                       ),
                       if (i != state.entries.length - 1)
                         const Divider(
@@ -283,11 +296,17 @@ class _WaterAmountButton extends StatelessWidget {
 }
 
 class _WaterLogRow extends StatelessWidget {
-  const _WaterLogRow({required this.entry, required this.isAr, required this.onAdd});
+  const _WaterLogRow({
+    required this.entry,
+    required this.isAr,
+    required this.onAdd,
+    required this.onDelete,
+  });
 
   final WaterEntry entry;
   final bool isAr;
   final VoidCallback onAdd;
+  final VoidCallback onDelete;
 
   String _formatTime(DateTime time) {
     final hour12 = time.hour == 0
@@ -341,6 +360,18 @@ class _WaterLogRow extends StatelessWidget {
                 child: Icon(Icons.add, size: 16, color: Colors.white),
               ),
             ),
+          ),
+          const SizedBox(width: 8),
+          IconButton(
+            onPressed: onDelete,
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              color: AfiaColors.orange,
+              size: 20,
+            ),
+            visualDensity: VisualDensity.compact,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
           ),
         ],
       ),

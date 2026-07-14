@@ -60,7 +60,7 @@ class ExploreRemoteDataSourceImpl implements ExploreRemoteDataSource {
         'fat_g': food.fatG.round(),
         'tags': food.tags,
         'slot_type': slotType,
-        'logged_date': DateTime.now().toUtc().toIso8601String().substring(0, 10),
+        'logged_date': DateTime.now().toIso8601String().substring(0, 10),
       });
     } catch (e) {
       AppLogger.error('ExploreRemoteDataSourceImpl.logFood', e);

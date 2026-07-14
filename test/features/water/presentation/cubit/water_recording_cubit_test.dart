@@ -1,70 +1,49 @@
-import 'package:afia/core/error/failures.dart';
+import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
+import 'package:afia/features/water/data/models/water_entry_model.dart';
 import 'package:afia/features/water/domain/entities/water_entry.dart';
-import 'package:afia/features/water/domain/usecases/add_water_log.dart';
-import 'package:afia/features/water/domain/usecases/delete_water_log.dart';
-import 'package:afia/features/water/domain/usecases/get_water_goal.dart';
-import 'package:afia/features/water/domain/usecases/get_water_logs.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
-import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockGetWaterLogs extends Mock implements GetWaterLogs {}
-class MockAddWaterLog extends Mock implements AddWaterLog {}
-class MockDeleteWaterLog extends Mock implements DeleteWaterLog {}
-class MockGetWaterGoal extends Mock implements GetWaterGoal {}
+class MockWaterRemoteDataSource extends Mock implements WaterRemoteDataSource {}
 
 void main() {
   late WaterRecordingCubit cubit;
-  late MockGetWaterLogs mockGetWaterLogs;
-  late MockAddWaterLog mockAddWaterLog;
-  late MockDeleteWaterLog mockDeleteWaterLog;
-  late MockGetWaterGoal mockGetWaterGoal;
+  late MockWaterRemoteDataSource mockRemoteDataSource;
 
   setUpAll(() {
     registerFallbackValue(DateTime.now());
   });
 
   setUp(() {
-    mockGetWaterLogs = MockGetWaterLogs();
-    mockAddWaterLog = MockAddWaterLog();
-    mockDeleteWaterLog = MockDeleteWaterLog();
-    mockGetWaterGoal = MockGetWaterGoal();
+    mockRemoteDataSource = MockWaterRemoteDataSource();
   });
 
   group('WaterRecordingCubit', () {
     final tDate = DateTime.now();
-    final tWaterEntry = WaterEntry(
+    final tWaterModel = WaterEntryModel(
       id: '1',
       timestamp: tDate,
       amountMl: 250,
       preset: WaterPreset.cup,
     );
 
-    test('initial state has loading status', () {
-      when(() => mockGetWaterLogs(any())).thenAnswer((_) async => const Right([]));
-      when(() => mockGetWaterGoal()).thenAnswer((_) async => const Right(2500));
+    test('initial state has default values', () {
+      when(() => mockRemoteDataSource.getWaterLogs(any())).thenAnswer((_) async => []);
+      when(() => mockRemoteDataSource.getWaterGoal()).thenAnswer((_) async => 2500);
 
-      cubit = WaterRecordingCubit(
-        getWaterLogs: mockGetWaterLogs,
-        addWaterLog: mockAddWaterLog,
-        deleteWaterLog: mockDeleteWaterLog,
-        getWaterGoal: mockGetWaterGoal,
-      );
+      cubit = WaterRecordingCubit(remoteDataSource: mockRemoteDataSource);
 
-      expect(cubit.state.isLoading, true);
+      expect(cubit.state.goalMl, 2500);
+      expect(cubit.state.consumedMl, 0);
+      expect(cubit.state.entries, isEmpty);
     });
 
     test('loadWaterData success sets logs and goal', () async {
-      when(() => mockGetWaterLogs(any())).thenAnswer((_) async => Right([tWaterEntry]));
-      when(() => mockGetWaterGoal()).thenAnswer((_) async => const Right(2400));
+      when(() => mockRemoteDataSource.getWaterLogs(any())).thenAnswer((_) async => [tWaterModel]);
+      when(() => mockRemoteDataSource.getWaterGoal()).thenAnswer((_) async => 2400);
 
-      cubit = WaterRecordingCubit(
-        getWaterLogs: mockGetWaterLogs,
-        addWaterLog: mockAddWaterLog,
-        deleteWaterLog: mockDeleteWaterLog,
-        getWaterGoal: mockGetWaterGoal,
-      );
+      cubit = WaterRecordingCubit(remoteDataSource: mockRemoteDataSource);
 
       // Wait for constructor loading
       await Future.delayed(Duration.zero);
@@ -72,42 +51,35 @@ void main() {
       expect(
         cubit.state,
         WaterRecordingState(
-          isLoading: false,
           goalMl: 2400,
           consumedMl: 250,
-          entries: [tWaterEntry],
+          entries: [tWaterModel],
         ),
       );
     });
 
     test('addPreset success adds a log', () async {
-      when(() => mockGetWaterLogs(any())).thenAnswer((_) async => const Right([]));
-      when(() => mockGetWaterGoal()).thenAnswer((_) async => const Right(2500));
-      when(() => mockAddWaterLog(
+      when(() => mockRemoteDataSource.getWaterLogs(any())).thenAnswer((_) async => []);
+      when(() => mockRemoteDataSource.getWaterGoal()).thenAnswer((_) async => 2500);
+      when(() => mockRemoteDataSource.addWaterLog(
             amountMl: 250,
             preset: 'cup',
-          )).thenAnswer((_) async => Right(tWaterEntry));
+          )).thenAnswer((_) async => tWaterModel);
 
-      cubit = WaterRecordingCubit(
-        getWaterLogs: mockGetWaterLogs,
-        addWaterLog: mockAddWaterLog,
-        deleteWaterLog: mockDeleteWaterLog,
-        getWaterGoal: mockGetWaterGoal,
-      );
-
+      cubit = WaterRecordingCubit(remoteDataSource: mockRemoteDataSource);
       await Future.delayed(Duration.zero);
 
-      cubit.addPreset(WaterPreset.cup);
+      // Setup mock to return the added entry on subsequent load
+      when(() => mockRemoteDataSource.getWaterLogs(any())).thenAnswer((_) async => [tWaterModel]);
 
-      await Future.delayed(Duration.zero);
+      await cubit.addPreset(WaterPreset.cup);
 
       expect(
         cubit.state,
         WaterRecordingState(
-          isLoading: false,
           goalMl: 2500,
           consumedMl: 250,
-          entries: [tWaterEntry],
+          entries: [tWaterModel],
           selectedPreset: WaterPreset.cup,
         ),
       );

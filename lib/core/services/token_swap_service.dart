@@ -57,12 +57,78 @@ class TokenSwapService {
         await _supabaseClient.auth.setSession(supabaseToken);
         AppLogger.info('Successfully swapped and applied custom Supabase token!');
         
+        // 5. Ensure user profile and default preferences exist in Supabase
+        await _ensureUserProfileExists(firebaseUser);
+        
       } catch (e) {
         AppLogger.error('TokenSwapService failed', e);
         // If the swap fails, sign out of Supabase to prevent unauthenticated actions
         await _supabaseClient.auth.signOut();
       }
     });
+  }
+
+  Future<void> _ensureUserProfileExists(firebase.User firebaseUser) async {
+    try {
+      final userId = firebaseUser.uid;
+      
+      // 1. Check if user profile already exists
+      final profileResponse = await _supabaseClient
+          .from('user_profiles')
+          .select()
+          .eq('id', userId)
+          .maybeSingle();
+
+      if (profileResponse == null) {
+        AppLogger.info('User profile not found. Creating default profile and preferences...');
+        
+        final name = firebaseUser.displayName ?? 'User';
+        
+        // Insert default user profile
+        await _supabaseClient.from('user_profiles').insert({
+          'id': userId,
+          'name': name,
+          'streak_days': 0,
+        });
+
+        // Insert default diet preferences
+        await _supabaseClient.from('diet_preferences').insert({
+          'user_id': userId,
+          'diet_style': 'balanced',
+          'goal_type': 'maintain',
+          'carbs_pct': 50,
+          'protein_pct': 20,
+          'fat_pct': 30,
+          'water_goal_ml': 2500,
+        });
+
+        // Insert default notification preferences
+        await _supabaseClient.from('notification_preferences').insert({
+          'user_id': userId,
+          'enabled': true,
+          'water_reminder': true,
+          'water_interval_hours': 2,
+          'meal_reminder': true,
+          'meal_times': ['08:00', '13:00', '20:00'],
+          'weigh_in_reminder': false,
+          'progress_summary': false,
+        });
+
+        // Insert default app preferences
+        await _supabaseClient.from('app_preferences').insert({
+          'user_id': userId,
+          'theme_mode': 'system',
+          'language': 'ar',
+          'units': 'metric',
+        });
+
+        AppLogger.info('Successfully created default profile and preferences for user $userId.');
+      } else {
+        AppLogger.info('User profile already exists in Supabase.');
+      }
+    } catch (e) {
+      AppLogger.error('Failed to ensure user profile exists in Supabase', e);
+    }
   }
 
   void dispose() {
