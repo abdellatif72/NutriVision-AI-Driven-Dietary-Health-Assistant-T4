@@ -229,13 +229,6 @@ class _HomeViewState extends State<_HomeView> {
           );
         }
 
-        final stepsText = state.steps != null
-            ? _formatNumber(state.steps!)
-            : '0';
-        final stepsGoalText = state.stepsGoal != null
-            ? '/${_formatNumber(state.stepsGoal!)}'
-            : '/10,000';
-
         final waterText = state.water != null
             ? state.water!.consumedLiters.toStringAsFixed(1)
             : '0.0';
@@ -244,7 +237,6 @@ class _HomeViewState extends State<_HomeView> {
             : '/2.5 L';
 
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
-        final stepsTitle = isAr ? 'الخطوات' : 'Steps';
         final waterTitle = isAr ? 'الماء' : 'Water';
 
         // Bottom padding = nav bar height (80) + device safe-area so content
@@ -297,33 +289,17 @@ class _HomeViewState extends State<_HomeView> {
                     horizontal: 20,
                     vertical: 8,
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.steps,
-                          icon: Icons.directions_walk_rounded,
-                          title: stepsTitle,
-                          value: stepsText,
-                          subtext: stepsGoalText,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.water,
-                          icon: Icons.water_drop_rounded,
-                          title: waterTitle,
-                          value: waterText,
-                          valueUnit: isAr ? 'لتر' : 'L',
-                          subtext: isAr ? '/٢.٥ لتر' : waterGoalText,
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            RouteNames.water,
-                          ),
-                        ),
-                      ),
-                    ],
+                  child: MetricCard(
+                    kind: AfiaMetricKind.water,
+                    icon: Icons.water_drop_rounded,
+                    title: waterTitle,
+                    value: waterText,
+                    valueUnit: isAr ? 'لتر' : 'L',
+                    subtext: isAr ? '/٢.٥ لتر' : waterGoalText,
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      RouteNames.water,
+                    ),
                   ),
                 ),
                 CaloriesProgressCard(
