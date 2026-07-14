@@ -515,28 +515,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectTeam => 'Project Team';
 
   @override
-  String get teamMemberSara => 'Sara';
+  String get teamMemberAhmed => 'Ahmed Abdellatif';
 
   @override
-  String get teamMemberSaraRole => 'Design & Development';
+  String get teamMemberAhmedRole => 'Auth, Backend & Meals';
 
   @override
-  String get teamMemberAhmed => 'Ahmed';
+  String get teamMemberMarawan => 'Marawan Mahmoud';
 
   @override
-  String get teamMemberAhmedRole => 'Backend & AI';
+  String get teamMemberMarawanRole => 'UI/UX';
 
   @override
-  String get teamMemberLayla => 'Layla';
+  String get teamMemberMario => 'Mario Nabil';
 
   @override
-  String get teamMemberLaylaRole => 'Research & Content';
+  String get teamMemberMarioRole => 'Profile, Onboarding & Home';
 
   @override
-  String get teamMemberKhalid => 'Khalid';
+  String get teamMemberYusuf => 'Yusuf Dagash';
 
   @override
-  String get teamMemberKhalidRole => 'Testing & QA';
+  String get teamMemberYusufRole => 'Auth, AI';
 
   @override
   String get termsOfService => 'Terms of Service';

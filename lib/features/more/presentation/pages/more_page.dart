@@ -147,12 +147,6 @@ class _MoreView extends StatelessWidget {
                         onTap: () => Navigator.pushNamed(context, RouteNames.personalInformation),
                       ),
                       MoreTile(
-                        icon: Icons.restaurant_outlined,
-                        title: l10n.dietPreferences,
-                        subtitle: l10n.dietPrefsSubtitleMore,
-                        onTap: () => Navigator.pushNamed(context, RouteNames.dietPreferences),
-                      ),
-                      MoreTile(
                         icon: Icons.bar_chart_outlined,
                         title: l10n.progress,
                         subtitle: l10n.progressSubtitleMore,

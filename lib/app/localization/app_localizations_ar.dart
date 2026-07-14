@@ -517,28 +517,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get projectTeam => 'فريق العمل';
 
   @override
-  String get teamMemberSara => 'سارة';
+  String get teamMemberAhmed => 'أحمد عبد اللطيف';
 
   @override
-  String get teamMemberSaraRole => 'التصميم والتطوير';
+  String get teamMemberAhmedRole => 'المصادقة، الخلفية البرمجية والوجبات';
 
   @override
-  String get teamMemberAhmed => 'أحمد';
+  String get teamMemberMarawan => 'مروان محمود';
 
   @override
-  String get teamMemberAhmedRole => 'قواعد البيانات والذكاء الاصطناعي';
+  String get teamMemberMarawanRole => 'واجهة وتجربة المستخدم';
 
   @override
-  String get teamMemberLayla => 'ليلى';
+  String get teamMemberMario => 'ماريو نبيل';
 
   @override
-  String get teamMemberLaylaRole => 'البحث والمحتوى';
+  String get teamMemberMarioRole => 'الملف الشخصي، التهيئة والرئيسية';
 
   @override
-  String get teamMemberKhalid => 'خالد';
+  String get teamMemberYusuf => 'يوسف دغش';
 
   @override
-  String get teamMemberKhalidRole => 'الاختبار وضمان الجودة';
+  String get teamMemberYusufRole => 'المصادقة والذكاء الاصطناعي';
 
   @override
   String get termsOfService => 'شروط الخدمة';

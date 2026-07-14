@@ -1070,53 +1070,53 @@ abstract class AppLocalizations {
   /// **'Project Team'**
   String get projectTeam;
 
-  /// No description provided for @teamMemberSara.
-  ///
-  /// In en, this message translates to:
-  /// **'Sara'**
-  String get teamMemberSara;
-
-  /// No description provided for @teamMemberSaraRole.
-  ///
-  /// In en, this message translates to:
-  /// **'Design & Development'**
-  String get teamMemberSaraRole;
-
   /// No description provided for @teamMemberAhmed.
   ///
   /// In en, this message translates to:
-  /// **'Ahmed'**
+  /// **'Ahmed Abdellatif'**
   String get teamMemberAhmed;
 
   /// No description provided for @teamMemberAhmedRole.
   ///
   /// In en, this message translates to:
-  /// **'Backend & AI'**
+  /// **'Auth, Backend & Meals'**
   String get teamMemberAhmedRole;
 
-  /// No description provided for @teamMemberLayla.
+  /// No description provided for @teamMemberMarawan.
   ///
   /// In en, this message translates to:
-  /// **'Layla'**
-  String get teamMemberLayla;
+  /// **'Marawan Mahmoud'**
+  String get teamMemberMarawan;
 
-  /// No description provided for @teamMemberLaylaRole.
+  /// No description provided for @teamMemberMarawanRole.
   ///
   /// In en, this message translates to:
-  /// **'Research & Content'**
-  String get teamMemberLaylaRole;
+  /// **'UI/UX'**
+  String get teamMemberMarawanRole;
 
-  /// No description provided for @teamMemberKhalid.
+  /// No description provided for @teamMemberMario.
   ///
   /// In en, this message translates to:
-  /// **'Khalid'**
-  String get teamMemberKhalid;
+  /// **'Mario Nabil'**
+  String get teamMemberMario;
 
-  /// No description provided for @teamMemberKhalidRole.
+  /// No description provided for @teamMemberMarioRole.
   ///
   /// In en, this message translates to:
-  /// **'Testing & QA'**
-  String get teamMemberKhalidRole;
+  /// **'Profile, Onboarding & Home'**
+  String get teamMemberMarioRole;
+
+  /// No description provided for @teamMemberYusuf.
+  ///
+  /// In en, this message translates to:
+  /// **'Yusuf Dagash'**
+  String get teamMemberYusuf;
+
+  /// No description provided for @teamMemberYusufRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Auth, AI'**
+  String get teamMemberYusufRole;
 
   /// No description provided for @termsOfService.
   ///
