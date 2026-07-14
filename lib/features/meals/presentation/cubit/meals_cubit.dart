@@ -95,22 +95,88 @@ class MealsCubit extends Cubit<MealsState> {
   }
 
   void addMealToSlot(String slotType, MealSummary meal) async {
-    emit(state.copyWith(status: MealsStatus.loading));
+    final previousState = state;
+    final tempId = 'temp_${DateTime.now().microsecondsSinceEpoch}';
+    final tempMeal = MealSummary(
+      id: tempId,
+      name: meal.name,
+      nameAr: meal.nameAr,
+      emoji: meal.emoji,
+      servingLabel: meal.servingLabel,
+      servingLabelAr: meal.servingLabelAr,
+      calories: meal.calories,
+      tags: meal.tags,
+    );
+
+    // Optimistically add the meal to the target slot
+    final updatedSlots = state.slots.map((slot) {
+      if (slot.type == slotType) {
+        return slot.copyWith(
+          loggedMeals: [...slot.loggedMeals, tempMeal],
+        );
+      }
+      return slot;
+    }).toList();
+
+    emit(state.copyWith(
+      slots: updatedSlots,
+      status: MealsStatus.success,
+    ));
+
     try {
-      await _remoteDataSource.insertMeal(meal, slotType, state.selectedDate);
-      await loadMeals();
+      final insertedMeal = await _remoteDataSource.insertMeal(meal, slotType, state.selectedDate);
+      
+      if (!isClosed) {
+        // Silently replace temporary meal with the inserted database row (contains real UUID)
+        final finalSlots = state.slots.map((slot) {
+          if (slot.type == slotType) {
+            return slot.copyWith(
+              loggedMeals: slot.loggedMeals.map((m) {
+                return m.id == tempId ? insertedMeal : m;
+              }).toList(),
+            );
+          }
+          return slot;
+        }).toList();
+
+        emit(state.copyWith(
+          slots: finalSlots,
+          status: MealsStatus.success,
+        ));
+      }
     } catch (e) {
-      emit(state.copyWith(status: MealsStatus.failure));
+      if (!isClosed) {
+        emit(previousState);
+      }
     }
   }
 
   void deleteMealFromSlot(String slotType, String mealId) async {
-    emit(state.copyWith(status: MealsStatus.loading));
+    final previousState = state;
+
+    // Optimistically filter out the deleted meal
+    final updatedSlots = state.slots.map((slot) {
+      if (slot.type == slotType) {
+        return slot.copyWith(
+          loggedMeals: slot.loggedMeals.where((m) => m.id != mealId).toList(),
+        );
+      }
+      return slot;
+    }).toList();
+
+    emit(state.copyWith(
+      slots: updatedSlots,
+      status: updatedSlots.any((s) => s.isLogged) ? MealsStatus.success : MealsStatus.empty,
+    ));
+
     try {
-      await _remoteDataSource.deleteMeal(mealId);
-      await loadMeals();
+      if (!mealId.startsWith('temp_')) {
+        await _remoteDataSource.deleteMeal(mealId);
+      }
     } catch (e) {
-      emit(state.copyWith(status: MealsStatus.failure));
+      if (!isClosed) {
+        emit(previousState);
+      }
     }
   }
 
