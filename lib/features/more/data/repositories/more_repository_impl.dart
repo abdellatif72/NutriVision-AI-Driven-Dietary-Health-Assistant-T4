@@ -1,10 +1,10 @@
+import 'dart:typed_data';
 import 'package:afia/core/error/exceptions.dart';
 import 'package:afia/core/error/failures.dart';
 import 'package:afia/features/more/data/datasources/more_local_datasource.dart';
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:afia/features/more/domain/entities/app_preferences.dart';
 import 'package:afia/features/more/domain/entities/diet_preferences.dart';
-import 'package:afia/features/more/domain/entities/notification_preferences.dart';
 import 'package:afia/features/more/domain/entities/user_profile.dart';
 import 'package:afia/features/more/domain/repositories/more_repository.dart';
 import 'package:dartz/dartz.dart';
@@ -53,6 +53,28 @@ class MoreRepositoryImpl implements MoreRepository {
   }
 
   @override
+  Future<Either<Failure, String>> uploadProfileImage(Uint8List bytes, String fileName) async {
+    try {
+      final publicUrl = await remoteDataSource.uploadProfileImage(bytes, fileName);
+      
+      // Update local profile cache
+      try {
+        final cachedProfile = await localDataSource.getCachedProfile();
+        final updatedProfile = cachedProfile.copyWith(photoUrl: publicUrl);
+        await localDataSource.cacheProfile(updatedProfile);
+      } catch (_) {
+        final remoteProfile = await remoteDataSource.getProfile();
+        final updatedProfile = remoteProfile.copyWith(photoUrl: publicUrl);
+        await localDataSource.cacheProfile(updatedProfile);
+      }
+      
+      return Right(publicUrl);
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, DietPreferences>> getDietPreferences() async {
     try {
       final remotePrefs = await remoteDataSource.getDietPreferences();
@@ -82,42 +104,6 @@ class MoreRepositoryImpl implements MoreRepository {
     try {
       final updatedPrefs = await remoteDataSource.updateDietPreferences(prefs);
       await localDataSource.cacheDietPreferences(updatedPrefs);
-      return Right(updatedPrefs);
-    } catch (e) {
-      return Left(ServerFailure(e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, NotificationPreferences>> getNotificationPreferences() async {
-    try {
-      final remotePrefs = await remoteDataSource.getNotificationPreferences();
-      await localDataSource.cacheNotificationPreferences(remotePrefs);
-      return Right(remotePrefs);
-    } on ServerException {
-      try {
-        final localPrefs = await localDataSource.getCachedNotificationPreferences();
-        return Right(localPrefs);
-      } on CacheException {
-        return const Left(CacheFailure('Failed to load notification preferences from cache.'));
-      }
-    } catch (e) {
-      try {
-        final localPrefs = await localDataSource.getCachedNotificationPreferences();
-        return Right(localPrefs);
-      } catch (_) {
-        return Left(ServerFailure(e.toString()));
-      }
-    }
-  }
-
-  @override
-  Future<Either<Failure, NotificationPreferences>> updateNotificationPreferences(
-    NotificationPreferences prefs,
-  ) async {
-    try {
-      final updatedPrefs = await remoteDataSource.updateNotificationPreferences(prefs);
-      await localDataSource.cacheNotificationPreferences(updatedPrefs);
       return Right(updatedPrefs);
     } catch (e) {
       return Left(ServerFailure(e.toString()));

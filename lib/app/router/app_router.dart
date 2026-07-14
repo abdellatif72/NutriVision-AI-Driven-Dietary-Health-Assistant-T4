@@ -17,7 +17,6 @@ import 'package:afia/features/more/presentation/pages/diet_preferences_page.dart
 import 'package:afia/features/more/presentation/pages/edit_profile_page.dart';
 import 'package:afia/features/more/presentation/pages/faqs_page.dart';
 import 'package:afia/features/more/presentation/pages/help_page.dart';
-import 'package:afia/features/more/presentation/pages/notifications_page.dart';
 import 'package:afia/features/more/presentation/pages/personal_information_page.dart';
 import 'package:afia/features/more/presentation/pages/profile_page.dart';
 import 'package:afia/features/more/presentation/pages/settings_page.dart';
@@ -135,11 +134,6 @@ abstract final class AppRouter {
       case RouteNames.settings:
         return MaterialPageRoute<void>(
           builder: (_) => const SettingsPage(),
-          settings: settings,
-        );
-      case RouteNames.notifications:
-        return MaterialPageRoute<void>(
-          builder: (_) => const NotificationsPage(),
           settings: settings,
         );
       case RouteNames.changePassword:

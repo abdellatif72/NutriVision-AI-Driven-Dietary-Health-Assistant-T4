@@ -13,6 +13,8 @@ import 'package:afia/features/more/domain/usecases/get_more_profile.dart';
 import 'package:afia/features/more/domain/usecases/update_user_profile.dart';
 import 'package:afia/features/more/domain/usecases/get_diet_preferences.dart';
 import 'package:afia/features/more/domain/usecases/update_diet_preferences.dart';
+import 'package:afia/features/more/domain/usecases/upload_profile_image.dart';
+import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
 import 'package:afia/features/more/presentation/cubit/profile_form_cubit.dart';
 import 'package:afia/features/explore/data/datasources/explore_remote_datasource.dart';
 import 'package:afia/features/explore/data/datasources/explore_remote_datasource_impl.dart';
@@ -46,6 +48,7 @@ abstract final class InjectionContainer {
     sl.registerLazySingleton(() => UpdateUserProfile(sl()));
     sl.registerLazySingleton(() => GetDietPreferences(sl()));
     sl.registerLazySingleton(() => UpdateDietPreferences(sl()));
+    sl.registerLazySingleton(() => UploadProfileImage(sl()));
     sl.registerLazySingleton(() => GetFoods(sl()));
     sl.registerLazySingleton(() => LogFood(sl()));
 
@@ -70,6 +73,12 @@ abstract final class InjectionContainer {
         updateUserProfile: sl(),
         getDietPreferences: sl(),
         updateDietPreferences: sl(),
+      ),
+    );
+    sl.registerFactory(
+      () => MoreCubit(
+        getMoreProfile: sl(),
+        uploadProfileImageUsecase: sl(),
       ),
     );
 

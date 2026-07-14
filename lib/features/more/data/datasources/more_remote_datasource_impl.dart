@@ -1,11 +1,10 @@
+import 'dart:typed_data';
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:afia/features/more/data/models/app_preferences_model.dart';
 import 'package:afia/features/more/data/models/diet_preferences_model.dart';
-import 'package:afia/features/more/data/models/notification_preferences_model.dart';
 import 'package:afia/features/more/data/models/user_profile_model.dart';
 import 'package:afia/features/more/domain/entities/app_preferences.dart';
 import 'package:afia/features/more/domain/entities/diet_preferences.dart';
-import 'package:afia/features/more/domain/entities/notification_preferences.dart';
 import 'package:afia/features/more/domain/entities/user_profile.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -97,36 +96,6 @@ class MoreRemoteDataSourceImpl implements MoreRemoteDataSource {
     );
   }
 
-  Map<String, dynamic> _notificationToDb(NotificationPreferences prefs, String userId) {
-    return {
-      'user_id': userId,
-      'enabled': prefs.enabled,
-      'water_reminder': prefs.waterReminder,
-      'water_interval_hours': prefs.waterIntervalHours,
-      'meal_reminder': prefs.mealReminder,
-      'meal_times': prefs.mealTimes,
-      'weigh_in_reminder': prefs.weighInReminder,
-      'weigh_in_day': prefs.weighInDay,
-      'progress_summary': prefs.progressSummary,
-      'summary_frequency': prefs.summaryFrequency,
-      'updated_at': DateTime.now().toUtc().toIso8601String(),
-    };
-  }
-
-  NotificationPreferences _notificationFromDb(Map<String, dynamic> row) {
-    return NotificationPreferencesModel(
-      enabled: row['enabled'] as bool? ?? true,
-      waterReminder: row['water_reminder'] as bool? ?? true,
-      waterIntervalHours: row['water_interval_hours'] as int? ?? 2,
-      mealReminder: row['meal_reminder'] as bool? ?? true,
-      mealTimes: (row['meal_times'] as List<dynamic>?)?.map((e) => e as String).toList() ?? const ['08:00', '13:00', '20:00'],
-      weighInReminder: row['weigh_in_reminder'] as bool? ?? false,
-      weighInDay: row['weigh_in_day'] as String? ?? 'Monday',
-      progressSummary: row['progress_summary'] as bool? ?? false,
-      summaryFrequency: row['summary_frequency'] as String? ?? 'weekly',
-    );
-  }
-
   Map<String, dynamic> _appToDb(AppPreferences prefs, String userId) {
     return {
       'user_id': userId,
@@ -170,6 +139,31 @@ class MoreRemoteDataSourceImpl implements MoreRemoteDataSource {
   }
 
   @override
+  Future<String> uploadProfileImage(Uint8List bytes, String fileName) async {
+    final userId = _currentUserId;
+    final fileExtension = fileName.split('.').last;
+    final path = '$userId/profile.$fileExtension';
+
+    await _supabaseClient.storage.from('avatars').uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(
+            upsert: true,
+            contentType: 'image/$fileExtension',
+          ),
+        );
+
+    final publicUrl = _supabaseClient.storage.from('avatars').getPublicUrl(path);
+
+    await _supabaseClient
+        .from('user_profiles')
+        .update({'photo_url': publicUrl})
+        .eq('id', userId);
+
+    return publicUrl;
+  }
+
+  @override
   Future<DietPreferences> getDietPreferences() async {
     final userId = _currentUserId;
     final response = await _supabaseClient
@@ -189,31 +183,6 @@ class MoreRemoteDataSourceImpl implements MoreRemoteDataSource {
     final userId = _currentUserId;
     final data = _dietToDb(prefs, userId);
     await _supabaseClient.from('diet_preferences').upsert(data);
-    return prefs;
-  }
-
-  @override
-  Future<NotificationPreferences> getNotificationPreferences() async {
-    final userId = _currentUserId;
-    final response = await _supabaseClient
-        .from('notification_preferences')
-        .select()
-        .eq('user_id', userId)
-        .maybeSingle();
-
-    if (response == null) {
-      return const NotificationPreferences();
-    }
-    return _notificationFromDb(response);
-  }
-
-  @override
-  Future<NotificationPreferences> updateNotificationPreferences(
-    NotificationPreferences prefs,
-  ) async {
-    final userId = _currentUserId;
-    final data = _notificationToDb(prefs, userId);
-    await _supabaseClient.from('notification_preferences').upsert(data);
     return prefs;
   }
 

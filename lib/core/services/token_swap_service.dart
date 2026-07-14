@@ -102,18 +102,6 @@ class TokenSwapService {
           'water_goal_ml': 2500,
         });
 
-        // Insert default notification preferences
-        await _supabaseClient.from('notification_preferences').insert({
-          'user_id': userId,
-          'enabled': true,
-          'water_reminder': true,
-          'water_interval_hours': 2,
-          'meal_reminder': true,
-          'meal_times': ['08:00', '13:00', '20:00'],
-          'weigh_in_reminder': false,
-          'progress_summary': false,
-        });
-
         // Insert default app preferences
         await _supabaseClient.from('app_preferences').insert({
           'user_id': userId,
