@@ -23,6 +23,8 @@ class MealCategoryDetailPage extends StatelessWidget {
         return 'lunch';
       case MealSlot.dinner:
         return 'dinner';
+      case MealSlot.snack:
+        return 'snack';
     }
   }
 

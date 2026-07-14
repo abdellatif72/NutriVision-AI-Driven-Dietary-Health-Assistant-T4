@@ -16,33 +16,15 @@ class TodaysMealsList extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                Localizations.localeOf(context).languageCode == 'ar'
-                    ? 'وجبات اليوم'
-                    : "Today's Meals",
-                style: AfiaTypography.cardTitle.copyWith(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AfiaColors.textPrimary,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: Text(
-                  Localizations.localeOf(context).languageCode == 'ar'
-                      ? 'عرض الكل'
-                      : 'See all',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w700,
-                    color: AfiaColors.primary,
-                  ),
-                ),
-              ),
-            ],
+          child: Text(
+            Localizations.localeOf(context).languageCode == 'ar'
+                ? 'وجبات اليوم'
+                : "Today's Meals",
+            style: AfiaTypography.cardTitle.copyWith(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AfiaColors.textPrimary,
+            ),
           ),
         ),
         ...meals.map((meal) => _MealRow(meal: meal, onTap: onMealTap != null ? () => onMealTap!(meal) : null)),

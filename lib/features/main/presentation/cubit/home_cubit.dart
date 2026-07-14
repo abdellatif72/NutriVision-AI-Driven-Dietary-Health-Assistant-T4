@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum HomeStatus { initial, loading, success, failure }
 
-enum MealSlot { breakfast, lunch, dinner }
+enum MealSlot { breakfast, lunch, dinner, snack }
 
 class MacroSummary extends Equatable {
   const MacroSummary({
@@ -240,6 +240,7 @@ class HomeCubit extends Cubit<HomeState> {
       final breakfastMeals = loggedMeals.where((m) => m.slotType == 'breakfast').toList();
       final lunchMeals = loggedMeals.where((m) => m.slotType == 'lunch').toList();
       final dinnerMeals = loggedMeals.where((m) => m.slotType == 'dinner').toList();
+      final snackMeals = loggedMeals.where((m) => m.slotType == 'snack').toList();
 
       final mealsList = [
         MealEntry(
@@ -262,6 +263,13 @@ class HomeCubit extends Cubit<HomeState> {
           emoji: '🌙',
           description: dinnerMeals.isEmpty ? null : dinnerMeals.map((m) => m.name).join(', '),
           calories: dinnerMeals.isEmpty ? null : dinnerMeals.fold<int>(0, (sum, m) => sum + m.calories),
+        ),
+        MealEntry(
+          slot: MealSlot.snack,
+          title: 'Snack',
+          emoji: '🍎',
+          description: snackMeals.isEmpty ? null : snackMeals.map((m) => m.name).join(', '),
+          calories: snackMeals.isEmpty ? null : snackMeals.fold<int>(0, (sum, m) => sum + m.calories),
         ),
       ];
 
