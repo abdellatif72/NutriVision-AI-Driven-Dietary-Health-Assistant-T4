@@ -4,6 +4,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
+import 'package:afia/features/main/presentation/pages/meal_category_detail_page.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
 import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart';
@@ -262,12 +263,35 @@ class _HomeViewState extends State<_HomeView> {
                   greeting: isAr ? 'لنبدأ يوماً رائعاً معاً!' : state.greeting,
                   userName: state.userName,
                 ),
-                DailyProgressCard(
-                  percent: 0.78,
-                  description: isAr
-                      ? 'عمل رائع! أنت\nعلى المسار الصحيح اليوم.'
-                      : "Great job! You're\non track today.",
-                ),
+                Builder(builder: (context) {
+                  final caloriePercent = (state.calories?.percent ?? 0.0).clamp(0.0, 1.0);
+                  final String progressDesc;
+                  if (isAr) {
+                    if (caloriePercent >= 1.0) {
+                      progressDesc = 'لقد وصلت إلى هدفك اليومي! 🎉';
+                    } else if (caloriePercent >= 0.75) {
+                      progressDesc = 'رائع! أنت\nعلى المسار الصحيح اليوم.';
+                    } else if (caloriePercent >= 0.5) {
+                      progressDesc = 'تقدم جيد!\nأنت في منتصف الطريق.';
+                    } else {
+                      progressDesc = 'لنبدأ! أنت\nفي بداية رحلتك اليوم.';
+                    }
+                  } else {
+                    if (caloriePercent >= 1.0) {
+                      progressDesc = "You've reached your\ndaily goal! 🎉";
+                    } else if (caloriePercent >= 0.75) {
+                      progressDesc = "Great job! You're\nalmost there.";
+                    } else if (caloriePercent >= 0.5) {
+                      progressDesc = "Good progress!\nYou're halfway there.";
+                    } else {
+                      progressDesc = "Let's get going — you're\njust getting started.";
+                    }
+                  }
+                  return DailyProgressCard(
+                    percent: caloriePercent,
+                    description: progressDesc,
+                  );
+                }),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
@@ -306,7 +330,14 @@ class _HomeViewState extends State<_HomeView> {
                   consumed: state.calories?.consumed ?? 1420,
                   goal: state.calories?.goal ?? 2000,
                 ),
-                TodaysMealsList(meals: state.meals),
+                TodaysMealsList(meals: state.meals, onMealTap: (meal) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MealCategoryDetailPage(mealEntry: meal),
+                    ),
+                  );
+                }),
               ],
             ),
           ),

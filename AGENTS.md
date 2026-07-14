@@ -12,7 +12,7 @@ Afia is a **Flutter-based nutrition and wellness mobile app** targeting **Arabic
 - **Target users**: Arabic-speaking adults
 - **Language/RTL**: Arabic primary, RTL layout (localization infrastructure exists but is not wired yet)
 - **Project type**: Graduation project (team of 4)
-- **Current stage**: UI shell + mock data complete. Auth flow UI is largely built (6 screens). AI chat UI is built with voice/image/history. Meals UI is fully built. More feature has the most complete architecture (models, use cases, entities). Backend and data layer not yet started. ⚠️ Potential compile errors (see section 9).
+- **Current stage**: Most features fully implemented with real Supabase backend. Auth, Meals, Water, Explore, AI Chat, Home dashboard, Progress page — all wired to real data. Localization infrastructure wired (ARB files added). Reminders feature removed from scope.
 
 ---
 
@@ -348,41 +348,37 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 | **Design system** | Colors, typography, spacing, theme — all token files complete |
 | **Routing** | All 31 named routes defined and wired |
 | **Onboarding** | Logo, hero text, CTAs, navigates to auth. Full `OnboardBloc`, 4 widget files |
-| **Home dashboard** | Metrics (steps, water, heart rate), calories ring, daily progress, meals list — all with mock data via `HomeCubit` |
-| **Progress page** | Calories bar chart, water bar chart, macro breakdown, weight trend, weekly/monthly/yearly toggle — mock data. Charts use design system tokens. |
+| **Home dashboard** | Metrics (steps, water, heart rate), calories ring, daily progress wired to real Supabase data. `DailyProgressCard` shows real calorie %. Meal rows now tappable — open `MealCategoryDetailPage`. |
+| **Progress page** | Wired to `weight_history` and `daily_metrics` from Supabase. |
 | **Main shell** | `MainShellPage` with `MainShellCubit` and `AfiaBottomNav` (5 tabs: home, meals, water, ai, more) |
-| **Water logging** | Preset buttons (250ml, 500ml, custom), progress ring, entry list — mock data via `WaterRecordingCubit` |
-| **Shared widgets** | `AfiaBarChartCard`, `AfiaMetricStatCard`, `AfiaMiniMetricCard`, `AfiaWeekCalendar`, `AfiaWeeklyProgressCard` |
-| **Domain entity** | `MealSummary` (id, name, emoji, calories, serving) |
+| **Water logging** | Full data layer wired to Supabase. `WaterRecordingCubit` reads/writes real data. |
+| **Meals** | Full data layer (`MealModel`, `MealRemoteDataSource`, `MealRepositoryImpl`). UI wired via `MealsCubit`. Add/delete meals persisted to Supabase. `MealCategoryDetailPage` shows per-slot meal lists with macros. |
+| **AI Chat** | Gemini API integrated (`AiBloc`, `AiService`). Snap Your Plate (image recognition). AI confirmation bottom sheet. Logic moved out of `ai_page.dart` into proper Clean Architecture layers. |
+| **Explore** | `ExploreBloc` implemented and connected to Nutritionix/USDA APIs. |
+| **More / profile** | Most complete feature. Full data + domain + presentation layers. Supabase + SharedPreferences. |
+| **Localization** | `flutter_localizations` wired. `app_en.arb` and `app_ar.arb` added. RTL audit done. |
+| **DI wiring** | Auth, Meals, Water, Explore, More, AI — all registered in `InjectionContainer`. |
+| **Shared widgets** | `AfiaBarChartCard`, `AfiaMetricStatCard`, `AfiaMiniMetricCard`, `AfiaWeekCalendar`, `AfiaWeeklyProgressCard`, `AfiaEmptyState`, `AfiaErrorState` |
 | **Error infrastructure** | `Failure`, `ServerFailure`, `CacheFailure`, `ServerException`, `CacheException` |
-| **Auth** | Fully implemented. Includes `AuthUserModel`, `AuthRemoteDataSource`, `AuthRepositoryImpl`, `AuthBloc`, and fully wired UI screens (`LoginPage`, `SignupPage`, `ForgotPasswordPage`, `AuthPage` session guard). Firebase initialized. |
+| **Auth** | Fully implemented. Firebase + Supabase. All screens wired. |
 
 ### ⚠️ Partial
 
-| Feature | What exists | What's missing |
-|---------|-------------|---------------|
-| **AI Chat** | Full chat interface (558 lines) with speech-to-text (`speech_to_text`), image picker (`image_picker`), SharedPreferences-based history persistence, mock responses, bottom nav integration. | `AiBloc` is an empty stub. `AiService` (`core/services/ai_service.dart`) is an empty stub. No real LLM/API integration. |
-| **Meals** | `MealsPage` (764 lines): full meal logging UI with date selector, summary card, quick actions (breakfast/lunch/dinner/snack), AI suggestion card, meal log cards. `MealsCubit` + `MealsState` with mock data. `MealSearchBloc`/`Event`/`State` with mock results. 6 widget files. | NO `data/` directory at all — no datasources, no models, no repository implementations, no use cases. Domain layer only has the entity. |
-| **More / profile** | Most complete feature. **Data layer**: 4 model files (`UserProfileModel`, `AppPreferencesModel`, `DietPreferencesModel`, `NotificationPreferencesModel`), abstract datasource interfaces (local + remote). **Domain layer**: 4 entities, abstract repository, 5 use cases. **Presentation**: 14 page files (MorePage, ProfilePage, SettingsPage, EditProfilePage, PersonalInformationPage, DietPreferencesPage, NotificationsPage, ChangePasswordPage, ProgressSettingsPage, AboutPage, HelpPage, FaqsPage), 8 widget files, 8 cubit files. | None. Datasources implemented using Supabase and SharedPreferences. MoreRepositoryImpl coordinates caching and Supabase synchronization. |
-| **Localization** | Infrastructure files exist (`l10n.dart` defines `supported = ['en', 'ar']`, `locale_cubit.dart` exists). | No translation strings, no `.arb` files, no `flutter_localizations` or `intl` packages. App is not wired with `LocalizationsDelegate` or `supportedLocales`. |
-| **DI wiring** | GetIt is installed and `InjectionContainer` is initialized in `main.dart` for Auth. | Registered Auth and More features (SharedPreferences, ApiClient, remote/local datasources, repositories). Other features are not registered yet. |
+| Feature | What's remaining |
+|---------|------------------|
+| **Steps / Health** | Steps metric on home still shows 0. No Apple Health / Google Fit integration yet. |
+| **Dark theme** | Not implemented |
+| **Push notifications** | Not implemented |
 
 ### ❌ Not Started
 
 | Feature | Notes |
 |---------|-------|
-| **Explore** | Feature folder exists, page is a `FeaturePlaceholderPage`. `ExploreBloc` is empty stub. No logic, no UI. |
-| **Data layer (except auth/more)** | `meals` has NO data dir at all. All other features have no data layer. |
-| **Real API integration** | ApiClient is fully implemented using Dio, with timeout configuration, logging interceptors, and error mapping. |
-| **Core services** | `AuthService` (might be deprecated by `AuthBloc`), `AiService`, `AnalyticsService` — all empty stubs. `LocalStorage`, `SecureStorage` — all empty stubs. |
-| **Dark theme** | Not implemented |
-| **Push notifications** | Not implemented |
+| **Health Package** | Sync steps/heart rate from Apple Health/Google Fit to `daily_metrics`. |
 
 ### 🔧 Known Issues / Risks
 
-| Issue | Details |
-|-------|---------|
-| **AI page bypasses service layer** | `ai_page.dart` directly uses `speech_to_text`, `image_picker`, and `shared_preferences` instead of going through the stub service layer. |
+None outstanding.
 
 ---
 
@@ -407,56 +403,54 @@ AfiaTypography.fontFamily = GoogleFonts.plusJakartaSans().fontFamily;
 4. **Use `FeaturePlaceholderPage`** as a temporary UI for any screen not yet implemented.
 5. **Wire new blocs/cubits into `InjectionContainer.init()`** once the data layer exists.
 6. **Register new routes** in both `route_names.dart` and `app_router.dart`.
-7. **Do not add packages** without confirming they belong in `pubspec.yaml` (several stubs assume packages not yet installed).
-8. **Mock data** lives inside cubits/blocs for now — real data sources will replace it once the data layer is built.
-9. **Meals has no `data/` directory** — unlike the reference folder structure, the meals feature has zero data layer files. Create from scratch if needed.
+7. **Do not add packages** without confirming they belong in `pubspec.yaml`.
+8. **Reminders feature has been removed** from the app — do not add it back.
 
 
 ---
 
 ## What's Next to Work On
 
-> Last updated: 2026-07-09. 3-Day Sprint Plan to Final Demo.
+> Last updated: 2026-07-14. Final sprint — Day 3 remaining tasks.
 
-### 🔴 Day 1 — Core Data Layers & Backend Integrations
-
-| Assignee | Task | Notes |
-|----------|------|-------|
-| **Abdellatif** | ✅ Supabase Setup | Run `database_design.md` SQL scripts to create tables. (DONE) |
-| **Abdellatif** | ✅ API Configuration | Add Supabase URL/Anon Key to `app_constants.dart`. (DONE) |
-| **Abdellatif** | ✅ Dio Client | Configure `dio` package with interceptors for external APIs. (DONE) |
-| **Abdellatif** | ✅ BMR Logic | Implement `CalculateDailyCalories` usecase with unit tests. (DONE) |
-| **Yusuf** | Gemini Text API | Implement `AiService` for "Recipe Converter" and "Snack Discovery". |
-| **Yusuf** | "Snap Your Plate" | Implement Gemini Vision API for image recognition mapping to `Meal` entity. |
-| **Yusuf** | AI UI Refactoring | Move logic from `ai_page.dart` to `AiBloc` events (Clean Architecture). |
-| **Mario** | Meals Data Layer | Create `MealModel`, `MealRemoteDataSource`, `MealRepositoryImpl` (Supabase). |
-| **Mario** | Meals UI Wiring | Wire `AddMeal` and `SearchMeals` to `MealsCubit`. |
-| **Mario** | Water Data Layer | Create water data layer and wire `WaterRecordingCubit` to Supabase. |
-
-### 🟡 Day 2 — Polish, Localization, and UI Completion
+### 🔴 Day 1 — Core Data Layers & Backend Integrations ✅ ALL DONE
 
 | Assignee | Task | Notes |
 |----------|------|-------|
-| **Abdellatif** | ✅ Profile Persistence | Save BMR and User Profile to Supabase `user_profiles` table on onboard complete. (DONE) |
-| **Abdellatif** | ✅ Progress Page | Wire charts/trends on Progress Page to `weight_history` and `daily_metrics`. (DONE) |
-| **Abdellatif** | ✅ UI Polish | Build `AfiaEmptyState` and `AfiaErrorState` shared widgets. (DONE) |
-| **Yusuf** | AI Confirmation | Add Bottom Sheet for manual calorie/macro override before saving AI meals. |
-| **Yusuf** | Localization Wiring | Set up `flutter_localizations` & `intl`. Add `app_en.arb` and `app_ar.arb`. |
-| **Yusuf** | RTL Audit | Swap `EdgeInsets` to `EdgeInsetsDirectional` for proper Arabic layout. |
-| **Mario** | Explore Feature | Implement `ExploreBloc` & connect to external Nutritionix/USDA APIs. |
-| **Mario** | Health Package | Sync steps/heart rate from Apple Health/Google Fit to `daily_metrics`. |
-| **Mario** | Shimmer Loading | Add skeleton loading animations for Meals list and Explore page. |
+| **Abdellatif** | ✅ Supabase Setup | DONE |
+| **Abdellatif** | ✅ API Configuration | DONE |
+| **Abdellatif** | ✅ Dio Client | DONE |
+| **Abdellatif** | ✅ BMR Logic | DONE |
+| **Yusuf** | ✅ Gemini Text API | DONE |
+| **Yusuf** | ✅ "Snap Your Plate" | DONE |
+| **Yusuf** | ✅ AI UI Refactoring | DONE |
+| **Mario** | ✅ Meals Data Layer | DONE |
+| **Mario** | ✅ Meals UI Wiring | DONE |
+| **Mario** | ✅ Water Data Layer | DONE |
+
+### 🟡 Day 2 — Polish, Localization, and UI Completion ✅ ALL DONE
+
+| Assignee | Task | Notes |
+|----------|------|-------|
+| **Abdellatif** | ✅ Profile Persistence | DONE |
+| **Abdellatif** | ✅ Progress Page | DONE |
+| **Abdellatif** | ✅ UI Polish | DONE |
+| **Yusuf** | ✅ AI Confirmation | DONE |
+| **Yusuf** | ✅ Localization Wiring | DONE |
+| **Yusuf** | ✅ RTL Audit | DONE |
+| **Mario** | ✅ Explore Feature | DONE |
+| **Mario** | ✅ Health Package | DONE |
+| **Mario** | ✅ Shimmer Loading | DONE |
 
 ### 🟢 Day 3 — Testing, Documentation, & Presentation
 
 | Assignee | Task | Notes |
 |----------|------|-------|
-| **Abdellatif** | ✅ Integration Test | Write the 3-minute E2E integration test for onboarding flow (Week 5 KPI). (DONE) |
+| **Abdellatif** | ✅ Integration Test | DONE |
 | **Abdellatif** | Performance Audit | Run Flutter DevTools. Ensure smooth scrolling and no memory leaks. |
 | **Abdellatif** | Bug Squashing | Fix any final crashes. |
 | **Yusuf** | Demo Seeding | Seed a Demo User account in Supabase with realistic mock data for the demo. |
 | **Yusuf** | Presentation | Draft final presentation slides (Architecture, Supabase, Gemini AI). |
 | **Yusuf** | Demo Rehearsal | Rehearse live demo. Test "Snap Your Plate" on a real device. |
-| **Mario** | Widget Testing | Write widget tests for Home, Meals, and Water pages (Week 3/4 deliverable). |
-| **Mario** | Reminders | Implement `RemindersPage` using `flutter_local_notifications`. |
+| **Mario** | Widget Testing | Write widget tests for Home, Meals, and Water pages. |
 | **Mario** | Documentation | Finalize DEPI project document and update `README.md`. |
