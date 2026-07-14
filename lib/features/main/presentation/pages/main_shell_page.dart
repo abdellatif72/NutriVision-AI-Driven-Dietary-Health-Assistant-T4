@@ -16,10 +16,21 @@ import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class MainShellPage extends StatelessWidget {
+class MainShellPage extends StatefulWidget {
   const MainShellPage({super.key, this.initialTab = MainTab.home});
 
   final MainTab initialTab;
+
+  @override
+  State<MainShellPage> createState() => _MainShellPageState();
+}
+
+class _MainShellPageState extends State<MainShellPage> {
+  @override
+  void initState() {
+    super.initState();
+    sl<MealsCubit>().loadMeals();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +39,8 @@ class MainShellPage extends StatelessWidget {
 
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => MainShellCubit()..selectTab(initialTab)),
-        BlocProvider(create: (_) => sl<MealsCubit>()..loadMeals()),
+        BlocProvider(create: (_) => MainShellCubit()..selectTab(widget.initialTab)),
+        BlocProvider.value(value: sl<MealsCubit>()),
         // Build HomeCubit after MealsCubit is ready, so sl() successfully retrieves it and passes it as parameter
         BlocProvider(create: (ctx) => sl<HomeCubit>(param1: userName)..loadDashboardData()),
       ],
