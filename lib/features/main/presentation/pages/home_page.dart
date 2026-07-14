@@ -99,10 +99,16 @@ class HomePage extends StatelessWidget {
     // Read the real user name from the global AuthBloc
     final authState = context.read<AuthBloc>().state;
     final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
-    return BlocProvider(
-      create: (_) => sl<HomeCubit>(param1: userName)..loadDashboardData(),
-      child: _HomeView(showBottomNav: showBottomNav),
-    );
+    
+    try {
+      context.read<HomeCubit>();
+      return _HomeView(showBottomNav: showBottomNav);
+    } catch (_) {
+      return BlocProvider(
+        create: (_) => sl<HomeCubit>(param1: userName)..loadDashboardData(),
+        child: _HomeView(showBottomNav: showBottomNav),
+      );
+    }
   }
 }
 

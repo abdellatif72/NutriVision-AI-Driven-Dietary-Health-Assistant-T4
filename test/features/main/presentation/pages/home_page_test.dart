@@ -4,6 +4,7 @@ import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:afia/features/main/presentation/pages/home_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_state.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
 import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart';
@@ -36,6 +37,7 @@ class FakeAuthBloc extends Bloc<AuthEvent, AuthState> implements AuthBloc {
 class MockMealRemoteDataSource extends Mock implements MealRemoteDataSource {}
 class MockWaterRemoteDataSource extends Mock implements WaterRemoteDataSource {}
 class MockMoreRemoteDataSource extends Mock implements MoreRemoteDataSource {}
+class MockMealsCubit extends Mock implements MealsCubit {}
 
 Widget wrapInApp(Widget child) {
   return MaterialApp(
@@ -94,20 +96,30 @@ void main() {
         mealDataSource: sl(),
         waterDataSource: sl(),
         moreDataSource: sl(),
+        mealsCubit: sl(),
         userName: userName,
       ),
     );
-    sl.registerFactory<MealsCubit>(() => MealsCubit(remoteDataSource: mockMealDS));
+    sl.registerFactory<MealsCubit>(
+      () => MealsCubit(
+        remoteDataSource: mockMealDS,
+        moreDataSource: mockMoreDS,
+      ),
+    );
   });
 
   group('HomePage', () {
     test(
       'HomeCubit emits success state with data after loadDashboardData',
       () async {
+        final mockMealsCubit = MockMealsCubit();
+        when(() => mockMealsCubit.stream).thenAnswer((_) => const Stream<MealsState>.empty());
+
         final cubit = HomeCubit(
           mealDataSource: mockMealDS,
           waterDataSource: mockWaterDS,
           moreDataSource: mockMoreDS,
+          mealsCubit: mockMealsCubit,
           userName: 'Sara',
         );
         expect(cubit.state.status, HomeStatus.initial);

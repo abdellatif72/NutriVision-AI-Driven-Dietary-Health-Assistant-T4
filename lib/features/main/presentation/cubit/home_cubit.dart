@@ -1,6 +1,9 @@
+import 'dart:async';
 import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
 import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
 import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_state.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -172,17 +175,27 @@ class HomeCubit extends Cubit<HomeState> {
   final MealRemoteDataSource _mealDataSource;
   final WaterRemoteDataSource _waterDataSource;
   final MoreRemoteDataSource _moreDataSource;
+  final MealsCubit _mealsCubit;
   final String? userName;
+  late final StreamSubscription<MealsState> _mealsSubscription;
 
   HomeCubit({
     required MealRemoteDataSource mealDataSource,
     required WaterRemoteDataSource waterDataSource,
     required MoreRemoteDataSource moreDataSource,
+    required MealsCubit mealsCubit,
     this.userName,
   })  : _mealDataSource = mealDataSource,
         _waterDataSource = waterDataSource,
         _moreDataSource = moreDataSource,
-        super(const HomeState());
+        _mealsCubit = mealsCubit,
+        super(const HomeState()) {
+    _mealsSubscription = _mealsCubit.stream.listen((mealsState) {
+      if (mealsState.status == MealsStatus.success || mealsState.status == MealsStatus.empty) {
+        loadDashboardData();
+      }
+    });
+  }
 
   Future<void> loadDashboardData() async {
     emit(state.copyWith(status: HomeStatus.loading));
@@ -286,5 +299,11 @@ class HomeCubit extends Cubit<HomeState> {
     } catch (e) {
       emit(state.copyWith(status: HomeStatus.failure));
     }
+  }
+
+  @override
+  Future<void> close() {
+    _mealsSubscription.cancel();
+    return super.close();
   }
 }

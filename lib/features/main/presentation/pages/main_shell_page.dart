@@ -1,3 +1,9 @@
+import 'package:afia/app/di/injection_container.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
+import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_state.dart';
 import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
@@ -17,8 +23,16 @@ class MainShellPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => MainShellCubit()..selectTab(initialTab),
+    final authState = context.read<AuthBloc>().state;
+    final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => MainShellCubit()..selectTab(initialTab)),
+        BlocProvider(create: (_) => sl<MealsCubit>()..loadMeals()),
+        // Build HomeCubit after MealsCubit is ready, so sl() successfully retrieves it and passes it as parameter
+        BlocProvider(create: (ctx) => sl<HomeCubit>(param1: userName)..loadDashboardData()),
+      ],
       child: const _MainShellView(),
     );
   }
@@ -81,6 +95,11 @@ class _MainShellViewState extends State<_MainShellView> {
                   onSelected: (index) {
                     final tab = MainTab.values[index];
                     context.read<MainShellCubit>().selectTab(tab);
+                    if (tab == MainTab.home) {
+                      context.read<HomeCubit>().loadDashboardData();
+                    } else if (tab == MainTab.meals) {
+                      context.read<MealsCubit>().loadMeals();
+                    }
                   },
                   centerIcon: Icons.add_rounded,
                   onCenterTap: () => _showActionBottomSheet(context),
@@ -128,7 +147,11 @@ class _MainShellViewState extends State<_MainShellView> {
                           subtitle: isAr ? 'سجّل كمية الماء التي شربتها' : 'Record your water intake',
                           onTap: () {
                             Navigator.pop(sheetContext);
-                            Navigator.pushNamed(context, RouteNames.water);
+                            Navigator.pushNamed(context, RouteNames.water).then((_) {
+                              if (context.mounted) {
+                                context.read<HomeCubit>().loadDashboardData();
+                              }
+                            });
                           },
                         ),
                         const SizedBox(height: 8),

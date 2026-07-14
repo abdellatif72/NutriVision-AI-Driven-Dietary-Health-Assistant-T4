@@ -22,8 +22,8 @@ class MealsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<MealsCubit>(),
+    return BlocProvider.value(
+      value: sl<MealsCubit>(),
       child: _MealsPageView(showBottomNav: showBottomNav),
     );
   }
@@ -484,6 +484,7 @@ class _MealsPageView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<MealsCubit, MealsState>(
       builder: (context, state) {
+        print("MealsPage BlocBuilder: state.status=${state.status}, consumedCalories=${state.consumedCalories}, hashCode=${context.read<MealsCubit>().hashCode}");
         final loggedCount = state.slots.where((s) => s.isLogged).length;
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
 

@@ -62,7 +62,7 @@ class MealModel extends MealSummary {
       'fat_g': f,
       'tags': tags,
       'slot_type': slotType,
-      'logged_date': date.toUtc().toIso8601String().substring(0, 10),
+      'logged_date': date.toIso8601String().substring(0, 10),
     };
   }
 
