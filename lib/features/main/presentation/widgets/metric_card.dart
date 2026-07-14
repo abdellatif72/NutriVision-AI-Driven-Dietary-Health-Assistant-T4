@@ -35,14 +35,9 @@ class MetricCard extends StatelessWidget {
       case AfiaMetricKind.water:
         cardBgColor = const Color(0xFFF2F8FF); // Very soft blue
         break;
-      case AfiaMetricKind.heartRate:
-        cardBgColor = const Color(0xFFFFECEC); // Very soft red/pink
-        break;
       default:
         cardBgColor = AfiaColors.surface;
     }
-
-    final isHeartRate = kind == AfiaMetricKind.heartRate;
 
     return Container(
       decoration: BoxDecoration(
@@ -73,9 +68,7 @@ class MetricCard extends StatelessWidget {
                   height: 34,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isHeartRate
-                        ? Colors.white
-                        : accent.withOpacity(0.15),
+                    color: accent.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -91,7 +84,7 @@ class MetricCard extends StatelessWidget {
                   style: AfiaTypography.label.copyWith(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: isHeartRate ? accent : AfiaColors.textPrimary.withOpacity(0.7),
+                    color: AfiaColors.textPrimary.withOpacity(0.7),
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -106,7 +99,7 @@ class MetricCard extends StatelessWidget {
                         style: AfiaTypography.statValueCompact.copyWith(
                           fontSize: 19,
                           fontWeight: FontWeight.w800,
-                          color: isHeartRate ? accent : AfiaColors.textPrimary,
+                          color: AfiaColors.textPrimary,
                         ),
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -118,7 +111,7 @@ class MetricCard extends StatelessWidget {
                         style: AfiaTypography.unit.copyWith(
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
-                          color: isHeartRate ? accent : AfiaColors.textSecondary,
+                          color: AfiaColors.textSecondary,
                         ),
                       ),
                     ],

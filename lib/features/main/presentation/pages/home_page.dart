@@ -245,10 +245,6 @@ class _HomeViewState extends State<_HomeView> {
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
         final stepsTitle = isAr ? 'الخطوات' : 'Steps';
         final waterTitle = isAr ? 'الماء' : 'Water';
-        final heartRateTitle = isAr ? 'نبضات القلب' : 'Heart Rate';
-        final heartStatus = state.heartRateStatus == 'Resting'
-            ? (isAr ? 'الراحة' : 'Resting')
-            : (state.heartRateStatus ?? (isAr ? 'الراحة' : 'Resting'));
 
         // Bottom padding = nav bar height (80) + device safe-area so content
         // isn't hidden behind the Stack-overlaid bottom navigation bar.
@@ -301,19 +297,6 @@ class _HomeViewState extends State<_HomeView> {
                             context,
                             RouteNames.water,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.heartRate,
-                          icon: Icons.favorite_rounded,
-                          title: heartRateTitle,
-                          value: state.heartRate != null
-                              ? '${state.heartRate}'
-                              : '72',
-                          valueUnit: isAr ? 'ن/د' : 'bpm',
-                          subtext: heartStatus,
                         ),
                       ),
                     ],

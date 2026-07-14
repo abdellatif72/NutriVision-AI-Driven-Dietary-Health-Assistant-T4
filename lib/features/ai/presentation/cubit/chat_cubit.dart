@@ -70,12 +70,6 @@ class ChatCubit extends Cubit<ChatState> {
       );
     }
 
-    if (homeState.heartRate != null) {
-      buffer.writeln(
-        'Heart rate: ${homeState.heartRate} bpm (${homeState.heartRateStatus ?? "normal"})',
-      );
-    }
-
     if (streak != null) {
       buffer.writeln('Streak: ${streak.consecutiveDays} consecutive days');
     }

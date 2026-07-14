@@ -126,16 +126,6 @@ class _ProfileView extends StatelessWidget {
                       container: AfiaColors.blueContainer,
                     ),
                   ),
-                  SizedBox(width: AfiaSpacing.md),
-                  Expanded(
-                    child: _MiniInfoCard(
-                      icon: Icons.favorite_outlined,
-                      label: 'Heart Rate',
-                      value: '72 bpm',
-                      accent: AfiaColors.red,
-                      container: AfiaColors.redContainer,
-                    ),
-                  ),
                 ],
               ),
             ],

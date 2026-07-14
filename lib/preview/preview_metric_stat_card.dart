@@ -57,7 +57,7 @@ class _PreviewApp extends StatelessWidget {
                   SizedBox(width: AfiaSpacing.md),
                   Expanded(
                     child: AfiaMetricStatCard(
-                      kind: AfiaMetricKind.heartRate,
+                      kind: AfiaMetricKind.exercise,
                       icon: Icons.favorite_rounded,
                       label: 'Resting HR',
                       value: '72',
