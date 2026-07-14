@@ -126,8 +126,8 @@ class _AiPageViewState extends State<_AiPageView> {
               servingLabel: '${updatedResult.estimatedQuantityG}g',
               calories: updatedResult.calories,
             );
-            final mealsCubit = context.read<MealsCubit?>();
-            mealsCubit?.addMealToSlot(slotType, mealSummary);
+            final mealsCubit = sl<MealsCubit>();
+            mealsCubit.addMealToSlot(slotType, mealSummary);
 
             // 2. Mark the confirmation complete in the AI flow.
             context.read<AiBloc>().add(

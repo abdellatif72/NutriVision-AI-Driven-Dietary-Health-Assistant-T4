@@ -172,7 +172,12 @@ class _MainShellViewState extends State<_MainShellView> {
                           subtitle: isAr ? 'تصفح كتالوج الأطعمة وسجّلها' : 'Browse food catalog and log them',
                           onTap: () {
                             Navigator.pop(sheetContext);
-                            Navigator.pushNamed(context, RouteNames.explore);
+                            Navigator.pushNamed(context, RouteNames.explore).then((_) {
+                              if (context.mounted) {
+                                context.read<MealsCubit>().loadMeals();
+                                context.read<HomeCubit>().loadDashboardData();
+                              }
+                            });
                           },
                         ),
                         const SizedBox(height: 8),

@@ -142,7 +142,11 @@ class _MealsPageView extends StatelessWidget {
                       context,
                       RouteNames.explore,
                       arguments: preSelectedSlot,
-                    );
+                    ).then((_) {
+                      if (context.mounted) {
+                        context.read<MealsCubit>().loadMeals();
+                      }
+                    });
                   },
                 ),
                 const SizedBox(height: 8),
