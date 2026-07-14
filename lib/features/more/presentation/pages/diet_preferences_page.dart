@@ -5,6 +5,7 @@ import 'package:afia/features/more/presentation/cubit/diet_preferences_cubit.dar
 import 'package:afia/features/more/presentation/cubit/diet_preferences_state.dart';
 import 'package:afia/features/more/presentation/widgets/form_card.dart';
 import 'package:afia/features/more/presentation/widgets/section_title.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -25,16 +26,19 @@ class _DietPreferencesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Diet Preferences', style: AfiaTypography.screenTitle),
+        title: Text(l10n.dietPreferences, style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: BlocListener<DietPreferencesCubit, DietPreferencesState>(
@@ -42,7 +46,7 @@ class _DietPreferencesView extends StatelessWidget {
           if (state.isSuccess) {
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(const SnackBar(content: Text('Preferences saved')));
+            ).showSnackBar(SnackBar(content: Text(l10n.preferencesSaved)));
             context.read<DietPreferencesCubit>().resetSuccess();
             Navigator.pop(context);
           }
@@ -50,14 +54,14 @@ class _DietPreferencesView extends StatelessWidget {
         child: BlocBuilder<DietPreferencesCubit, DietPreferencesState>(
           builder: (context, state) {
             return ListView(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AfiaSpacing.pageMargin,
                 AfiaSpacing.xl,
                 AfiaSpacing.pageMargin,
                 AfiaSpacing.xxxl,
               ),
               children: [
-                const SectionTitle('Diet Style'),
+                SectionTitle(l10n.dietStyle),
                 const SizedBox(height: AfiaSpacing.md),
                 _buildChipGroup(
                   context,
@@ -67,7 +71,7 @@ class _DietPreferencesView extends StatelessWidget {
                       context.read<DietPreferencesCubit>().updateDietStyle(v),
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
-                const SectionTitle('Goal'),
+                SectionTitle(l10n.goal),
                 const SizedBox(height: AfiaSpacing.md),
                 _buildChipGroup(
                   context,
@@ -76,12 +80,12 @@ class _DietPreferencesView extends StatelessWidget {
                   (v) => context.read<DietPreferencesCubit>().updateGoalType(v),
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
-                const SectionTitle('Macronutrient Split'),
+                SectionTitle(l10n.macroSplit),
                 const SizedBox(height: AfiaSpacing.md),
                 FormCard(
                   children: [
                     _buildSliderTile(
-                      'Carbs',
+                      l10n.carbs,
                       '${state.carbsPct}%',
                       state.carbsPct.toDouble(),
                       AfiaColors.orange,
@@ -91,7 +95,7 @@ class _DietPreferencesView extends StatelessWidget {
                     ),
                     const _PrefDivider(),
                     _buildSliderTile(
-                      'Protein',
+                      l10n.protein,
                       '${state.proteinPct}%',
                       state.proteinPct.toDouble(),
                       AfiaColors.blue,
@@ -101,7 +105,7 @@ class _DietPreferencesView extends StatelessWidget {
                     ),
                     const _PrefDivider(),
                     _buildSliderTile(
-                      'Fat',
+                      l10n.fat,
                       '${state.fatPct}%',
                       state.fatPct.toDouble(),
                       AfiaColors.primary,
@@ -112,7 +116,7 @@ class _DietPreferencesView extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
-                const SectionTitle('Allergies'),
+                SectionTitle(l10n.allergies),
                 const SizedBox(height: AfiaSpacing.md),
                 _buildChipGroup(
                   context,
@@ -123,7 +127,7 @@ class _DietPreferencesView extends StatelessWidget {
                   selectedValues: state.allergies,
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
-                const SectionTitle('Meals Per Day'),
+                SectionTitle(l10n.mealsPerDay),
                 const SizedBox(height: AfiaSpacing.md),
                 _buildChipGroup(
                   context,
@@ -134,12 +138,12 @@ class _DietPreferencesView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AfiaSpacing.xl),
-                const SectionTitle('Water Goal'),
+                SectionTitle(l10n.waterGoal),
                 const SizedBox(height: AfiaSpacing.md),
                 FormCard(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: const EdgeInsetsDirectional.symmetric(
                         horizontal: AfiaSpacing.lg,
                         vertical: AfiaSpacing.md,
                       ),
@@ -151,7 +155,7 @@ class _DietPreferencesView extends StatelessWidget {
                           ),
                           const SizedBox(width: AfiaSpacing.sm),
                           Text(
-                            '${state.waterGoalMl} ml',
+                            isAr ? '${state.waterGoalMl} مل' : '${state.waterGoalMl} ml',
                             style: AfiaTypography.cardTitle,
                           ),
                           const Spacer(),
@@ -198,7 +202,7 @@ class _DietPreferencesView extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          'Save Preferences',
+                          l10n.savePreferences,
                           style: AfiaTypography.cardTitle.copyWith(
                             color: AfiaColors.onPrimary,
                           ),
@@ -223,7 +227,7 @@ class _DietPreferencesView extends StatelessWidget {
     return FormCard(
       children: [
         Padding(
-          padding: const EdgeInsets.all(AfiaSpacing.md),
+          padding: const EdgeInsetsDirectional.all(AfiaSpacing.md),
           child: Wrap(
             spacing: AfiaSpacing.sm,
             runSpacing: AfiaSpacing.sm,
@@ -233,7 +237,7 @@ class _DietPreferencesView extends StatelessWidget {
                   : selected == option;
               return ChoiceChip(
                 label: Text(
-                  _labelFor(option),
+                  _labelFor(context, option),
                   style: AfiaTypography.body.copyWith(
                     color: isSelected
                         ? AfiaColors.onPrimary
@@ -263,7 +267,7 @@ class _DietPreferencesView extends StatelessWidget {
     ValueChanged<double> onChanged,
   ) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: const EdgeInsetsDirectional.fromSTEB(
         AfiaSpacing.lg,
         AfiaSpacing.sm,
         AfiaSpacing.lg,
@@ -293,26 +297,39 @@ class _DietPreferencesView extends StatelessWidget {
     );
   }
 
-  String _labelFor(String key) {
+  String _labelFor(BuildContext context, String key) {
+    final l10n = AppLocalizations.of(context)!;
     switch (key) {
       case 'balanced':
-        return 'Balanced';
+        return l10n.dietBalanced;
       case 'low-carb':
-        return 'Low Carb';
+        return l10n.dietLowCarb;
       case 'keto':
-        return 'Keto';
+        return l10n.dietKeto;
       case 'vegan':
-        return 'Vegan';
+        return l10n.dietVegan;
       case 'mediterranean':
-        return 'Mediterranean';
+        return l10n.dietMediterranean;
       case 'lose':
-        return 'Lose Weight';
+        return l10n.goalLose;
       case 'maintain':
-        return 'Maintain';
+        return l10n.goalMaintain;
       case 'gain':
-        return 'Gain Weight';
+        return l10n.goalGain;
+      case 'Gluten':
+        return l10n.allergyGluten;
+      case 'Dairy':
+        return l10n.allergyDairy;
+      case 'Nuts':
+        return l10n.allergyNuts;
+      case 'Eggs':
+        return l10n.allergyEggs;
+      case 'Soy':
+        return l10n.allergySoy;
+      case 'Seafood':
+        return l10n.allergySeafood;
       default:
-        return key[0].toUpperCase() + key.substring(1);
+        return key;
     }
   }
 }

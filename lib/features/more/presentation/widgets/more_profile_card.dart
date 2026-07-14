@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class MoreProfileCard extends StatelessWidget {
@@ -21,6 +22,25 @@ class MoreProfileCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    
+    // Map goal key to localized title
+    String goalText = currentGoal;
+    final lowerGoal = currentGoal.toLowerCase();
+    if (lowerGoal == 'stay_healthy' || lowerGoal == 'stay healthy' || lowerGoal == 'maintain') {
+      goalText = isAr ? 'البقاء بصحة جيدة' : 'Stay Healthy';
+    } else if (lowerGoal == 'lose_weight' || lowerGoal == 'lose weight' || lowerGoal == 'lose') {
+      goalText = isAr ? 'إنقاص الوزن' : 'Lose Weight';
+    } else if (lowerGoal == 'build_muscle' || lowerGoal == 'build muscle' || lowerGoal == 'gain') {
+      goalText = isAr ? 'بناء العضلات' : 'Build Muscle';
+    } else if (lowerGoal == 'nutrition' || lowerGoal == 'improve_nutrition') {
+      goalText = isAr ? 'تحسين التغذية' : 'Improve Nutrition';
+    }
+
+    final streakText = isAr 
+        ? 'متابعة لـ $streakDays يوم متتالي' 
+        : '$streakDays day streak';
+
     return Material(
       color: AfiaColors.surface,
       borderRadius: BorderRadius.circular(24),
@@ -28,7 +48,7 @@ class MoreProfileCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
         child: Padding(
-          padding: const EdgeInsets.all(AfiaSpacing.lg),
+          padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
           child: Row(
             children: [
               CircleAvatar(
@@ -50,7 +70,7 @@ class MoreProfileCard extends StatelessWidget {
                     Text(name, style: AfiaTypography.cardTitle),
                     const SizedBox(height: 4),
                     Text(
-                      '$currentGoal • $streakDays day streak',
+                      '$goalText • $streakText',
                       style: AfiaTypography.body.copyWith(
                         color: AfiaColors.textSecondary,
                       ),
@@ -58,8 +78,8 @@ class MoreProfileCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
-                Icons.chevron_right_rounded,
+              Icon(
+                isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
                 color: AfiaColors.textMuted,
               ),
             ],

@@ -19,9 +19,10 @@ class MoreTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return ListTile(
       onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(
+      contentPadding: const EdgeInsetsDirectional.symmetric(
         horizontal: AfiaSpacing.lg,
         vertical: 2,
       ),
@@ -30,8 +31,8 @@ class MoreTile extends StatelessWidget {
       subtitle: subtitle != null
           ? Text(subtitle!, style: AfiaTypography.body)
           : null,
-      trailing: const Icon(
-        Icons.chevron_right_rounded,
+      trailing: Icon(
+        isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
         color: AfiaColors.textMuted,
       ),
     );

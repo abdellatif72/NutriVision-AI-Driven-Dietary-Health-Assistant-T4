@@ -36,6 +36,8 @@ class AfiaTheme {
         centerTitle: true,
         titleTextStyle: AfiaTypography.screenTitle,
         iconTheme: const IconThemeData(color: AfiaColors.textPrimary),
+        actionsIconTheme: const IconThemeData(color: AfiaColors.textPrimary),
+        foregroundColor: AfiaColors.textPrimary,
       ),
       cardTheme: CardThemeData(
         color: AfiaColors.surface,

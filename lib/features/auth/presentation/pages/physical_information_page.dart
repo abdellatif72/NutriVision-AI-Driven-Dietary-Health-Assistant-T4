@@ -2,6 +2,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PhysicalInformationPage extends StatefulWidget {
@@ -72,7 +73,7 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
     return Flexible(
       fit: FlexFit.tight,
       child: Container(
-        constraints: const BoxConstraints(minWidth: 160),
+        constraints: const BoxConstraints(minWidth: 140),
         height: 100,
         decoration: BoxDecoration(
           color: selected ? AfiaColors.primary.withOpacity(0.16) : AfiaColors.surface,
@@ -107,8 +108,8 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
     required Widget child,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: AfiaSpacing.xl),
-      padding: const EdgeInsets.all(AfiaSpacing.lg),
+      margin: const EdgeInsetsDirectional.only(bottom: AfiaSpacing.xl),
+      padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
       decoration: BoxDecoration(
         color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(24),
@@ -190,7 +191,7 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
             onPressed: onUnitTap,
             style: TextButton.styleFrom(
               minimumSize: const Size(72, 44),
-              padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.md),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: AfiaSpacing.md),
               backgroundColor: AfiaColors.primary.withOpacity(0.12),
               foregroundColor: AfiaColors.primary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -205,23 +206,26 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: AfiaSpacing.pageMargin),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AfiaSpacing.xl),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () => Navigator.maybePop(context),
                   icon: Container(
-                    padding: const EdgeInsets.all(10),
+                    padding: const EdgeInsetsDirectional.all(10),
                     decoration: BoxDecoration(
                       color: AfiaColors.surface,
                       shape: BoxShape.circle,
@@ -233,7 +237,10 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                         ),
                       ],
                     ),
-                    child: const Icon(Icons.arrow_back, size: 20),
+                    child: Icon(
+                      isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
@@ -263,15 +270,15 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
               ),
               const SizedBox(height: AfiaSpacing.sm),
               Align(
-                alignment: Alignment.centerLeft,
+                alignment: AlignmentDirectional.centerStart,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.lg, vertical: AfiaSpacing.sm),
+                  padding: const EdgeInsetsDirectional.symmetric(horizontal: AfiaSpacing.lg, vertical: AfiaSpacing.sm),
                   decoration: BoxDecoration(
                     color: AfiaColors.primary.withOpacity(0.12),
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    'Step 1 of 2',
+                    l10n.stepOneOfTwo,
                     style: AfiaTypography.body.copyWith(
                       color: AfiaColors.primary,
                       fontWeight: FontWeight.w700,
@@ -281,13 +288,13 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
               ),
               const SizedBox(height: AfiaSpacing.xl),
               Text(
-                'Physical Information',
+                l10n.physicalInformation,
                 textAlign: TextAlign.center,
                 style: AfiaTypography.statValue.copyWith(fontSize: 32),
               ),
               const SizedBox(height: AfiaSpacing.sm),
               Text(
-                'Help us personalize your experience with accurate information.',
+                l10n.physicalInfoSubtitle,
                 textAlign: TextAlign.center,
                 style: AfiaTypography.body.copyWith(
                   color: AfiaColors.textSecondary,
@@ -297,10 +304,10 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
               const SizedBox(height: AfiaSpacing.xxxl),
               _buildSection(
                 icon: Icons.transgender,
-                title: 'Gender',
-                subtitle: 'Select your gender',
+                title: l10n.gender,
+                subtitle: l10n.selectGender,
                 child: Container(
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsetsDirectional.all(4),
                   decoration: BoxDecoration(
                     color: AfiaColors.surface,
                     borderRadius: BorderRadius.circular(20),
@@ -310,12 +317,12 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                     children: [
                       GestureDetector(
                         onTap: () => setState(() => _selectedGender = 'Male'),
-                        child: _buildOption('Male', Icons.male, _selectedGender == 'Male'),
+                        child: _buildOption(l10n.male, Icons.male, _selectedGender == 'Male'),
                       ),
                       const SizedBox(width: AfiaSpacing.sm),
                       GestureDetector(
                         onTap: () => setState(() => _selectedGender = 'Female'),
-                        child: _buildOption('Female', Icons.female, _selectedGender == 'Female'),
+                        child: _buildOption(l10n.female, Icons.female, _selectedGender == 'Female'),
                       ),
                     ],
                   ),
@@ -323,8 +330,8 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
               ),
               _buildSection(
                 icon: Icons.monitor_weight,
-                title: 'Weight',
-                subtitle: 'Enter your current weight',
+                title: l10n.weight,
+                subtitle: l10n.enterCurrentWeight,
                 child: _buildInputRow(
                   controller: _weightController,
                   hint: _isWeightKg ? 'e.g., 70' : 'e.g., 154',
@@ -335,8 +342,8 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
               ),
               _buildSection(
                 icon: Icons.straighten,
-                title: 'Height',
-                subtitle: 'Enter your height',
+                title: l10n.height,
+                subtitle: l10n.enterHeight,
                 child: _buildInputRow(
                   controller: _heightController,
                   hint: _isHeightCm ? 'e.g., 175' : 'e.g., 5.9',
@@ -355,7 +362,7 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                     final heightVal = double.tryParse(_heightController.text.trim());
                     if (weightVal == null || heightVal == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Please enter valid weight and height')),
+                        SnackBar(content: Text(l10n.enterValidWeightHeight)),
                       );
                       return;
                     }
@@ -379,7 +386,10 @@ class _PhysicalInformationPageState extends State<PhysicalInformationPage> {
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                   ),
-                  child: Text('Continue', style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary)),
+                  child: Text(
+                    l10n.continueButton,
+                    style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary),
+                  ),
                 ),
               ),
               const SizedBox(height: AfiaSpacing.xxxl),

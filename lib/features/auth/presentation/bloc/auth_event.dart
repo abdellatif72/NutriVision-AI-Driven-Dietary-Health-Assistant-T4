@@ -24,16 +24,18 @@ class SignUpRequested extends AuthEvent {
   final String password;
   final String name;
   final bool ignoreWarnings;
+  final String locale;
 
   const SignUpRequested({
     required this.email,
     required this.password,
     required this.name,
     this.ignoreWarnings = false,
+    this.locale = 'ar',
   });
 
   @override
-  List<Object?> get props => [email, password, name, ignoreWarnings];
+  List<Object?> get props => [email, password, name, ignoreWarnings, locale];
 }
 
 class LoginRequested extends AuthEvent {

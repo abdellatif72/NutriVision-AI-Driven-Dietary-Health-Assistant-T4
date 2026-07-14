@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class PeriodSegmentedControl extends StatelessWidget {
@@ -13,16 +14,28 @@ class PeriodSegmentedControl extends StatelessWidget {
   final ProgressPeriod selected;
   final ValueChanged<ProgressPeriod> onChanged;
 
+  String _localizedLabel(BuildContext context, ProgressPeriod p) {
+    final l10n = AppLocalizations.of(context)!;
+    switch (p) {
+      case ProgressPeriod.week:
+        return l10n.periodWeekly;
+      case ProgressPeriod.month:
+        return l10n.periodMonthly;
+      case ProgressPeriod.year:
+        return l10n.periodYearly;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.fromLTRB(
+      margin: const EdgeInsetsDirectional.fromSTEB(
         AfiaSpacing.pageMargin,
         0,
         AfiaSpacing.pageMargin,
         AfiaSpacing.md,
       ),
-      padding: const EdgeInsets.all(AfiaSpacing.xs),
+      padding: const EdgeInsetsDirectional.all(AfiaSpacing.xs),
       decoration: BoxDecoration(
         color: AfiaColors.divider,
         borderRadius: BorderRadius.circular(AfiaRadius.sm),
@@ -32,7 +45,7 @@ class PeriodSegmentedControl extends StatelessWidget {
             .map(
               (p) => Expanded(
                 child: _SegmentButton(
-                  label: p.label,
+                  label: _localizedLabel(context, p),
                   active: selected == p,
                   onTap: () => onChanged(p),
                 ),
@@ -61,7 +74,7 @@ class _SegmentButton extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(vertical: AfiaSpacing.sm),
+        padding: const EdgeInsetsDirectional.symmetric(vertical: AfiaSpacing.sm),
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: active ? AfiaColors.surface : Colors.transparent,

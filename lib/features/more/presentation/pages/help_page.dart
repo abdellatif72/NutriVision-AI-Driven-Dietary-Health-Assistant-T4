@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class HelpPage extends StatelessWidget {
@@ -8,20 +9,23 @@ class HelpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Help', style: AfiaTypography.screenTitle),
+        title: Text(l10n.help, style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: const EdgeInsetsDirectional.fromSTEB(
           AfiaSpacing.pageMargin,
           AfiaSpacing.sm,
           AfiaSpacing.pageMargin,
@@ -29,7 +33,7 @@ class HelpPage extends StatelessWidget {
         ),
         children: [
           Container(
-            padding: const EdgeInsets.all(AfiaSpacing.lg),
+            padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
             decoration: BoxDecoration(
               color: AfiaColors.surface,
               borderRadius: BorderRadius.circular(24),
@@ -37,10 +41,10 @@ class HelpPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Contact Support', style: AfiaTypography.cardTitle),
+                Text(l10n.contactSupport, style: AfiaTypography.cardTitle),
                 const SizedBox(height: AfiaSpacing.sm),
                 Text(
-                  'We are here to help you get the most out of Afia.',
+                  l10n.helpSubtitle,
                   style: AfiaTypography.body.copyWith(
                     color: AfiaColors.textSecondary,
                   ),
@@ -51,52 +55,52 @@ class HelpPage extends StatelessWidget {
           const SizedBox(height: AfiaSpacing.lg),
           _ContactCard(
             icon: Icons.chat_bubble_outline_rounded,
-            title: 'Live Chat',
-            subtitle: 'Average reply in under 2 hours',
+            title: l10n.liveChat,
+            subtitle: l10n.liveChatSubtitle,
             color: AfiaColors.primary,
             containerColor: AfiaColors.primaryContainer,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Chat support coming soon')),
+                SnackBar(content: Text(l10n.chatSupportComingSoon)),
               );
             },
           ),
           const SizedBox(height: AfiaSpacing.md),
           _ContactCard(
             icon: Icons.mail_outline_rounded,
-            title: 'Email Us',
-            subtitle: 'support@afia.app',
+            title: l10n.emailUs,
+            subtitle: l10n.emailUsSubtitle,
             color: AfiaColors.blue,
             containerColor: AfiaColors.blueContainer,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Email support coming soon')),
+                SnackBar(content: Text(l10n.emailSupportComingSoon)),
               );
             },
           ),
           const SizedBox(height: AfiaSpacing.md),
           _ContactCard(
             icon: Icons.report_problem_outlined,
-            title: 'Report a Problem',
-            subtitle: 'Let us know what went wrong',
+            title: l10n.reportProblem,
+            subtitle: l10n.reportProblemSubtitle,
             color: AfiaColors.orange,
             containerColor: AfiaColors.orangeContainer,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Problem reporting coming soon')),
+                SnackBar(content: Text(l10n.problemReportingComingSoon)),
               );
             },
           ),
           const SizedBox(height: AfiaSpacing.md),
           _ContactCard(
             icon: Icons.feedback_outlined,
-            title: 'Send Feedback',
-            subtitle: 'Help us improve Afia',
+            title: l10n.sendFeedback,
+            subtitle: l10n.sendFeedbackSubtitle,
             color: AfiaColors.red,
             containerColor: AfiaColors.redContainer,
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Feedback feature coming soon')),
+                SnackBar(content: Text(l10n.feedbackFeatureComingSoon)),
               );
             },
           ),
@@ -125,6 +129,7 @@ class _ContactCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Material(
       color: AfiaColors.surface,
       borderRadius: BorderRadius.circular(24),
@@ -132,7 +137,7 @@ class _ContactCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(24),
         child: Padding(
-          padding: const EdgeInsets.all(AfiaSpacing.lg),
+          padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
           child: Row(
             children: [
               Container(
@@ -155,8 +160,8 @@ class _ContactCard extends StatelessWidget {
                   ],
                 ),
               ),
-              const Icon(
-                Icons.chevron_right_rounded,
+              Icon(
+                isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
                 color: AfiaColors.textMuted,
               ),
             ],

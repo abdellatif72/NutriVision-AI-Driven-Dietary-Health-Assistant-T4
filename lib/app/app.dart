@@ -2,6 +2,7 @@ import 'package:afia/app/router/app_router.dart';
 import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/core/theme/afia_theme.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:afia/features/more/presentation/cubit/app_preferences_cubit.dart';
 import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/app/localization/locale_cubit.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ class AfiaApp extends StatelessWidget {
       providers: [
         BlocProvider<AuthBloc>(create: (context) => sl<AuthBloc>()),
         BlocProvider<LocaleCubit>(create: (context) => LocaleCubit()),
+        BlocProvider<AppPreferencesCubit>(create: (context) => AppPreferencesCubit()),
       ],
       child: BlocBuilder<LocaleCubit, Locale>(
         builder: (context, locale) {
@@ -23,6 +25,7 @@ class AfiaApp extends StatelessWidget {
             title: 'Afia',
             debugShowCheckedModeBanner: false,
             theme: AfiaTheme.light,
+            themeMode: ThemeMode.light,
             locale: locale,
             supportedLocales: AppLocales.supported,
             localizationsDelegates: AppLocales.delegates,

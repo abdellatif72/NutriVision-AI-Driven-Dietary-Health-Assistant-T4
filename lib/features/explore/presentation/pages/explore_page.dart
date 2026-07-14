@@ -129,7 +129,7 @@ class _ExploreViewState extends State<_ExploreView> {
           elevation: 0,
           leading: IconButton(
             onPressed: () => Navigator.maybePop(context),
-            icon: const Icon(Icons.arrow_back_rounded, color: AfiaColors.textPrimary),
+            icon: const Icon(Icons.arrow_back_rounded),
           ),
           title: Text(
             isAr ? 'تصفح كتالوج الأطعمة' : 'Explore Food Catalog',

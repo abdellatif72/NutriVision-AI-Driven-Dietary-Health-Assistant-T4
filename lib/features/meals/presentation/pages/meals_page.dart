@@ -495,7 +495,7 @@ class _MealsPageView extends StatelessWidget {
             centerTitle: true,
             automaticallyImplyLeading: false,
             title: Text(
-              AppLocalizations.of(context).translate('meals'),
+              AppLocalizations.of(context)!.meals,
               style: AfiaTypography.screenTitle,
             ),
             actions: const [],

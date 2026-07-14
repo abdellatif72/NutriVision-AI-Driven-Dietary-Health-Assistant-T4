@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class AboutPage extends StatelessWidget {
@@ -8,20 +9,23 @@ class AboutPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('About Afia', style: AfiaTypography.screenTitle),
+        title: Text(l10n.aboutAfia, style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: const EdgeInsetsDirectional.fromSTEB(
           AfiaSpacing.pageMargin,
           AfiaSpacing.xl,
           AfiaSpacing.pageMargin,
@@ -46,7 +50,7 @@ class AboutPage extends StatelessWidget {
                 ),
                 const SizedBox(height: AfiaSpacing.md),
                 Text(
-                  'Afia',
+                  l10n.afia,
                   style: AfiaTypography.screenTitle.copyWith(
                     fontSize: 24,
                     color: AfiaColors.primary,
@@ -54,7 +58,7 @@ class AboutPage extends StatelessWidget {
                 ),
                 const SizedBox(height: AfiaSpacing.sm),
                 Text(
-                  'Version 1.0.0',
+                  l10n.version('1.0.0'),
                   style: AfiaTypography.body.copyWith(
                     color: AfiaColors.textSecondary,
                   ),
@@ -64,7 +68,7 @@ class AboutPage extends StatelessWidget {
           ),
           const SizedBox(height: AfiaSpacing.xxxl),
           Container(
-            padding: const EdgeInsets.all(AfiaSpacing.lg),
+            padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
             decoration: BoxDecoration(
               color: AfiaColors.surface,
               borderRadius: BorderRadius.circular(24),
@@ -73,14 +77,12 @@ class AboutPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Your AI-Driven Dietary Health Assistant',
+                  isAr ? 'مساعدك الصحي الموجه بالذكاء الاصطناعي' : 'Your AI-Driven Dietary Health Assistant',
                   style: AfiaTypography.cardTitle,
                 ),
                 const SizedBox(height: AfiaSpacing.md),
                 Text(
-                  'Afia helps you track your daily nutrition, water intake, '
-                  'and health metrics. Powered by AI, it provides personalized '
-                  'meal recommendations and insights to support your wellness journey.',
+                  l10n.afiaDescription,
                   style: AfiaTypography.body.copyWith(
                     color: AfiaColors.textSecondary,
                     height: 1.5,
@@ -91,7 +93,7 @@ class AboutPage extends StatelessWidget {
           ),
           const SizedBox(height: AfiaSpacing.lg),
           Container(
-            padding: const EdgeInsets.all(AfiaSpacing.lg),
+            padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
             decoration: BoxDecoration(
               color: AfiaColors.surface,
               borderRadius: BorderRadius.circular(24),
@@ -99,21 +101,21 @@ class AboutPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Project Team', style: AfiaTypography.cardTitle),
+                Text(l10n.projectTeam, style: AfiaTypography.cardTitle),
                 const SizedBox(height: AfiaSpacing.md),
-                _teamMember('Sara', 'Design & Development'),
+                _teamMember(l10n.teamMemberSara, l10n.teamMemberSaraRole),
                 const SizedBox(height: AfiaSpacing.sm),
-                _teamMember('Ahmed', 'Backend & AI'),
+                _teamMember(l10n.teamMemberAhmed, l10n.teamMemberAhmedRole),
                 const SizedBox(height: AfiaSpacing.sm),
-                _teamMember('Layla', 'Research & Content'),
+                _teamMember(l10n.teamMemberLayla, l10n.teamMemberLaylaRole),
                 const SizedBox(height: AfiaSpacing.sm),
-                _teamMember('Khalid', 'Testing & QA'),
+                _teamMember(l10n.teamMemberKhalid, l10n.teamMemberKhalidRole),
               ],
             ),
           ),
           const SizedBox(height: AfiaSpacing.lg),
           Container(
-            padding: const EdgeInsets.all(AfiaSpacing.lg),
+            padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
             decoration: BoxDecoration(
               color: AfiaColors.surface,
               borderRadius: BorderRadius.circular(24),
@@ -121,18 +123,18 @@ class AboutPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _linkRow('Terms of Service', () {}),
+                _linkRow(context, l10n.termsOfService, () {}),
                 const Divider(height: 1, color: AfiaColors.divider),
-                _linkRow('Privacy Policy', () {}),
+                _linkRow(context, l10n.privacyPolicy, () {}),
                 const Divider(height: 1, color: AfiaColors.divider),
-                _linkRow('Open Source Licenses', () {}),
+                _linkRow(context, l10n.openSourceLicenses, () {}),
               ],
             ),
           ),
           const SizedBox(height: AfiaSpacing.xxxl),
           Center(
             child: Text(
-              'Made with ❤️ for better health',
+              l10n.madeWithHeart,
               style: AfiaTypography.body.copyWith(color: AfiaColors.textMuted),
             ),
           ),
@@ -153,7 +155,7 @@ class AboutPage extends StatelessWidget {
           ),
           alignment: Alignment.center,
           child: Text(
-            name[0],
+            name.isNotEmpty ? name[0] : '',
             style: AfiaTypography.cardTitle.copyWith(
               color: AfiaColors.primary,
               fontSize: 14,
@@ -177,12 +179,13 @@ class AboutPage extends StatelessWidget {
     );
   }
 
-  Widget _linkRow(String title, VoidCallback onTap) {
+  Widget _linkRow(BuildContext context, String title, VoidCallback onTap) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return ListTile(
       onTap: onTap,
       title: Text(title, style: AfiaTypography.cardTitle),
-      trailing: const Icon(
-        Icons.chevron_right_rounded,
+      trailing: Icon(
+        isAr ? Icons.chevron_left_rounded : Icons.chevron_right_rounded,
         color: AfiaColors.textMuted,
       ),
       contentPadding: EdgeInsets.zero,

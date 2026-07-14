@@ -1,5 +1,6 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class GreetingHeader extends StatelessWidget {
@@ -15,7 +16,7 @@ class GreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 18, 4, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 4, 12),
       color: Colors.transparent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -27,9 +28,7 @@ class GreetingHeader extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      Localizations.localeOf(context).languageCode == 'ar'
-                          ? 'مرحباً، $userName'
-                          : 'Hi, $userName',
+                      AppLocalizations.of(context)!.greetingUser(userName),
                       style: AfiaTypography.screenTitle.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w800,

@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:equatable/equatable.dart';
 
 class MoreState extends Equatable {
@@ -9,6 +10,8 @@ class MoreState extends Equatable {
     this.weightKg = 62.4,
     this.heightCm = 165.0,
     this.isLoading = false,
+    this.profileImagePath = '',
+    this.profileImageBytes,
   });
 
   final String name;
@@ -18,6 +21,8 @@ class MoreState extends Equatable {
   final double weightKg;
   final double heightCm;
   final bool isLoading;
+  final String profileImagePath;
+  final Uint8List? profileImageBytes;
 
   MoreState copyWith({
     String? name,
@@ -27,6 +32,8 @@ class MoreState extends Equatable {
     double? weightKg,
     double? heightCm,
     bool? isLoading,
+    String? profileImagePath,
+    Uint8List? profileImageBytes,
   }) {
     return MoreState(
       name: name ?? this.name,
@@ -36,6 +43,8 @@ class MoreState extends Equatable {
       weightKg: weightKg ?? this.weightKg,
       heightCm: heightCm ?? this.heightCm,
       isLoading: isLoading ?? this.isLoading,
+      profileImagePath: profileImagePath ?? this.profileImagePath,
+      profileImageBytes: profileImageBytes ?? this.profileImageBytes,
     );
   }
 
@@ -48,5 +57,8 @@ class MoreState extends Equatable {
     weightKg,
     heightCm,
     isLoading,
+    profileImagePath,
+    profileImageBytes,
   ];
 }
+

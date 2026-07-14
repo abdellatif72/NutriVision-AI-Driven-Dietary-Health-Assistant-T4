@@ -75,7 +75,7 @@ class _AiPageViewState extends State<_AiPageView> {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text(
-                            AppLocalizations.of(context).translate('web_camera_warning'),
+                            AppLocalizations.of(context)!.webCameraWarning,
                           ),
                         ),
                       );
