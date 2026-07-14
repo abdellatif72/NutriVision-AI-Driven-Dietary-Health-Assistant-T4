@@ -10,6 +10,7 @@ class AiBloc extends Bloc<AiEvent, AiState> {
       super(AiInitial()) {
     on<AnalyzePlateRequested>(_onAnalyzePlateRequested);
     on<ConfirmPlateAnalysis>(_onConfirmPlateAnalysis);
+    on<PickImageEvent>(_onPickImageEvent);
   }
 
   final AnalyzePlate analyzePlate;
@@ -22,6 +23,22 @@ class AiBloc extends Bloc<AiEvent, AiState> {
     emit(AiLoading());
 
     final failureOrResult = await analyzePlate(event.image);
+    failureOrResult.fold(
+      (failure) => emit(AiError(failure.message)),
+      (result) => emit(AiSuccess(result)),
+    );
+  }
+
+  Future<void> _onPickImageEvent(
+    PickImageEvent event,
+    Emitter<AiState> emit,
+  ) async {
+    final image = await pickImage(source: event.source);
+    if (image == null) return;
+
+    emit(AiLoading());
+
+    final failureOrResult = await analyzePlate(image);
     failureOrResult.fold(
       (failure) => emit(AiError(failure.message)),
       (result) => emit(AiSuccess(result)),

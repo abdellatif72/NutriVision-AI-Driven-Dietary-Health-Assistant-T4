@@ -175,7 +175,7 @@ class HomeCubit extends Cubit<HomeState> {
       HomeState(
         status: HomeStatus.success,
         greeting: "Let's make today amazing!",
-        userName: userName ?? '',
+        userName: (userName == null || userName!.isEmpty) ? 'Sara' : userName!,
         calories: CalorieSummary(
           percent: 0.71,
           consumed: 1420,

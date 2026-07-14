@@ -35,17 +35,54 @@ class _LoginPageState extends State<LoginPage> {
         child: BlocConsumer<AuthBloc, AuthState>(
           listener: (context, state) {
             if (state is AuthAuthenticated) {
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                RouteNames.main,
-                (route) => false,
-              );
+              Navigator.pushReplacementNamed(context, RouteNames.main);
             } else if (state is AuthError) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(state.message),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
+              final isEmailNotVerified = state.message.contains('تفعيل') ||
+                  state.message.contains('برجاء') ||
+                  state.message.contains('email-not-verified');
+
+              if (isEmailNotVerified) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: AfiaColors.red,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Text(
+                              "برجاء تفعيل بريدك الإلكتروني أولاً من خلال الرابط. إذا كان البريد الإلكتروني غير صحيح، يرجى إنشاء حساب جديد ببريد صحيح.",
+                              style: AfiaTypography.body.copyWith(
+                                color: AfiaColors.red,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    backgroundColor: AfiaColors.redContainer,
+                    duration: const Duration(seconds: 6),
+                    behavior: SnackBarBehavior.floating,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(AfiaRadius.md),
+                      side: const BorderSide(color: AfiaColors.red, width: 1.5),
+                    ),
+                  ),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.message),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              }
             }
           },
           builder: (context, state) {

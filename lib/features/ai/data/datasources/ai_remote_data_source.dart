@@ -26,7 +26,6 @@ class AiRemoteDataSourceImpl implements AiRemoteDataSource {
 
   // ── Groq primary: Qwen 3.6 27B (stronger visual grounding for food) ────────
   static const _groqUrl = 'https://api.groq.com/openai/v1/chat/completions';
-  // TODO: Replace with the exact Groq model ID shown in console.groq.com/docs/models
   // e.g. 'qwen/qwen3-6-27b-instruct'  — check your Groq dashboard for the exact string
   static const _groqModelPrimary = 'qwen/qwen3.6-27b';
   // Llama 4 Scout as secondary vision fallback

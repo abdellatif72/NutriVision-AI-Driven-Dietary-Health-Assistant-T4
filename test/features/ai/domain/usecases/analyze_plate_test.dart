@@ -35,6 +35,8 @@ void main() {
       estimatedQuantityG: 250,
       calories: 420,
       proteinG: 24,
+      carbsG: 30,
+      fatG: 15,
       calciumMg: 80,
       vitamins: ['فيتامين سي'],
     );

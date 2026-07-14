@@ -133,12 +133,12 @@ class _MainShellViewState extends State<_MainShellView> {
                         ),
                         const SizedBox(height: 8),
                         _ActionSheetTile(
-                          icon: Icons.restaurant_rounded,
-                          title: isAr ? 'تسجيل وجبة' : 'Log Meal',
-                          subtitle: isAr ? 'أضف وجبة إلى يومياتك' : 'Add a meal to your diary',
+                          icon: Icons.explore_rounded,
+                          title: isAr ? 'تصفح الأطعمة' : 'Explore Foods',
+                          subtitle: isAr ? 'تصفح كتالوج الأطعمة وسجّلها' : 'Browse food catalog and log them',
                           onTap: () {
                             Navigator.pop(sheetContext);
-                            Navigator.pushNamed(context, RouteNames.mealSearch);
+                            Navigator.pushNamed(context, RouteNames.explore);
                           },
                         ),
                         const SizedBox(height: 8),

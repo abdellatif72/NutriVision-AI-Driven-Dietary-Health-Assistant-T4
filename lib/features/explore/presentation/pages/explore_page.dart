@@ -1,14 +1,946 @@
-import 'package:afia/core/widgets/feature_placeholder_page.dart';
+import 'package:afia/app/di/injection_container.dart';
+import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_spacing.dart';
+import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/features/explore/domain/entities/food_item.dart';
+import 'package:afia/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExplorePage extends StatelessWidget {
-  const ExplorePage({super.key});
+  const ExplorePage({super.key, this.preSelectedSlot});
+
+  final String? preSelectedSlot;
 
   @override
   Widget build(BuildContext context) {
-    return const FeaturePlaceholderPage(
-      title: 'Explore',
-      description: 'Catalog browsing, categories, and discovery screens live here.',
+    return BlocProvider(
+      create: (_) => sl<ExploreBloc>()..add(const LoadCatalog()),
+      child: _ExploreView(preSelectedSlot: preSelectedSlot),
+    );
+  }
+}
+
+class _ExploreView extends StatefulWidget {
+  const _ExploreView({this.preSelectedSlot});
+
+  final String? preSelectedSlot;
+
+  @override
+  State<_ExploreView> createState() => _ExploreViewState();
+}
+
+class _ExploreViewState extends State<_ExploreView> {
+  final _searchController = TextEditingController();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  void _onCategorySelected(BuildContext context, String categoryEn) {
+    context.read<ExploreBloc>().add(CategoryChanged(categoryEn));
+  }
+
+  void _onSearchChanged(BuildContext context, String query) {
+    context.read<ExploreBloc>().add(SearchQueryChanged(query));
+  }
+
+  void _showFoodDetails(BuildContext context, FoodItem food) {
+    final exploreBloc = context.read<ExploreBloc>();
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: AfiaColors.surface,
+      builder: (sheetContext) {
+        return _FoodDetailsSheetContent(
+          food: food,
+          exploreBloc: exploreBloc,
+          sheetContext: sheetContext,
+          preSelectedSlot: widget.preSelectedSlot,
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    final categories = [
+      ('all', isAr ? 'الكل' : 'All'),
+      ('Levantine Dishes', isAr ? 'أطباق شامية' : 'Levantine'),
+      ('Egyptian Dishes', isAr ? 'أطباق مصرية' : 'Egyptian'),
+      ('Arabic Sweets', isAr ? 'حلويات عربية' : 'Sweets'),
+      ('Bakery', isAr ? 'مخبوزات' : 'Bakery'),
+      ('Basic Ingredients', isAr ? 'مكونات أساسية' : 'Ingredients'),
+      ('Vegetables', isAr ? 'خضروات' : 'Vegetables'),
+      ('Fruits', isAr ? 'فواكه' : 'Fruits'),
+      ('Meat', isAr ? 'لحوم' : 'Meat'),
+      ('Seafood', isAr ? 'أسماك' : 'Seafood'),
+      ('Dairy', isAr ? 'ألبان' : 'Dairy'),
+      ('Proteins', isAr ? 'بروتينات' : 'Proteins'),
+      ('Seeds', isAr ? 'بذور' : 'Seeds'),
+      ('Nuts', isAr ? 'مكسرات' : 'Nuts'),
+      ('Oils', isAr ? 'زيوت' : 'Oils'),
+    ];
+
+    return BlocListener<ExploreBloc, ExploreState>(
+      listener: (context, state) {
+        if (state.loggingStatus == LoggingStatus.loading) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(
+              child: CircularProgressIndicator(color: AfiaColors.primary),
+            ),
+          );
+        } else if (state.loggingStatus == LoggingStatus.success) {
+          Navigator.of(context, rootNavigator: true).pop(); // dismiss loading dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(isAr ? 'تمت إضافة الوجبة بنجاح!' : 'Meal logged successfully!'),
+              backgroundColor: AfiaColors.primary,
+            ),
+          );
+        } else if (state.loggingStatus == LoggingStatus.failure) {
+          Navigator.of(context, rootNavigator: true).pop(); // dismiss loading dialog
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                isAr
+                    ? 'حدث خطأ أثناء إضافة الوجبة: ${state.errorMessage}'
+                    : 'Error logging meal: ${state.errorMessage}',
+              ),
+              backgroundColor: AfiaColors.red,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AfiaColors.scaffoldBackground,
+        appBar: AppBar(
+          backgroundColor: AfiaColors.scaffoldBackground,
+          elevation: 0,
+          leading: IconButton(
+            onPressed: () => Navigator.maybePop(context),
+            icon: const Icon(Icons.arrow_back_rounded, color: AfiaColors.textPrimary),
+          ),
+          title: Text(
+            isAr ? 'تصفح كتالوج الأطعمة' : 'Explore Food Catalog',
+            style: AfiaTypography.screenTitle,
+          ),
+          centerTitle: true,
+        ),
+        body: Column(
+          children: [
+            // Search field
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AfiaSpacing.pageMargin,
+                vertical: 8,
+              ),
+              child: TextField(
+                controller: _searchController,
+                onChanged: (val) => _onSearchChanged(context, val),
+                decoration: InputDecoration(
+                  hintText: isAr
+                      ? 'ابحث عن أكلات، حلويات، أو مكونات...'
+                      : 'Search for foods, sweets, or ingredients...',
+                  hintStyle: const TextStyle(
+                    fontSize: 12,
+                    color: AfiaColors.textSecondary,
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.search_rounded,
+                    color: AfiaColors.textSecondary,
+                  ),
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (_, value, child) {
+                      if (value.text.isEmpty) return const SizedBox.shrink();
+                      return IconButton(
+                        icon: const Icon(Icons.close_rounded, color: AfiaColors.textSecondary),
+                        onPressed: () {
+                          _searchController.clear();
+                          _onSearchChanged(context, '');
+                        },
+                      );
+                    },
+                  ),
+                  filled: true,
+                  fillColor: AfiaColors.surface,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AfiaColors.divider),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AfiaColors.divider),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(14),
+                    borderSide: const BorderSide(color: AfiaColors.primary),
+                  ),
+                ),
+              ),
+            ),
+
+            // Horizontal Category Chips
+            BlocBuilder<ExploreBloc, ExploreState>(
+              buildWhen: (previous, current) =>
+                  previous.selectedCategoryEn != current.selectedCategoryEn,
+              builder: (context, state) {
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AfiaSpacing.pageMargin,
+                    vertical: 8,
+                  ),
+                  child: Row(
+                    children: categories.map((cat) {
+                      final isSelected = state.selectedCategoryEn == cat.$1;
+                      return Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ChoiceChip(
+                          label: Text(
+                            cat.$2,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? Colors.white : AfiaColors.textPrimary,
+                            ),
+                          ),
+                          selected: isSelected,
+                          onSelected: (selected) {
+                            if (selected) {
+                              _onCategorySelected(context, cat.$1);
+                            }
+                          },
+                          selectedColor: AfiaColors.primary,
+                          backgroundColor: AfiaColors.surface,
+                          elevation: 0,
+                          pressElevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            side: BorderSide(
+                              color: isSelected ? Colors.transparent : AfiaColors.divider,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                );
+              },
+            ),
+
+            // Food Items Catalog List
+            Expanded(
+              child: BlocBuilder<ExploreBloc, ExploreState>(
+                buildWhen: (previous, current) =>
+                    previous.status != current.status || previous.foods != current.foods,
+                builder: (context, state) {
+                  if (state.status == ExploreStatus.loading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: AfiaColors.primary,
+                        strokeWidth: 2.4,
+                      ),
+                    );
+                  }
+
+                  if (state.status == ExploreStatus.failure) {
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              size: 48,
+                              color: AfiaColors.red,
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              isAr
+                                  ? 'فشل تحميل كتالوج الأطعمة'
+                                  : 'Failed to load food catalog',
+                              style: AfiaTypography.cardTitle,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              state.errorMessage ?? '',
+                              textAlign: TextAlign.center,
+                              style: AfiaTypography.body.copyWith(
+                                color: AfiaColors.textSecondary,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () =>
+                                  context.read<ExploreBloc>().add(const LoadCatalog()),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AfiaColors.primary,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: Text(isAr ? 'إعادة المحاولة' : 'Retry'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }
+
+                  if (state.foods.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.search_off_rounded,
+                            size: 64,
+                            color: AfiaColors.textMuted,
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            isAr ? 'لم نجد أي طعام يطابق بحثك!' : 'No foods found!',
+                            style: AfiaTypography.cardTitle.copyWith(
+                              color: AfiaColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            isAr
+                                ? 'جرّب البحث بكلمة مختلفة أو تصنيف آخر.'
+                                : 'Try searching with another word or category.',
+                            style: AfiaTypography.body.copyWith(
+                              color: AfiaColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AfiaSpacing.pageMargin,
+                      vertical: 8,
+                    ),
+                    itemCount: state.foods.length,
+                    itemBuilder: (context, index) {
+                      final food = state.foods[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: Card(
+                          margin: EdgeInsets.zero,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: const BorderSide(color: AfiaColors.divider),
+                          ),
+                          color: AfiaColors.surface,
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: () => _showFoodDetails(context, food),
+                            child: Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: Row(
+                                children: [
+                                  // Emoji Circle bg
+                                  Container(
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: AfiaColors.scaffoldBackground,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        food.emoji,
+                                        style: const TextStyle(fontSize: 22),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  // Details
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          food.getName(isAr ? 'ar' : 'en'),
+                                          style: AfiaTypography.body.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            color: AfiaColors.textPrimary,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          '${food.getCategory(isAr ? 'ar' : 'en')} · ${food.getServingLabel(isAr ? 'ar' : 'en')}',
+                                          style: AfiaTypography.body.copyWith(
+                                            fontSize: 12,
+                                            color: AfiaColors.textSecondary,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Calories
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${food.calories}',
+                                        style: AfiaTypography.cardTitle.copyWith(
+                                          color: AfiaColors.orange,
+                                        ),
+                                      ),
+                                      Text(
+                                        isAr ? 'سعرة' : 'Kcal',
+                                        style: AfiaTypography.body.copyWith(
+                                          fontSize: 10,
+                                          color: AfiaColors.textSecondary,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _FoodDetailsSheetContent extends StatefulWidget {
+  const _FoodDetailsSheetContent({
+    required this.food,
+    required this.exploreBloc,
+    required this.sheetContext,
+    this.preSelectedSlot,
+  });
+
+  final FoodItem food;
+  final ExploreBloc exploreBloc;
+  final BuildContext sheetContext;
+  final String? preSelectedSlot;
+
+  @override
+  State<_FoodDetailsSheetContent> createState() => _FoodDetailsSheetContentState();
+}
+
+class _FoodDetailsSheetContentState extends State<_FoodDetailsSheetContent> {
+  late double _currentServingSize;
+  late TextEditingController _servingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentServingSize = widget.food.servingSizeG.toDouble();
+    _servingController = TextEditingController(text: widget.food.servingSizeG.toString());
+  }
+
+  @override
+  void dispose() {
+    _servingController.dispose();
+    super.dispose();
+  }
+
+  void _showMealSlotSelection(BuildContext context, FoodItem updatedFood) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      backgroundColor: AfiaColors.surface,
+      builder: (sheetContext) {
+        final slots = [
+          ('breakfast', isAr ? 'الإفطار' : 'Breakfast', '🥣'),
+          ('lunch', isAr ? 'الغداء' : 'Lunch', '🥗'),
+          ('dinner', isAr ? 'العشاء' : 'Dinner', '🍛'),
+          ('snack', isAr ? 'الوجبات الخفيفة' : 'Snacks', '🍎'),
+        ];
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AfiaColors.divider,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  isAr ? 'اختر فترة الوجبة' : 'Select Meal Slot',
+                  style: AfiaTypography.cardTitle,
+                ),
+                const SizedBox(height: 16),
+                ...slots.map((s) {
+                  return ListTile(
+                    leading: Text(
+                      s.$3,
+                      style: const TextStyle(fontSize: 24),
+                    ),
+                    title: Text(
+                      s.$2,
+                      style: AfiaTypography.body.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: AfiaColors.textPrimary,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.chevron_right_rounded,
+                      color: AfiaColors.textMuted,
+                    ),
+                    onTap: () {
+                      widget.exploreBloc.add(LogFoodItem(food: updatedFood, slotType: s.$1));
+                      Navigator.pop(sheetContext); // Pop slot selection sheet
+                      Navigator.pop(widget.sheetContext); // Pop details bottom sheet
+                    },
+                  );
+                }),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
+    final currentSizeValue = _currentServingSize > 0 ? _currentServingSize : widget.food.servingSizeG.toDouble();
+    final ratio = currentSizeValue / widget.food.servingSizeG;
+
+    final recalculatedCalories = (widget.food.calories * ratio).round();
+    final recalculatedProtein = double.parse((widget.food.proteinG * ratio).toStringAsFixed(1));
+    final recalculatedCarbs = double.parse((widget.food.carbsG * ratio).toStringAsFixed(1));
+    final recalculatedFat = double.parse((widget.food.fatG * ratio).toStringAsFixed(1));
+    final recalculatedFiber = widget.food.fiberG != null
+        ? double.parse((widget.food.fiberG! * ratio).toStringAsFixed(1))
+        : null;
+
+    final updatedFood = FoodItem(
+      id: widget.food.id,
+      nameEn: widget.food.nameEn,
+      nameAr: widget.food.nameAr,
+      emoji: widget.food.emoji,
+      categoryAr: widget.food.categoryAr,
+      categoryEn: widget.food.categoryEn,
+      servingSizeG: currentSizeValue.round(),
+      servingLabelAr: '${currentSizeValue.round()} غرام',
+      servingLabelEn: '${currentSizeValue.round()} g',
+      calories: recalculatedCalories,
+      proteinG: recalculatedProtein,
+      carbsG: recalculatedCarbs,
+      fatG: recalculatedFat,
+      fiberG: recalculatedFiber,
+      tags: widget.food.tags,
+    );
+
+    return BlocProvider.value(
+      value: widget.exploreBloc,
+      child: DraggableScrollableSheet(
+        expand: false,
+        initialChildSize: 0.75,
+        minChildSize: 0.5,
+        maxChildSize: 0.95,
+        builder: (ctx, scrollController) {
+          return SingleChildScrollView(
+            controller: scrollController,
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Handle line
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AfiaColors.divider,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Title & Emoji
+                Row(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AfiaColors.primaryContainer,
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: Center(
+                        child: Text(
+                          widget.food.emoji,
+                          style: const TextStyle(fontSize: 32),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            widget.food.getName(isAr ? 'ar' : 'en'),
+                            style: AfiaTypography.cardTitle.copyWith(fontSize: 18),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            widget.food.getCategory(isAr ? 'ar' : 'en'),
+                            style: AfiaTypography.body.copyWith(
+                              color: AfiaColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+
+                // Serving Size Edit Row
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AfiaColors.surface,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AfiaColors.divider),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          const Icon(Icons.scale_rounded, color: AfiaColors.primary, size: 20),
+                          const SizedBox(width: 8),
+                          Text(
+                            isAr ? 'حجم الحصة (غرام):' : 'Serving Size (g):',
+                            style: AfiaTypography.body.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: AfiaColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              final val = double.tryParse(_servingController.text) ?? widget.food.servingSizeG.toDouble();
+                              final newVal = (val - 10).clamp(10, 1000).round();
+                              _servingController.text = newVal.toString();
+                              setState(() {
+                                _currentServingSize = newVal.toDouble();
+                              });
+                            },
+                            icon: const Icon(Icons.remove_circle_outline_rounded, color: AfiaColors.primary, size: 24),
+                          ),
+                          SizedBox(
+                            width: 64,
+                            height: 38,
+                            child: TextField(
+                              controller: _servingController,
+                              keyboardType: const TextInputType.numberWithOptions(decimal: false),
+                              textAlign: TextAlign.center,
+                              style: AfiaTypography.body.copyWith(
+                                fontWeight: FontWeight.w800,
+                                color: AfiaColors.textPrimary,
+                              ),
+                              onChanged: (val) {
+                                final parsed = double.tryParse(val) ?? 0.0;
+                                if (parsed > 0) {
+                                  setState(() {
+                                    _currentServingSize = parsed;
+                                  });
+                                }
+                              },
+                              decoration: InputDecoration(
+                                contentPadding: EdgeInsets.zero,
+                                filled: true,
+                                fillColor: AfiaColors.scaffoldBackground,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(color: AfiaColors.divider),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(color: AfiaColors.divider),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: const BorderSide(color: AfiaColors.primary),
+                                ),
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              final val = double.tryParse(_servingController.text) ?? widget.food.servingSizeG.toDouble();
+                              final newVal = (val + 10).clamp(10, 1000).round();
+                              _servingController.text = newVal.toString();
+                              setState(() {
+                                _currentServingSize = newVal.toDouble();
+                              });
+                            },
+                            icon: const Icon(Icons.add_circle_outline_rounded, color: AfiaColors.primary, size: 24),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Nutrient Target Breakdown
+                Text(
+                  isAr ? 'القيم الغذائية المرجعية' : 'Reference Nutrition',
+                  style: AfiaTypography.cardTitle.copyWith(fontSize: 14),
+                ),
+                const SizedBox(height: 16),
+
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final cardWidth = (constraints.maxWidth - 12) / 2;
+                    return Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        SizedBox(
+                          width: cardWidth,
+                          child: _NutritionStatCard(
+                            label: isAr ? 'السعرات الحرارية' : 'Calories',
+                            value: '$recalculatedCalories Kcal',
+                            icon: Icons.local_fire_department_rounded,
+                            color: AfiaColors.orangeContainer,
+                            iconColor: AfiaColors.orange,
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: _NutritionStatCard(
+                            label: isAr ? 'البروتين' : 'Protein',
+                            value: '$recalculatedProtein g',
+                            icon: Icons.fitness_center_rounded,
+                            color: AfiaColors.redContainer,
+                            iconColor: AfiaColors.red,
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: _NutritionStatCard(
+                            label: isAr ? 'الكربوهيدرات' : 'Carbs',
+                            value: '$recalculatedCarbs g',
+                            icon: Icons.grain_rounded,
+                            color: AfiaColors.primaryContainer,
+                            iconColor: AfiaColors.primary,
+                          ),
+                        ),
+                        SizedBox(
+                          width: cardWidth,
+                          child: _NutritionStatCard(
+                            label: isAr ? 'الدهون' : 'Fat',
+                            value: '$recalculatedFat g',
+                            icon: Icons.opacity_rounded,
+                            color: AfiaColors.orangeContainer,
+                            iconColor: AfiaColors.orange,
+                          ),
+                        ),
+                        if (recalculatedFiber != null && recalculatedFiber > 0)
+                          SizedBox(
+                            width: cardWidth,
+                            child: _NutritionStatCard(
+                              label: isAr ? 'الألياف' : 'Fiber',
+                              value: '$recalculatedFiber g',
+                              icon: Icons.spa_rounded,
+                              color: AfiaColors.blueContainer,
+                              iconColor: AfiaColors.blue,
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: 24),
+
+                // Tags
+                if (widget.food.tags.isNotEmpty) ...[
+                  Text(
+                    isAr ? 'الوسوم والخصائص' : 'Tags & Labels',
+                    style: AfiaTypography.cardTitle.copyWith(fontSize: 14),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: widget.food.tags.map((tag) {
+                      return Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AfiaColors.scaffoldBackground,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AfiaColors.divider),
+                        ),
+                        child: Text(
+                          tag,
+                          style: AfiaTypography.body.copyWith(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AfiaColors.textSecondary,
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 32),
+                ],
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (widget.preSelectedSlot != null) {
+                        widget.exploreBloc.add(LogFoodItem(
+                          food: updatedFood,
+                          slotType: widget.preSelectedSlot!,
+                        ));
+                        Navigator.pop(widget.sheetContext); // Pop details bottom sheet
+                      } else {
+                        _showMealSlotSelection(ctx, updatedFood);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AfiaColors.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                    child: Text(
+                      isAr ? 'أضف إلى اليوميات' : 'Add to Diary',
+                      style: AfiaTypography.body.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _NutritionStatCard extends StatelessWidget {
+  const _NutritionStatCard({
+    required this.label,
+    required this.value,
+    required this.icon,
+    required this.color,
+    required this.iconColor,
+  });
+
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final Color iconColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+      decoration: BoxDecoration(
+        color: AfiaColors.scaffoldBackground,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AfiaColors.divider),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icon,
+              size: 16,
+              color: iconColor,
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  value,
+                  style: AfiaTypography.body.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: AfiaColors.textPrimary,
+                    fontSize: 13,
+                  ),
+                ),
+                const SizedBox(height: 1),
+                Text(
+                  label,
+                  style: AfiaTypography.body.copyWith(
+                    color: AfiaColors.textSecondary,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
