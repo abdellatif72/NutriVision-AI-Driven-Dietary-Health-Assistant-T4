@@ -16,7 +16,7 @@ class GreetingHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 4, 12),
+      padding: const EdgeInsetsDirectional.fromSTEB(20, 18, 20, 12),
       color: Colors.transparent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -52,15 +52,6 @@ class GreetingHeader extends StatelessWidget {
                   ),
                 ),
               ],
-            ),
-          ),
-          IconButton(
-            onPressed: () =>
-                Navigator.pushNamed(context, '/more/notifications'),
-            icon: const Icon(
-              Icons.notifications_none_rounded,
-              color: AfiaColors.textPrimary,
-              size: 26,
             ),
           ),
         ],

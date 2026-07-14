@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 enum HomeStatus { initial, loading, success, failure }
 
-enum MealSlot { breakfast, lunch, dinner }
+enum MealSlot { breakfast, lunch, dinner, snack }
 
 class MacroSummary extends Equatable {
   const MacroSummary({
@@ -111,8 +111,6 @@ class HomeState extends Equatable {
     this.water,
     this.steps,
     this.stepsGoal,
-    this.heartRate,
-    this.heartRateStatus,
     this.meals = const [],
   });
 
@@ -124,8 +122,6 @@ class HomeState extends Equatable {
   final WaterSummary? water;
   final int? steps;
   final int? stepsGoal;
-  final int? heartRate;
-  final String? heartRateStatus;
   final List<MealEntry> meals;
 
   HomeState copyWith({
@@ -137,8 +133,6 @@ class HomeState extends Equatable {
     WaterSummary? water,
     int? steps,
     int? stepsGoal,
-    int? heartRate,
-    String? heartRateStatus,
     List<MealEntry>? meals,
   }) {
     return HomeState(
@@ -150,8 +144,6 @@ class HomeState extends Equatable {
       water: water ?? this.water,
       steps: steps ?? this.steps,
       stepsGoal: stepsGoal ?? this.stepsGoal,
-      heartRate: heartRate ?? this.heartRate,
-      heartRateStatus: heartRateStatus ?? this.heartRateStatus,
       meals: meals ?? this.meals,
     );
   }
@@ -166,8 +158,6 @@ class HomeState extends Equatable {
         water,
         steps,
         stepsGoal,
-        heartRate,
-        heartRateStatus,
         meals,
       ];
 }
@@ -250,6 +240,7 @@ class HomeCubit extends Cubit<HomeState> {
       final breakfastMeals = loggedMeals.where((m) => m.slotType == 'breakfast').toList();
       final lunchMeals = loggedMeals.where((m) => m.slotType == 'lunch').toList();
       final dinnerMeals = loggedMeals.where((m) => m.slotType == 'dinner').toList();
+      final snackMeals = loggedMeals.where((m) => m.slotType == 'snack').toList();
 
       final mealsList = [
         MealEntry(
@@ -272,6 +263,13 @@ class HomeCubit extends Cubit<HomeState> {
           emoji: '🌙',
           description: dinnerMeals.isEmpty ? null : dinnerMeals.map((m) => m.name).join(', '),
           calories: dinnerMeals.isEmpty ? null : dinnerMeals.fold<int>(0, (sum, m) => sum + m.calories),
+        ),
+        MealEntry(
+          slot: MealSlot.snack,
+          title: 'Snack',
+          emoji: '🍎',
+          description: snackMeals.isEmpty ? null : snackMeals.map((m) => m.name).join(', '),
+          calories: snackMeals.isEmpty ? null : snackMeals.fold<int>(0, (sum, m) => sum + m.calories),
         ),
       ];
 
@@ -299,8 +297,6 @@ class HomeCubit extends Cubit<HomeState> {
           water: WaterSummary(consumedLiters: waterConsumedMl / 1000.0, goalLiters: waterGoal / 1000.0),
           steps: 0,
           stepsGoal: 10000,
-          heartRate: null,
-          heartRateStatus: null,
           meals: mealsList,
         ),
       );

@@ -3,11 +3,9 @@ import 'package:afia/core/error/exceptions.dart';
 import 'package:afia/features/more/data/datasources/more_local_datasource.dart';
 import 'package:afia/features/more/data/models/app_preferences_model.dart';
 import 'package:afia/features/more/data/models/diet_preferences_model.dart';
-import 'package:afia/features/more/data/models/notification_preferences_model.dart';
 import 'package:afia/features/more/data/models/user_profile_model.dart';
 import 'package:afia/features/more/domain/entities/app_preferences.dart';
 import 'package:afia/features/more/domain/entities/diet_preferences.dart';
-import 'package:afia/features/more/domain/entities/notification_preferences.dart';
 import 'package:afia/features/more/domain/entities/user_profile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +17,6 @@ class MoreLocalDataSourceImpl implements MoreLocalDataSource {
 
   static const _profileKey = 'CACHED_USER_PROFILE';
   static const _dietKey = 'CACHED_DIET_PREFERENCES';
-  static const _notificationKey = 'CACHED_NOTIFICATION_PREFERENCES';
   static const _appKey = 'CACHED_APP_PREFERENCES';
 
   @override
@@ -60,27 +57,6 @@ class MoreLocalDataSourceImpl implements MoreLocalDataSource {
     final model = DietPreferencesModel.fromEntity(prefs);
     await _sharedPreferences.setString(
       _dietKey,
-      json.encode(model.toJson()),
-    );
-  }
-
-  @override
-  Future<NotificationPreferences> getCachedNotificationPreferences() async {
-    final jsonString = _sharedPreferences.getString(_notificationKey);
-    if (jsonString != null) {
-      return NotificationPreferencesModel.fromJson(
-        json.decode(jsonString) as Map<String, dynamic>,
-      );
-    } else {
-      throw CacheException();
-    }
-  }
-
-  @override
-  Future<void> cacheNotificationPreferences(NotificationPreferences prefs) async {
-    final model = NotificationPreferencesModel.fromEntity(prefs);
-    await _sharedPreferences.setString(
-      _notificationKey,
       json.encode(model.toJson()),
     );
   }

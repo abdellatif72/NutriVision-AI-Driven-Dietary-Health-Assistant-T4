@@ -22,7 +22,6 @@ abstract final class RouteNames {
   static const goals = '/more/goals';
   static const progress = '/more/progress';
   static const reminders = '/more/reminders';
-  static const notifications = '/more/notifications';
   static const connectedApps = '/more/connected-apps';
   static const settings = '/more/settings';
   static const changePassword = '/more/change-password';

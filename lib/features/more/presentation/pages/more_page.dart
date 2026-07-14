@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:afia/app/localization/locale_cubit.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
@@ -11,6 +10,7 @@ import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
 import 'package:afia/features/more/presentation/cubit/more_state.dart';
 
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/features/more/presentation/widgets/more_section_card.dart';
 import 'package:afia/features/more/presentation/widgets/more_tile.dart';
 import 'package:afia/features/more/presentation/widgets/section_title.dart';
@@ -27,7 +27,7 @@ class MorePage extends StatelessWidget {
     final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
     return BlocProvider(
       create: (_) {
-        final cubit = MoreCubit()..loadProfile();
+        final cubit = sl<MoreCubit>()..loadProfile();
         if (userName.isNotEmpty) cubit.updateName(userName);
         return cubit;
       },
@@ -85,7 +85,7 @@ class _MoreView extends StatelessWidget {
                                 backgroundImage: state.profileImageBytes != null
                                     ? MemoryImage(state.profileImageBytes!)
                                     : (state.profileImagePath.isNotEmpty
-                                        ? (kIsWeb
+                                        ? (state.profileImagePath.startsWith('http')
                                             ? NetworkImage(state.profileImagePath)
                                             : FileImage(File(state.profileImagePath))) as ImageProvider
                                         : null),
@@ -165,13 +165,6 @@ class _MoreView extends StatelessWidget {
                   const SizedBox(height: AfiaSpacing.md),
                   MoreSectionCard(
                     children: [
-                      MoreTile(
-                        icon: Icons.notifications_none_rounded,
-                        title: l10n.notifications,
-                        subtitle: l10n.notificationsSubtitleMore,
-                        onTap: () => Navigator.pushNamed(context, RouteNames.notifications),
-                      ),
-
                       MoreTile(
                         icon: Icons.language_rounded,
                         title: l10n.language,

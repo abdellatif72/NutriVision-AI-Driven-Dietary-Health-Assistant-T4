@@ -4,6 +4,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
+import 'package:afia/features/main/presentation/pages/meal_category_detail_page.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
 import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart';
@@ -228,13 +229,6 @@ class _HomeViewState extends State<_HomeView> {
           );
         }
 
-        final stepsText = state.steps != null
-            ? _formatNumber(state.steps!)
-            : '0';
-        final stepsGoalText = state.stepsGoal != null
-            ? '/${_formatNumber(state.stepsGoal!)}'
-            : '/10,000';
-
         final waterText = state.water != null
             ? state.water!.consumedLiters.toStringAsFixed(1)
             : '0.0';
@@ -243,12 +237,7 @@ class _HomeViewState extends State<_HomeView> {
             : '/2.5 L';
 
         final isAr = Localizations.localeOf(context).languageCode == 'ar';
-        final stepsTitle = isAr ? 'الخطوات' : 'Steps';
         final waterTitle = isAr ? 'الماء' : 'Water';
-        final heartRateTitle = isAr ? 'نبضات القلب' : 'Heart Rate';
-        final heartStatus = state.heartRateStatus == 'Resting'
-            ? (isAr ? 'الراحة' : 'Resting')
-            : (state.heartRateStatus ?? (isAr ? 'الراحة' : 'Resting'));
 
         // Bottom padding = nav bar height (80) + device safe-area so content
         // isn't hidden behind the Stack-overlaid bottom navigation bar.
@@ -266,64 +255,65 @@ class _HomeViewState extends State<_HomeView> {
                   greeting: isAr ? 'لنبدأ يوماً رائعاً معاً!' : state.greeting,
                   userName: state.userName,
                 ),
-                DailyProgressCard(
-                  percent: 0.78,
-                  description: isAr
-                      ? 'عمل رائع! أنت\nعلى المسار الصحيح اليوم.'
-                      : "Great job! You're\non track today.",
-                ),
+                Builder(builder: (context) {
+                  final caloriePercent = (state.calories?.percent ?? 0.0).clamp(0.0, 1.0);
+                  final String progressDesc;
+                  if (isAr) {
+                    if (caloriePercent >= 1.0) {
+                      progressDesc = 'لقد وصلت إلى هدفك اليومي! 🎉';
+                    } else if (caloriePercent >= 0.75) {
+                      progressDesc = 'رائع! أنت\nعلى المسار الصحيح اليوم.';
+                    } else if (caloriePercent >= 0.5) {
+                      progressDesc = 'تقدم جيد!\nأنت في منتصف الطريق.';
+                    } else {
+                      progressDesc = 'لنبدأ! أنت\nفي بداية رحلتك اليوم.';
+                    }
+                  } else {
+                    if (caloriePercent >= 1.0) {
+                      progressDesc = "You've reached your\ndaily goal! 🎉";
+                    } else if (caloriePercent >= 0.75) {
+                      progressDesc = "Great job! You're\nalmost there.";
+                    } else if (caloriePercent >= 0.5) {
+                      progressDesc = "Good progress!\nYou're halfway there.";
+                    } else {
+                      progressDesc = "Let's get going — you're\njust getting started.";
+                    }
+                  }
+                  return DailyProgressCard(
+                    percent: caloriePercent,
+                    description: progressDesc,
+                  );
+                }),
                 Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 20,
                     vertical: 8,
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.steps,
-                          icon: Icons.directions_walk_rounded,
-                          title: stepsTitle,
-                          value: stepsText,
-                          subtext: stepsGoalText,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.water,
-                          icon: Icons.water_drop_rounded,
-                          title: waterTitle,
-                          value: waterText,
-                          valueUnit: isAr ? 'لتر' : 'L',
-                          subtext: isAr ? '/٢.٥ لتر' : waterGoalText,
-                          onTap: () => Navigator.pushNamed(
-                            context,
-                            RouteNames.water,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: MetricCard(
-                          kind: AfiaMetricKind.heartRate,
-                          icon: Icons.favorite_rounded,
-                          title: heartRateTitle,
-                          value: state.heartRate != null
-                              ? '${state.heartRate}'
-                              : '72',
-                          valueUnit: isAr ? 'ن/د' : 'bpm',
-                          subtext: heartStatus,
-                        ),
-                      ),
-                    ],
+                  child: MetricCard(
+                    kind: AfiaMetricKind.water,
+                    icon: Icons.water_drop_rounded,
+                    title: waterTitle,
+                    value: waterText,
+                    valueUnit: isAr ? 'لتر' : 'L',
+                    subtext: isAr ? '/٢.٥ لتر' : waterGoalText,
+                    onTap: () => Navigator.pushNamed(
+                      context,
+                      RouteNames.water,
+                    ),
                   ),
                 ),
                 CaloriesProgressCard(
                   consumed: state.calories?.consumed ?? 1420,
                   goal: state.calories?.goal ?? 2000,
                 ),
-                TodaysMealsList(meals: state.meals),
+                TodaysMealsList(meals: state.meals, onMealTap: (meal) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MealCategoryDetailPage(mealEntry: meal),
+                    ),
+                  );
+                }),
               ],
             ),
           ),

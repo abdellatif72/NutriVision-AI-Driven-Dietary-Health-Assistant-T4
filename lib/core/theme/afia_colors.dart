@@ -37,7 +37,7 @@ class AfiaColors {
   static const Color blue = Color(0xFF3DA5F4); // water
   static const Color blueContainer = Color(0xFFE2F2FE);
 
-  static const Color red = Color(0xFFFF5C5C); // heart rate
+  static const Color red = Color(0xFFFF5C5C); // semantic red
   static const Color redContainer = Color(0xFFFFE3E3);
 
   // ---------------------------------------------------------------
@@ -65,12 +65,10 @@ class AfiaColors {
         return (orange, orangeContainer);
       case AfiaMetricKind.water:
         return (blue, blueContainer);
-      case AfiaMetricKind.heartRate:
-        return (red, redContainer);
       case AfiaMetricKind.exercise:
         return (primary, primaryContainer);
     }
   }
 }
 
-enum AfiaMetricKind { steps, water, calories, heartRate, exercise }
+enum AfiaMetricKind { steps, water, calories, exercise }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-import 'package:flutter/foundation.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -127,16 +126,6 @@ class _ProfileView extends StatelessWidget {
                       container: AfiaColors.blueContainer,
                     ),
                   ),
-                  SizedBox(width: AfiaSpacing.md),
-                  Expanded(
-                    child: _MiniInfoCard(
-                      icon: Icons.favorite_outlined,
-                      label: 'Heart Rate',
-                      value: '72 bpm',
-                      accent: AfiaColors.red,
-                      container: AfiaColors.redContainer,
-                    ),
-                  ),
                 ],
               ),
             ],
@@ -183,7 +172,7 @@ class _HeroSummaryCard extends StatelessWidget {
                 backgroundImage: profileImageBytes != null
                     ? MemoryImage(profileImageBytes!)
                     : (profileImagePath.isNotEmpty
-                        ? (kIsWeb
+                        ? (profileImagePath.startsWith('http')
                             ? NetworkImage(profileImagePath)
                             : FileImage(File(profileImagePath))) as ImageProvider
                         : null),
