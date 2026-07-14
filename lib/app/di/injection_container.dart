@@ -24,6 +24,10 @@ import 'package:afia/features/explore/presentation/bloc/explore_bloc.dart';
 import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
 import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
 import 'package:afia/core/services/token_swap_service.dart';
+import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
+import 'package:afia/features/water/data/datasources/water_remote_datasource_impl.dart';
+import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
+import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,6 +54,15 @@ abstract final class InjectionContainer {
     sl.registerFactory(() => AuthBloc(authRepository: sl()));
     sl.registerFactory(() => ExploreBloc(getFoods: sl(), logFood: sl()));
     sl.registerFactory(() => MealsCubit(remoteDataSource: sl()));
+    sl.registerFactory(() => WaterRecordingCubit(remoteDataSource: sl()));
+    sl.registerFactoryParam<HomeCubit, String?, void>(
+      (userName, _) => HomeCubit(
+        mealDataSource: sl(),
+        waterDataSource: sl(),
+        moreDataSource: sl(),
+        userName: userName,
+      ),
+    );
     sl.registerFactory(
       () => ProfileFormCubit(
         getMoreProfile: sl(),
@@ -88,6 +101,9 @@ abstract final class InjectionContainer {
     );
     sl.registerLazySingleton<ExploreRemoteDataSource>(
       () => ExploreRemoteDataSourceImpl(),
+    );
+    sl.registerLazySingleton<WaterRemoteDataSource>(
+      () => WaterRemoteDataSourceImpl(),
     );
 
     // Services

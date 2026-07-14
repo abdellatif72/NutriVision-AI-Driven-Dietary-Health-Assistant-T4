@@ -1,3 +1,4 @@
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
@@ -99,7 +100,7 @@ class HomePage extends StatelessWidget {
     final authState = context.read<AuthBloc>().state;
     final userName = authState is AuthAuthenticated ? (authState.user.name ?? '') : '';
     return BlocProvider(
-      create: (_) => HomeCubit(userName: userName)..loadMockDashboard(),
+      create: (_) => sl<HomeCubit>(param1: userName)..loadDashboardData(),
       child: _HomeView(showBottomNav: showBottomNav),
     );
   }

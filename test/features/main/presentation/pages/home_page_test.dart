@@ -3,6 +3,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/features/main/presentation/cubit/home_cubit.dart';
 import 'package:afia/features/main/presentation/pages/home_page.dart';
 import 'package:afia/features/meals/presentation/pages/meals_page.dart';
+import 'package:afia/features/meals/presentation/cubit/meals_cubit.dart';
 import 'package:afia/features/main/presentation/widgets/afia_bottom_nav.dart';
 import 'package:afia/features/main/presentation/widgets/calories_progress_card.dart';
 import 'package:afia/features/main/presentation/widgets/daily_progress_card.dart';
@@ -13,14 +14,28 @@ import 'package:afia/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/auth/domain/entities/auth_user.dart';
+import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
+import 'package:afia/features/meals/data/models/meal_model.dart';
+import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
+import 'package:afia/features/water/data/models/water_entry_model.dart';
+import 'package:afia/features/water/domain/entities/water_entry.dart';
+import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
+import 'package:afia/features/more/domain/entities/diet_preferences.dart';
+import 'package:afia/features/more/domain/entities/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:get_it/get_it.dart';
 
 class FakeAuthBloc extends Bloc<AuthEvent, AuthState> implements AuthBloc {
   FakeAuthBloc(AuthState initialState) : super(initialState);
 }
+
+class MockMealRemoteDataSource extends Mock implements MealRemoteDataSource {}
+class MockWaterRemoteDataSource extends Mock implements WaterRemoteDataSource {}
+class MockMoreRemoteDataSource extends Mock implements MoreRemoteDataSource {}
 
 Widget wrapInApp(Widget child) {
   return MaterialApp(
@@ -36,21 +51,71 @@ Widget wrapInApp(Widget child) {
 }
 
 void main() {
+  late MockMealRemoteDataSource mockMealDS;
+  late MockWaterRemoteDataSource mockWaterDS;
+  late MockMoreRemoteDataSource mockMoreDS;
+
   setUpAll(() {
     GoogleFonts.config.allowRuntimeFetching = false;
+    registerFallbackValue(DateTime.now());
+  });
+
+  setUp(() {
+    mockMealDS = MockMealRemoteDataSource();
+    mockWaterDS = MockWaterRemoteDataSource();
+    mockMoreDS = MockMoreRemoteDataSource();
+
+    final tDate = DateTime.now();
+
+    // Stub common behaviors
+    when(() => mockMoreDS.getDietPreferences()).thenAnswer((_) async => const DietPreferences(calorieTarget: 2000));
+    when(() => mockMoreDS.getProfile()).thenAnswer((_) async => UserProfile(id: '1', name: 'Sara', streakDays: 7));
+    when(() => mockWaterDS.getWaterGoal()).thenAnswer((_) async => 2500);
+    when(() => mockWaterDS.getWaterLogs(any())).thenAnswer((_) async => [
+      WaterEntryModel(id: 'w1', timestamp: tDate, amountMl: 1000, preset: WaterPreset.pint),
+      WaterEntryModel(id: 'w2', timestamp: tDate, amountMl: 600, preset: WaterPreset.custom),
+    ]);
+
+    when(() => mockMealDS.getLoggedMeals(any())).thenAnswer((_) async => [
+      MealModel(id: 'm1', name: 'Oatmeal with berries', emoji: '☀️', servingLabel: '1 bowl', calories: 420, slotType: 'breakfast'),
+      MealModel(id: 'm2', name: 'Koshari + salad', emoji: '🌤️', servingLabel: '1 plate', calories: 680, slotType: 'lunch'),
+    ]);
+
+    // Register them in GetIt sl:
+    final sl = GetIt.instance;
+    sl.reset(); // Clear old registrations
+    
+    sl.registerLazySingleton<MealRemoteDataSource>(() => mockMealDS);
+    sl.registerLazySingleton<WaterRemoteDataSource>(() => mockWaterDS);
+    sl.registerLazySingleton<MoreRemoteDataSource>(() => mockMoreDS);
+    
+    sl.registerFactoryParam<HomeCubit, String?, void>(
+      (userName, _) => HomeCubit(
+        mealDataSource: sl(),
+        waterDataSource: sl(),
+        moreDataSource: sl(),
+        userName: userName,
+      ),
+    );
+    sl.registerFactory<MealsCubit>(() => MealsCubit(remoteDataSource: mockMealDS));
   });
 
   group('HomePage', () {
     test(
-      'HomeCubit emits success state with mock data after loadMockDashboard',
-      () {
-        final cubit = HomeCubit();
+      'HomeCubit emits success state with data after loadDashboardData',
+      () async {
+        final cubit = HomeCubit(
+          mealDataSource: mockMealDS,
+          waterDataSource: mockWaterDS,
+          moreDataSource: mockMoreDS,
+          userName: 'Sara',
+        );
         expect(cubit.state.status, HomeStatus.initial);
 
-        cubit.loadMockDashboard();
+        await cubit.loadDashboardData();
         expect(cubit.state.status, HomeStatus.success);
         expect(cubit.state.userName, 'Sara');
-        expect(cubit.state.steps, 8432);
+        expect(cubit.state.streak?.consecutiveDays, 7);
         expect(cubit.state.meals.length, 3);
       },
     );
@@ -67,25 +132,19 @@ void main() {
       // Daily progress card
       expect(find.byType(DailyProgressCard), findsOneWidget);
       expect(find.text('Daily Progress'), findsOneWidget);
-      expect(find.text('78'), findsOneWidget);
 
       // Metric cards
       expect(find.byType(MetricCard), findsNWidgets(3));
       expect(find.text('Steps'), findsOneWidget);
-      expect(find.text('8,432'), findsOneWidget);
-      expect(find.text('/10,000'), findsOneWidget);
       expect(find.text('Water'), findsOneWidget);
       expect(find.text('1.6'), findsOneWidget);
       expect(find.text('/2.5 L'), findsOneWidget);
       expect(find.text('Heart Rate'), findsOneWidget);
-      expect(find.text('72'), findsOneWidget);
-      expect(find.text('bpm'), findsOneWidget);
-      expect(find.text('Resting'), findsOneWidget);
 
       // Calories card
       expect(find.byType(CaloriesProgressCard), findsOneWidget);
       expect(find.text('Calories'), findsOneWidget);
-      expect(find.text('1420'), findsOneWidget);
+      expect(find.text('1100'), findsOneWidget); // 420 + 680 = 1100
       expect(find.text('/ 2000 kcal'), findsOneWidget);
 
       // Scroll down to meals section

@@ -1,3 +1,6 @@
+import 'package:afia/features/meals/data/datasources/meal_remote_datasource.dart';
+import 'package:afia/features/water/data/datasources/water_remote_datasource.dart';
+import 'package:afia/features/more/data/datasources/more_remote_datasource.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -166,60 +169,122 @@ class HomeState extends Equatable {
 }
 
 class HomeCubit extends Cubit<HomeState> {
-  HomeCubit({this.userName}) : super(const HomeState());
-
+  final MealRemoteDataSource _mealDataSource;
+  final WaterRemoteDataSource _waterDataSource;
+  final MoreRemoteDataSource _moreDataSource;
   final String? userName;
 
-  void loadMockDashboard() {
-    emit(
-      HomeState(
-        status: HomeStatus.success,
-        greeting: "Let's make today amazing!",
-        userName: (userName == null || userName!.isEmpty) ? 'Sara' : userName!,
-        calories: CalorieSummary(
-          percent: 0.71,
-          consumed: 1420,
-          goal: 2000,
-          macros: [
-            MacroSummary(label: 'Carb', grams: 142, fillPercent: 0.70),
-            MacroSummary(label: 'Protein', grams: 89, fillPercent: 0.60),
-            MacroSummary(label: 'Fat', grams: 38, fillPercent: 0.45),
-          ],
+  HomeCubit({
+    required MealRemoteDataSource mealDataSource,
+    required WaterRemoteDataSource waterDataSource,
+    required MoreRemoteDataSource moreDataSource,
+    this.userName,
+  })  : _mealDataSource = mealDataSource,
+        _waterDataSource = waterDataSource,
+        _moreDataSource = moreDataSource,
+        super(const HomeState());
+
+  Future<void> loadDashboardData() async {
+    emit(state.copyWith(status: HomeStatus.loading));
+    try {
+      final today = DateTime.now();
+
+      // 1. Fetch calorie goal & diet preferences
+      final dietPrefs = await _moreDataSource.getDietPreferences();
+      final calorieGoal = dietPrefs.calorieTarget ?? 2000;
+      final carbsPct = dietPrefs.carbsPct ?? 50;
+      final proteinPct = dietPrefs.proteinPct ?? 20;
+      final fatPct = dietPrefs.fatPct ?? 30;
+
+      // 2. Fetch today's logged meals
+      final loggedMeals = await _mealDataSource.getLoggedMeals(today);
+
+      // Sum calories & macros consumed
+      int consumedCalories = 0;
+      int consumedCarbs = 0;
+      int consumedProtein = 0;
+      int consumedFat = 0;
+
+      for (final meal in loggedMeals) {
+        consumedCalories += meal.calories;
+        consumedProtein += meal.proteinG ?? (meal.calories * 0.25 / 4).round();
+        consumedCarbs += meal.carbsG ?? (meal.calories * 0.50 / 4).round();
+        consumedFat += meal.fatG ?? (meal.calories * 0.25 / 9).round();
+      }
+
+      final goalCarbs = (calorieGoal * carbsPct / 100 / 4).round();
+      final goalProtein = (calorieGoal * proteinPct / 100 / 4).round();
+      final goalFat = (calorieGoal * fatPct / 100 / 9).round();
+
+      // 3. Fetch today's water logs
+      final waterGoal = await _waterDataSource.getWaterGoal();
+      final waterLogs = await _waterDataSource.getWaterLogs(today);
+      final waterConsumedMl = waterLogs.fold<int>(0, (sum, e) => sum + e.amountMl);
+
+      // 4. Fetch user profile streak
+      final profile = await _moreDataSource.getProfile();
+      final streakDays = profile.streakDays ?? 0;
+
+      // 5. Map meals to slot entries
+      final breakfastMeals = loggedMeals.where((m) => m.slotType == 'breakfast').toList();
+      final lunchMeals = loggedMeals.where((m) => m.slotType == 'lunch').toList();
+      final dinnerMeals = loggedMeals.where((m) => m.slotType == 'dinner').toList();
+
+      final mealsList = [
+        MealEntry(
+          slot: MealSlot.breakfast,
+          title: 'Breakfast',
+          emoji: '☀️',
+          description: breakfastMeals.isEmpty ? null : breakfastMeals.map((m) => m.name).join(', '),
+          calories: breakfastMeals.isEmpty ? null : breakfastMeals.fold<int>(0, (sum, m) => sum + m.calories),
         ),
-        streak: StreakSummary(
-          consecutiveDays: 7,
-          dayLabels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
-          completed: [true, true, true, true, true, true, true],
-          todayIndex: 6,
+        MealEntry(
+          slot: MealSlot.lunch,
+          title: 'Lunch',
+          emoji: '🌤️',
+          description: lunchMeals.isEmpty ? null : lunchMeals.map((m) => m.name).join(', '),
+          calories: lunchMeals.isEmpty ? null : lunchMeals.fold<int>(0, (sum, m) => sum + m.calories),
         ),
-        water: WaterSummary(consumedLiters: 1.6, goalLiters: 2.5),
-        steps: 8432,
-        stepsGoal: 10000,
-        heartRate: 72,
-        heartRateStatus: 'Resting',
-        meals: [
-          MealEntry(
-            slot: MealSlot.breakfast,
-            title: 'Breakfast',
-            emoji: '☀️',
-            imagePath: 'assets/images/breakfast_oatmeal.png',
-            description: 'Oatmeal with berries',
-            calories: 420,
+        MealEntry(
+          slot: MealSlot.dinner,
+          title: 'Dinner',
+          emoji: '🌙',
+          description: dinnerMeals.isEmpty ? null : dinnerMeals.map((m) => m.name).join(', '),
+          calories: dinnerMeals.isEmpty ? null : dinnerMeals.fold<int>(0, (sum, m) => sum + m.calories),
+        ),
+      ];
+
+      emit(
+        HomeState(
+          status: HomeStatus.success,
+          greeting: "Let's make today amazing!",
+          userName: (userName == null || userName!.isEmpty) ? 'User' : userName!,
+          calories: CalorieSummary(
+            percent: calorieGoal <= 0 ? 0.0 : consumedCalories / calorieGoal,
+            consumed: consumedCalories,
+            goal: calorieGoal,
+            macros: [
+              MacroSummary(label: 'Carb', grams: consumedCarbs, fillPercent: goalCarbs <= 0 ? 0.0 : (consumedCarbs / goalCarbs).clamp(0.0, 1.0)),
+              MacroSummary(label: 'Protein', grams: consumedProtein, fillPercent: goalProtein <= 0 ? 0.0 : (consumedProtein / goalProtein).clamp(0.0, 1.0)),
+              MacroSummary(label: 'Fat', grams: consumedFat, fillPercent: goalFat <= 0 ? 0.0 : (consumedFat / goalFat).clamp(0.0, 1.0)),
+            ],
           ),
-          MealEntry(
-            slot: MealSlot.lunch,
-            title: 'Lunch',
-            emoji: '🌤️',
-            description: 'Koshari + salad',
-            calories: 680,
+          streak: StreakSummary(
+            consecutiveDays: streakDays,
+            dayLabels: const ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+            completed: List.generate(7, (i) => i < streakDays),
+            todayIndex: 6,
           ),
-          MealEntry(
-            slot: MealSlot.dinner,
-            title: 'Dinner',
-            emoji: '🌙',
-          ),
-        ],
-      ),
-    );
+          water: WaterSummary(consumedLiters: waterConsumedMl / 1000.0, goalLiters: waterGoal / 1000.0),
+          steps: 0,
+          stepsGoal: 10000,
+          heartRate: null,
+          heartRateStatus: null,
+          meals: mealsList,
+        ),
+      );
+    } catch (e) {
+      emit(state.copyWith(status: HomeStatus.failure));
+    }
   }
 }

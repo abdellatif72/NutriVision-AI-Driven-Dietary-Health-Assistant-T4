@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:afia/app/localization/l10n.dart';
 
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/app/di/injection_container.dart';
 import 'package:afia/features/water/presentation/cubit/water_recording_cubit.dart';
 import 'package:afia/features/water/presentation/widgets/custom_water_amount_sheet.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class WaterRecordingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => WaterRecordingCubit(),
+      create: (_) => sl<WaterRecordingCubit>(),
       child: const _WaterRecordingView(),
     );
   }
