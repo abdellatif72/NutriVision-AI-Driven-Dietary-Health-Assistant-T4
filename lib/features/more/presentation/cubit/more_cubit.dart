@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:afia/features/more/presentation/cubit/more_state.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MoreCubit extends Cubit<MoreState> {
   MoreCubit() : super(const MoreState());
@@ -17,5 +18,17 @@ class MoreCubit extends Cubit<MoreState> {
         .join()
         .toUpperCase();
     emit(state.copyWith(name: name, initials: initials));
+  }
+
+  Future<void> updateProfileImage() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      final bytes = await image.readAsBytes();
+      emit(state.copyWith(
+        profileImagePath: image.path,
+        profileImageBytes: bytes,
+      ));
+    }
   }
 }

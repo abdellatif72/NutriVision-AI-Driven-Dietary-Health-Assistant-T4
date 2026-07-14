@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -54,6 +57,8 @@ class _ProfileView extends StatelessWidget {
                 initials: state.initials,
                 currentGoal: state.currentGoal,
                 streakDays: state.streakDays,
+                profileImagePath: state.profileImagePath,
+                profileImageBytes: state.profileImageBytes,
               ),
               const SizedBox(height: AfiaSpacing.xl),
               MoreSectionCard(
@@ -148,12 +153,16 @@ class _HeroSummaryCard extends StatelessWidget {
     required this.initials,
     required this.currentGoal,
     required this.streakDays,
+    required this.profileImagePath,
+    this.profileImageBytes,
   });
 
   final String name;
   final String initials;
   final String currentGoal;
   final int streakDays;
+  final String profileImagePath;
+  final Uint8List? profileImageBytes;
 
   @override
   Widget build(BuildContext context) {
@@ -171,13 +180,22 @@ class _HeroSummaryCard extends StatelessWidget {
               CircleAvatar(
                 radius: 28,
                 backgroundColor: AfiaColors.primaryContainer,
-                child: Text(
-                  initials,
-                  style: AfiaTypography.cardTitle.copyWith(
-                    color: AfiaColors.primary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
+                backgroundImage: profileImageBytes != null
+                    ? MemoryImage(profileImageBytes!)
+                    : (profileImagePath.isNotEmpty
+                        ? (kIsWeb
+                            ? NetworkImage(profileImagePath)
+                            : FileImage(File(profileImagePath))) as ImageProvider
+                        : null),
+                child: profileImageBytes == null && profileImagePath.isEmpty
+                    ? Text(
+                        initials,
+                        style: AfiaTypography.cardTitle.copyWith(
+                          color: AfiaColors.primary,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      )
+                    : null,
               ),
               const SizedBox(width: AfiaSpacing.md),
               Expanded(

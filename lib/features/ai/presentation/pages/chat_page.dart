@@ -1,3 +1,4 @@
+import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
@@ -19,8 +20,11 @@ class ChatPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // Read homeState to pass user data to the cubit
     final homeState = context.read<HomeCubit?>()?.state ?? const HomeState();
+
     return BlocProvider(
-      create: (_) => ChatCubit(homeState: homeState),
+      create: (_) => ChatCubit(
+        homeState: homeState,
+      ),
       child: _ChatPageView(showBottomNav: showBottomNav),
     );
   }
@@ -39,12 +43,37 @@ class _ChatPageViewState extends State<_ChatPageView> {
   final _scrollController = ScrollController();
   int _selectedNavIndex = 2;
 
-  static const _navItems = [
-    AfiaNavItem(icon: Icons.home_rounded, label: 'Home'),
-    AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: 'Meals'),
-    AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: 'Chat'),
-    AfiaNavItem(icon: Icons.more_horiz_rounded, label: 'More'),
-  ];
+  List<AfiaNavItem> _buildNavItems(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
+    return [
+      AfiaNavItem(icon: Icons.home_rounded, label: l.home),
+      AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: l.meals),
+      AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: l.chat),
+      AfiaNavItem(icon: Icons.more_horiz_rounded, label: l.more),
+    ];
+  }
+
+  String _getGreeting(BuildContext context) {
+    final homeState = context.read<ChatCubit>().homeState;
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final name = homeState.userName.isNotEmpty
+        ? homeState.userName
+        : (isAr ? 'هناك' : 'there');
+    final calories = homeState.calories;
+
+    if (calories != null) {
+      final remaining = calories.goal - calories.consumed;
+      return l10n.aiChatGreetingWithCalories(
+        name,
+        remaining.toString(),
+        calories.consumed,
+        calories.goal,
+      );
+    } else {
+      return l10n.aiChatInitialGreeting;
+    }
+  }
 
   @override
   void dispose() {
@@ -91,6 +120,7 @@ class _ChatPageViewState extends State<_ChatPageView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return BlocConsumer<ChatCubit, ChatState>(
       listener: (context, state) {
         if (state.messages.isNotEmpty) {
@@ -125,7 +155,7 @@ class _ChatPageViewState extends State<_ChatPageView> {
                   children: [
                     Text('Afia AI', style: AfiaTypography.cardTitle),
                     Text(
-                      'مساعدك الغذائي',
+                      l10n.aiNutritionAssistant,
                       style: AfiaTypography.caption.copyWith(
                         color: AfiaColors.textSecondary,
                       ),
@@ -150,19 +180,27 @@ class _ChatPageViewState extends State<_ChatPageView> {
           body: Column(
             children: [
               Expanded(
-                child: state.messages.isEmpty
-                    ? const _EmptyChat()
-                    : ListView.builder(
-                        controller: _scrollController,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: AfiaSpacing.pageMargin,
-                          vertical: AfiaSpacing.md,
-                        ),
-                        itemCount: state.messages.length,
-                        itemBuilder: (context, index) {
-                          return ChatBubble(message: state.messages[index]);
-                        },
-                      ),
+                child: ListView.builder(
+                  controller: _scrollController,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AfiaSpacing.pageMargin,
+                    vertical: AfiaSpacing.md,
+                  ),
+                  itemCount: state.messages.length + 1,
+                  itemBuilder: (context, index) {
+                    if (index == 0) {
+                      final greeting = _getGreeting(context);
+                      final welcomeMsg = ChatMessage(
+                        id: 'welcome',
+                        text: greeting,
+                        isUser: false,
+                        timestamp: DateTime(2026, 1, 1),
+                      );
+                      return ChatBubble(message: welcomeMsg);
+                    }
+                    return ChatBubble(message: state.messages[index - 1]);
+                  },
+                ),
               ),
               _ChatInput(
                 controller: _textController,
@@ -173,7 +211,7 @@ class _ChatPageViewState extends State<_ChatPageView> {
           ),
           bottomNavigationBar: widget.showBottomNav
               ? AfiaBottomNav(
-                  items: _navItems,
+                  items: _buildNavItems(context),
                   selectedIndex: _selectedNavIndex,
                   onSelected: _onNavSelected,
                   centerIcon: Icons.add_rounded,
@@ -199,6 +237,7 @@ class _ChatInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final mq = MediaQuery.of(context);
     final keyboardHeight = mq.viewInsets.bottom;
     // When keyboard is hidden, we need to clear the overlaid bottom nav bar
@@ -235,7 +274,7 @@ class _ChatInput extends StatelessWidget {
               onSubmitted: (_) => onSend(),
               enabled: !isLoading,
               decoration: InputDecoration(
-                hintText: 'اكتب سؤالك هنا...',
+                hintText: l10n.typeQuestion,
                 hintStyle: AfiaTypography.body.copyWith(
                   color: AfiaColors.textMuted,
                 ),
@@ -305,26 +344,3 @@ class _ChatInput extends StatelessWidget {
   }
 }
 
-class _EmptyChat extends StatelessWidget {
-  const _EmptyChat();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text('🤖', style: const TextStyle(fontSize: 56)),
-          const SizedBox(height: AfiaSpacing.lg),
-          Text('مساعدك الغذائي الذكي', style: AfiaTypography.cardTitle),
-          const SizedBox(height: AfiaSpacing.sm),
-          Text(
-            'اسألني عن التغذية، الوجبات، أو تقدمك الصحي',
-            style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-}

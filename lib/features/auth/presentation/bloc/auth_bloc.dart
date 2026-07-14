@@ -62,9 +62,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     SignUpRequested event,
     Emitter<AuthState> emit,
   ) async {
-    final emailError = ValidationUtils.validateEmail(event.email);
+    final emailError = ValidationUtils.validateEmail(event.email, locale: event.locale);
     final emailSuggestion = ValidationUtils.suggestEmailCorrection(event.email);
-    final passwordError = ValidationUtils.validatePassword(event.password);
+    final passwordError = ValidationUtils.validatePassword(event.password, locale: event.locale);
 
     final hasValidationError = emailError != null || passwordError != null;
     final hasWarning = emailSuggestion != null && !event.ignoreWarnings;

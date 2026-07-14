@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class FaqsPage extends StatelessWidget {
@@ -8,66 +9,62 @@ class FaqsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('FAQs', style: AfiaTypography.screenTitle),
+        title: Text(l10n.faqs, style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: const EdgeInsetsDirectional.fromSTEB(
           AfiaSpacing.pageMargin,
           AfiaSpacing.sm,
           AfiaSpacing.pageMargin,
           AfiaSpacing.xxxl,
         ),
-        children: const [
+        children: [
           _FaqTile(
-            question: 'How do I change my calorie goal?',
-            answer:
-                'Go to More > Diet Preferences, then adjust your calorie target and macro split.',
+            question: l10n.faq1Question,
+            answer: l10n.faq1Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'Can I track water reminders?',
-            answer:
-                'Yes. Go to More > Notifications and enable water reminders. You can set the interval between 1-4 hours.',
+            question: l10n.faq2Question,
+            answer: l10n.faq2Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'How do I reset my password?',
-            answer:
-                'Go to More > Change Password. Enter your current password, then your new password twice.',
+            question: l10n.faq3Question,
+            answer: l10n.faq3Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'How is my daily calorie target calculated?',
-            answer:
-                'Your target is based on your age, gender, height, weight, activity level, and selected goal (lose/maintain/gain).',
+            question: l10n.faq4Question,
+            answer: l10n.faq4Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'Can I use Afia offline?',
-            answer:
-                'Basic logging features work offline. Syncing across devices requires an internet connection.',
+            question: l10n.faq5Question,
+            answer: l10n.faq5Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'How do I change my language preference?',
-            answer:
-                'Go to More > Settings > Language to switch between العربية and English.',
+            question: l10n.faq6Question,
+            answer: l10n.faq6Answer,
           ),
-          SizedBox(height: AfiaSpacing.md),
+          const SizedBox(height: AfiaSpacing.md),
           _FaqTile(
-            question: 'Is my data secure?',
-            answer:
-                'Yes. Your health data is encrypted and stored securely. We do not share your personal information with third parties.',
+            question: l10n.faq7Question,
+            answer: l10n.faq7Answer,
           ),
         ],
       ),
@@ -101,7 +98,7 @@ class _FaqTileState extends State<_FaqTile> {
             onTap: () => setState(() => _expanded = !_expanded),
             borderRadius: BorderRadius.circular(24),
             child: Padding(
-              padding: const EdgeInsets.all(AfiaSpacing.lg),
+              padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
               child: Row(
                 children: [
                   Expanded(
@@ -122,7 +119,7 @@ class _FaqTileState extends State<_FaqTile> {
           ),
           if (_expanded)
             Padding(
-              padding: const EdgeInsets.fromLTRB(
+              padding: const EdgeInsetsDirectional.fromSTEB(
                 AfiaSpacing.lg,
                 0,
                 AfiaSpacing.lg,

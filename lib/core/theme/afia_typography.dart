@@ -89,11 +89,24 @@ class AfiaTypography {
       );
 
   static TextTheme get textTheme => TextTheme(
+        displayLarge: TextStyle(fontFamily: fontFamily, fontSize: 57, fontWeight: FontWeight.w400, color: AfiaColors.textPrimary),
+        displayMedium: TextStyle(fontFamily: fontFamily, fontSize: 45, fontWeight: FontWeight.w400, color: AfiaColors.textPrimary),
+        displaySmall: TextStyle(fontFamily: fontFamily, fontSize: 36, fontWeight: FontWeight.w400, color: AfiaColors.textPrimary),
+        
+        headlineLarge: TextStyle(fontFamily: fontFamily, fontSize: 32, fontWeight: FontWeight.w400, color: AfiaColors.textPrimary),
         headlineMedium: statValue,
+        headlineSmall: TextStyle(fontFamily: fontFamily, fontSize: 24, fontWeight: FontWeight.w400, color: AfiaColors.textPrimary),
+        
         titleLarge: screenTitle,
         titleMedium: cardTitle,
+        titleSmall: TextStyle(fontFamily: fontFamily, fontSize: 14, fontWeight: FontWeight.w500, color: AfiaColors.textPrimary),
+        
+        bodyLarge: body.copyWith(fontSize: 16),
         bodyMedium: body,
         bodySmall: label,
+        
+        labelLarge: TextStyle(fontFamily: fontFamily, fontSize: 14, fontWeight: FontWeight.w500, color: AfiaColors.textSecondary),
+        labelMedium: TextStyle(fontFamily: fontFamily, fontSize: 12, fontWeight: FontWeight.w500, color: AfiaColors.textSecondary),
         labelSmall: caption,
       );
 }

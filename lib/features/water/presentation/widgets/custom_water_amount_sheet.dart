@@ -50,9 +50,9 @@ class _CustomWaterAmountSheetState extends State<_CustomWaterAmountSheet> {
         bottom: MediaQuery.viewInsetsOf(context).bottom,
       ),
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AfiaColors.surface,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
         child: SafeArea(

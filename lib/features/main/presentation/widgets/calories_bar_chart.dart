@@ -37,7 +37,7 @@ class CaloriesBarChart extends StatelessWidget {
           Text(caption, style: AfiaTypography.label),
           const SizedBox(height: AfiaSpacing.md),
           SizedBox(
-            height: 120,
+            height: 125,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: bars

@@ -100,36 +100,35 @@ abstract final class ValidationUtils {
   }
 
   /// Validates email structural correctness.
-  /// Returns null if valid, or a localized Arabic error message.
-  static String? validateEmail(String email) {
+  /// Returns null if valid, or a localized error message.
+  static String? validateEmail(String email, {String locale = 'ar'}) {
     final trimmed = email.trim();
+    final isEn = locale == 'en';
     if (trimmed.isEmpty) {
-      return 'يرجى إدخال البريد الإلكتروني';
+      return isEn ? 'Please enter email' : 'يرجى إدخال البريد الإلكتروني';
     }
     
     // Simple check for presence of @
     if (!trimmed.contains('@')) {
-      return 'يرجى إدخال بريد إلكتروني صحيح يحتوي على @';
+      return isEn 
+          ? 'Please enter a valid email containing @' 
+          : 'يرجى إدخال بريد إلكتروني صحيح يحتوي على @';
     }
     
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(trimmed)) {
-      return 'يرجى إدخال بريد إلكتروني صحيح';
+      return isEn ? 'Please enter a valid email' : 'يرجى إدخال بريد إلكتروني صحيح';
     }
 
     return null;
   }
 
-  /// Validates password based on:
-  /// - At least 6 characters
-  /// - At least one uppercase letter
-  /// - At least one lowercase letter
-  /// - At least one number
-  /// - At least one special character
-  /// Returns null if valid, or a localized Arabic error message.
-  static String? validatePassword(String password) {
+  /// Validates password.
+  /// Returns null if valid, or a localized error message.
+  static String? validatePassword(String password, {String locale = 'ar'}) {
+    final isEn = locale == 'en';
     if (password.isEmpty) {
-      return 'يرجى إدخال كلمة المرور';
+      return isEn ? 'Please enter password' : 'يرجى إدخال كلمة المرور';
     }
 
     final hasMinLength = password.length >= 6;
@@ -139,32 +138,62 @@ abstract final class ValidationUtils {
     final hasSpecialCharacters = password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>\-_+=~`\[\]\\/]'));
 
     final missing = <String>[];
-    if (!hasUppercase) missing.add('حرف كبير');
-    if (!hasLowercase) missing.add('حرف صغير');
-    if (!hasDigits) missing.add('رقم');
-    if (!hasSpecialCharacters) missing.add('رمز خاص');
+    if (isEn) {
+      if (!hasUppercase) missing.add('an uppercase letter');
+      if (!hasLowercase) missing.add('a lowercase letter');
+      if (!hasDigits) missing.add('a number');
+      if (!hasSpecialCharacters) missing.add('a special character');
+    } else {
+      if (!hasUppercase) missing.add('حرف كبير');
+      if (!hasLowercase) missing.add('حرف صغير');
+      if (!hasDigits) missing.add('رقم');
+      if (!hasSpecialCharacters) missing.add('رمز خاص');
+    }
 
     if (!hasMinLength || missing.isNotEmpty) {
       String error = '';
-      if (!hasMinLength) {
-        error = 'كلمة المرور يجب أن تتكون من 6 أحرف على الأقل';
-        if (missing.isNotEmpty) {
+      if (isEn) {
+        if (!hasMinLength) {
+          error = 'Password must be at least 6 characters';
+          if (missing.isNotEmpty) {
+            String missingText;
+            if (missing.length == 1) {
+              missingText = missing[0];
+            } else {
+              missingText = '${missing.sublist(0, missing.length - 1).join(", ")}, and ${missing.last}';
+            }
+            error += ' and contain $missingText';
+          }
+        } else {
+          String missingText;
+          if (missing.length == 1) {
+            missingText = missing[0];
+          } else {
+            missingText = '${missing.sublist(0, missing.length - 1).join(", ")}, and ${missing.last}';
+          }
+          error = 'Password must contain $missingText';
+        }
+      } else {
+        if (!hasMinLength) {
+          error = 'كلمة المرور يجب أن تتكون من 6 أحرف على الأقل';
+          if (missing.isNotEmpty) {
+            String missingText;
+            if (missing.length == 1) {
+              missingText = missing[0];
+            } else {
+              missingText = '${missing.sublist(0, missing.length - 1).join("، ")}، و${missing.last}';
+            }
+            error += ' وتحتوي على $missingText';
+          }
+        } else {
           String missingText;
           if (missing.length == 1) {
             missingText = missing[0];
           } else {
             missingText = '${missing.sublist(0, missing.length - 1).join("، ")}، و${missing.last}';
           }
-          error += ' وتحتوي على $missingText';
+          error = 'كلمة المرور يجب أن تحتوي على $missingText';
         }
-      } else {
-        String missingText;
-        if (missing.length == 1) {
-          missingText = missing[0];
-        } else {
-          missingText = '${missing.sublist(0, missing.length - 1).join("، ")}، و${missing.last}';
-        }
-        error = 'كلمة المرور يجب أن تحتوي على $missingText';
       }
       return error;
     }

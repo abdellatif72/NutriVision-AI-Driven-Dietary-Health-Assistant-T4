@@ -33,12 +33,12 @@ class _MainShellView extends StatefulWidget {
 
 class _MainShellViewState extends State<_MainShellView> {
   List<AfiaNavItem> _buildNavItems(BuildContext context) {
-    final l = AppLocalizations.of(context);
+    final l = AppLocalizations.of(context)!;
     return [
-      AfiaNavItem(icon: Icons.home_rounded, label: l.translate('home')),
-      AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: l.translate('meals')),
-      AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: l.translate('chat')),
-      AfiaNavItem(icon: Icons.more_horiz_rounded, label: l.translate('more')),
+      AfiaNavItem(icon: Icons.home_rounded, label: l.home),
+      AfiaNavItem(icon: Icons.restaurant_menu_rounded, label: l.meals),
+      AfiaNavItem(icon: Icons.chat_bubble_outline_rounded, label: l.chat),
+      AfiaNavItem(icon: Icons.more_horiz_rounded, label: l.more),
     ];
   }
 

@@ -1,4 +1,5 @@
 import 'package:afia/core/theme/afia_colors.dart';
+import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/meals/domain/entities/meal_summary.dart';
 import 'package:afia/features/meals/presentation/bloc/meal_search_bloc.dart';
 import 'package:afia/features/meals/presentation/widgets/meal_search_tile.dart';
@@ -49,14 +50,13 @@ class _MealSearchViewState extends State<_MealSearchView> {
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.maybePop(context),
-          icon: const Icon(Icons.arrow_back_rounded, color: AfiaColors.textPrimary),
+          icon: const Icon(Icons.arrow_back_rounded),
         ),
         title: Text(
           isAr ? 'إضافة وجبة' : 'Add a meal',
-          style: const TextStyle(
+          style: AfiaTypography.screenTitle.copyWith(
             fontSize: 16,
             fontWeight: FontWeight.w800,
-            color: AfiaColors.textPrimary,
           ),
         ),
         centerTitle: true,

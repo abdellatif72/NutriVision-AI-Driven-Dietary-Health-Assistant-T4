@@ -149,7 +149,7 @@ class _NotificationsView extends StatelessWidget {
     bool isAr,
   ) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
+      padding: const EdgeInsetsDirectional.fromSTEB(
         AfiaSpacing.lg,
         0,
         AfiaSpacing.lg,
@@ -158,27 +158,30 @@ class _NotificationsView extends StatelessWidget {
       child: Row(
         children: [
           Text(isAr ? 'كل ' : 'Every ', style: AfiaTypography.body),
-          SizedBox(
-            width: 80,
-            child: DropdownButtonFormField<int>(
-              initialValue: state.waterIntervalHours,
-              items: [1, 2, 3, 4].map((h) {
-                return DropdownMenuItem(value: h, child: Text(isAr ? '$h س' : '$h h'));
-              }).toList(),
-              onChanged: (v) {
-                if (v != null) {
-                  context
-                      .read<NotificationPreferencesCubit>()
-                      .updateWaterInterval(v);
-                }
-              },
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AfiaSpacing.sm,
-                  vertical: AfiaSpacing.sm,
+          const SizedBox(width: AfiaSpacing.sm),
+          Flexible(
+            child: SizedBox(
+              width: 90,
+              child: DropdownButtonFormField<int>(
+                value: state.waterIntervalHours,
+                items: [1, 2, 3, 4].map((h) {
+                  return DropdownMenuItem(value: h, child: Text(isAr ? '$h س' : '$h h'));
+                }).toList(),
+                onChanged: (v) {
+                  if (v != null) {
+                    context
+                        .read<NotificationPreferencesCubit>()
+                        .updateWaterInterval(v);
+                  }
+                },
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  contentPadding: const EdgeInsetsDirectional.symmetric(
+                    horizontal: AfiaSpacing.sm,
+                    vertical: AfiaSpacing.sm,
+                  ),
                 ),
               ),
             ),

@@ -7,6 +7,7 @@ import 'package:afia/features/auth/domain/usecases/calculate_daily_calories.dart
 import 'package:afia/features/more/domain/entities/user_profile.dart';
 import 'package:afia/features/more/domain/entities/diet_preferences.dart';
 import 'package:afia/features/more/domain/repositories/more_repository.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 
@@ -22,9 +23,10 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
   bool _isLoading = false;
 
   Future<void> _saveOnboardingData(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedGoals.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one goal')),
+        SnackBar(content: Text(l10n.pleaseSelectGoal)),
       );
       return;
     }
@@ -107,7 +109,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error saving profile: $e')),
+          SnackBar(content: Text(l10n.errorSavingProfile(e.toString()))),
         );
       }
     } finally {
@@ -160,7 +162,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.all(AfiaSpacing.lg),
+              padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -216,7 +218,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                 left: 16,
                 bottom: 16,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(
+                  padding: const EdgeInsetsDirectional.symmetric(
                     horizontal: AfiaSpacing.md,
                     vertical: AfiaSpacing.xs,
                   ),
@@ -225,7 +227,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
-                    'Popular',
+                    AppLocalizations.of(context)!.popular,
                     style: AfiaTypography.body.copyWith(
                       color: AfiaColors.onPrimary,
                       fontWeight: FontWeight.w700,
@@ -241,6 +243,9 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       body: SafeArea(
@@ -248,19 +253,19 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
           children: [
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.pageMargin),
+                padding: const EdgeInsetsDirectional.symmetric(horizontal: AfiaSpacing.pageMargin),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(height: AfiaSpacing.xl),
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: AlignmentDirectional.centerStart,
                       child: IconButton(
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
                         onPressed: () => Navigator.maybePop(context),
                         icon: Container(
-                          padding: const EdgeInsets.all(10),
+                          padding: const EdgeInsetsDirectional.all(10),
                           decoration: BoxDecoration(
                             color: AfiaColors.surface,
                             shape: BoxShape.circle,
@@ -272,7 +277,10 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                               ),
                             ],
                           ),
-                          child: const Icon(Icons.arrow_back, size: 20),
+                          child: Icon(
+                            isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
@@ -302,15 +310,15 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                     ),
                     const SizedBox(height: AfiaSpacing.sm),
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: AlignmentDirectional.centerStart,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: AfiaSpacing.lg, vertical: AfiaSpacing.sm),
+                        padding: const EdgeInsetsDirectional.symmetric(horizontal: AfiaSpacing.lg, vertical: AfiaSpacing.sm),
                         decoration: BoxDecoration(
                           color: AfiaColors.primary.withOpacity(0.12),
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          'Step 2 of 2',
+                          l10n.stepTwoOfTwo,
                           style: AfiaTypography.body.copyWith(
                             color: AfiaColors.primary,
                             fontWeight: FontWeight.w700,
@@ -320,12 +328,12 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                     ),
                     const SizedBox(height: AfiaSpacing.xl),
                     Text(
-                      'What\'s your goal?',
+                      l10n.whatsYourGoal,
                       style: AfiaTypography.statValue.copyWith(fontSize: 32),
                     ),
                     const SizedBox(height: AfiaSpacing.sm),
                     Text(
-                      'We\'ll tailor your plan to what matters most to you.',
+                      l10n.tailorPlan,
                       style: AfiaTypography.body.copyWith(
                         color: AfiaColors.textSecondary,
                         height: 1.6,
@@ -334,9 +342,6 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                     const SizedBox(height: AfiaSpacing.xxxl),
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        // If the available width is narrow (mobile), show a single column
-                        // otherwise show two columns. This prevents horizontal overflow
-                        // that caused Flutter's yellow/black overflow indicator.
                         final available = constraints.maxWidth;
                         final columns = available < 420 ? 1 : 2;
                         final totalSpacing = (columns - 1) * AfiaSpacing.lg;
@@ -349,8 +354,8 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                             SizedBox(
                               width: cardWidth,
                               child: _buildGoalCard(
-                                title: 'Improve Nutrition',
-                                subtitle: 'Eat healthier every day',
+                                title: l10n.improveNutrition,
+                                subtitle: l10n.eatHealthier,
                                 iconBackground: AfiaColors.primary.withOpacity(0.16),
                                 icon: Icons.restaurant,
                                 goalKey: 'nutrition',
@@ -360,8 +365,8 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                             SizedBox(
                               width: cardWidth,
                               child: _buildGoalCard(
-                                title: 'Lose Weight',
-                                subtitle: 'Achieve a healthy weight',
+                                title: l10n.loseWeight,
+                                subtitle: l10n.achieveHealthyWeight,
                                 iconBackground: AfiaColors.orangeContainer,
                                 icon: Icons.monitor_weight,
                                 goalKey: 'lose_weight',
@@ -371,8 +376,8 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                             SizedBox(
                               width: cardWidth,
                               child: _buildGoalCard(
-                                title: 'Build Muscle',
-                                subtitle: 'Gain strength and energy',
+                                title: l10n.buildMuscle,
+                                subtitle: l10n.gainStrength,
                                 iconBackground: AfiaColors.blueContainer,
                                 icon: Icons.fitness_center,
                                 goalKey: 'build_muscle',
@@ -382,8 +387,8 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                             SizedBox(
                               width: cardWidth,
                               child: _buildGoalCard(
-                                title: 'Stay Healthy',
-                                subtitle: 'Maintain wellness daily',
+                                title: l10n.stayHealthy,
+                                subtitle: l10n.maintainWellness,
                                 iconBackground: AfiaColors.redContainer,
                                 icon: Icons.favorite,
                                 goalKey: 'stay_healthy',
@@ -407,7 +412,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                         ),
                         const SizedBox(width: AfiaSpacing.sm),
                         Text(
-                          'You can select multiple goals',
+                          l10n.selectMultipleGoals,
                           style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary),
                         ),
                       ],
@@ -422,7 +427,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
       ),
       bottomNavigationBar: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(AfiaSpacing.pageMargin, 0, AfiaSpacing.pageMargin, AfiaSpacing.xl),
+          padding: const EdgeInsetsDirectional.fromSTEB(AfiaSpacing.pageMargin, 0, AfiaSpacing.pageMargin, AfiaSpacing.xl),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -448,7 +453,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                             color: AfiaColors.onPrimary,
                           ),
                         )
-                      : Text('Continue', style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary)),
+                      : Text(l10n.continueButton, style: AfiaTypography.cardTitle.copyWith(color: AfiaColors.onPrimary)),
                 ),
               ),
               const SizedBox(height: AfiaSpacing.lg),
@@ -459,7 +464,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage> {
                     (route) => false,
                   ),
                   child: Text(
-                    'Skip for now',
+                    l10n.skipForNow,
                     style: AfiaTypography.body.copyWith(color: AfiaColors.textSecondary),
                   ),
                 ),

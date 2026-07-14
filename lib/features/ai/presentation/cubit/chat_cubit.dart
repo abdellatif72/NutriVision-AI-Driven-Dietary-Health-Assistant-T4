@@ -7,11 +7,11 @@ import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ChatCubit extends Cubit<ChatState> {
-  ChatCubit({required this.homeState, Dio? dio})
-      : _dio = dio ?? Dio(),
-        super(const ChatState()) {
-    _init();
-  }
+  ChatCubit({
+    required this.homeState,
+    Dio? dio,
+  })  : _dio = dio ?? Dio(),
+        super(const ChatState());
 
   final HomeState homeState;
   final Dio _dio;
@@ -23,34 +23,6 @@ class ChatCubit extends Cubit<ChatState> {
   static const _geminiUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
   static const _groqModel = 'meta-llama/llama-4-scout-17b-16e-instruct';
-
-  void _init() {
-    // Greet the user immediately
-    final greeting = _buildGreeting();
-    final welcomeMsg = ChatMessage(
-      id: 'welcome',
-      text: greeting,
-      isUser: false,
-      timestamp: DateTime.now(),
-    );
-    emit(state.copyWith(messages: [welcomeMsg]));
-  }
-
-  String _buildGreeting() {
-    final name = homeState.userName.isNotEmpty ? homeState.userName : 'there';
-    final calories = homeState.calories;
-    if (calories != null) {
-      final remaining = calories.goal - calories.consumed;
-      return 'مرحباً $name! 👋 أنا مساعدك الغذائي الذكي.\n\n'
-          'لديك **$remaining سعرة حرارية** متبقية من هدفك اليوم '
-          '(${calories.consumed} / ${calories.goal} kcal).\n\n'
-          'يمكنني مساعدتك في اقتراح وجبات، الإجابة على أسئلة التغذية، '
-          'أو تحليل طعامك. كيف يمكنني مساعدتك؟';
-    }
-    return 'مرحباً $name! 👋 أنا مساعدك الغذائي الذكي.\n\n'
-        'يمكنني مساعدتك في اقتراح وجبات، الإجابة على أسئلة التغذية، '
-        'ومتابعة تقدمك الصحي. كيف يمكنني مساعدتك اليوم؟';
-  }
 
   String _buildSystemPrompt() {
     final calories = homeState.calories;

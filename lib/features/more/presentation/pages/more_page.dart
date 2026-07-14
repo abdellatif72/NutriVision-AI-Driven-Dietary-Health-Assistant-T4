@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:afia/app/localization/locale_cubit.dart';
 import 'package:afia/app/router/route_names.dart';
 import 'package:afia/core/theme/afia_colors.dart';
@@ -8,10 +10,11 @@ import 'package:afia/features/auth/presentation/bloc/auth_event.dart';
 import 'package:afia/features/auth/presentation/bloc/auth_state.dart';
 import 'package:afia/features/more/presentation/cubit/more_cubit.dart';
 import 'package:afia/features/more/presentation/cubit/more_state.dart';
-import 'package:afia/features/more/presentation/widgets/more_profile_card.dart';
+
 import 'package:afia/features/more/presentation/widgets/more_section_card.dart';
 import 'package:afia/features/more/presentation/widgets/more_tile.dart';
 import 'package:afia/features/more/presentation/widgets/section_title.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,6 +41,11 @@ class _MoreView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    final authState = context.watch<AuthBloc>().state;
+    final userEmail = authState is AuthAuthenticated ? authState.user.email : '';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
@@ -46,7 +54,7 @@ class _MoreView extends StatelessWidget {
         centerTitle: false,
         automaticallyImplyLeading: false,
         title: Text(
-          Localizations.localeOf(context).languageCode == 'ar' ? 'المزيد' : 'More',
+          l10n.more,
           style: AfiaTypography.screenTitle,
         ),
       ),
@@ -54,135 +62,187 @@ class _MoreView extends StatelessWidget {
         builder: (context, state) {
           return Builder(
             builder: (ctx) {
-              final isAr = Localizations.localeOf(ctx).languageCode == 'ar';
               return ListView(
-            padding: EdgeInsets.fromLTRB(
-              AfiaSpacing.pageMargin,
-              AfiaSpacing.sm,
-              AfiaSpacing.pageMargin,
-              80.0 + MediaQuery.paddingOf(ctx).bottom,
-            ),
-            children: [
-              MoreProfileCard(
-                name: state.name,
-                initials: state.initials,
-                currentGoal: state.currentGoal,
-                streakDays: state.streakDays,
-                onTap: () => Navigator.pushNamed(context, RouteNames.profile),
-              ),
-              const SizedBox(height: AfiaSpacing.xl),
-              SectionTitle(isAr ? 'الصحة والأهداف' : 'Health & Goals'),
-              const SizedBox(height: AfiaSpacing.md),
-              MoreSectionCard(
-                children: [
-                  MoreTile(
-                    icon: Icons.person_outline,
-                    title: isAr ? 'المعلومات الشخصية' : 'Personal Information',
-                    subtitle: isAr ? 'العمر، الجنس، الطول، الوزن' : 'Age, gender, height, weight',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.personalInformation),
-                  ),
-                  MoreTile(
-                    icon: Icons.restaurant_outlined,
-                    title: isAr ? 'التفضيلات الغذائية' : 'Diet Preferences',
-                    subtitle: isAr ? 'الحساسية، نوع النظام الغذائي' : 'Allergies, diet type, macros',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.dietPreferences),
-                  ),
-                  MoreTile(
-                    icon: Icons.bar_chart_outlined,
-                    title: isAr ? 'التقدم' : 'Progress',
-                    subtitle: isAr ? 'اتجاهات الوزن والتاريخ' : 'Weight trends, history, milestones',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.progress),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AfiaSpacing.xl),
-              SectionTitle(isAr ? 'التفضيلات' : 'Preferences'),
-              const SizedBox(height: AfiaSpacing.md),
-              MoreSectionCard(
-                children: [
-                  MoreTile(
-                    icon: Icons.notifications_none_rounded,
-                    title: isAr ? 'الإشعارات' : 'Notifications',
-                    subtitle: isAr ? 'تذكيرات الماء والوجبات والوزن' : 'Reminders for water, meals, weigh-in',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.notifications),
-                  ),
-                  MoreTile(
-                    icon: Icons.palette_outlined,
-                    title: isAr ? 'المظهر' : 'Theme',
-                    subtitle: isAr ? 'فاتح، داكن، النظام' : 'Light, Dark, System',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.settings),
-                  ),
-                  MoreTile(
-                    icon: Icons.language_rounded,
-                    title: isAr ? 'اللغة' : 'Language',
-                    subtitle: 'العربية, English',
-                    onTap: () => _showLanguageSheet(context),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AfiaSpacing.xl),
-              SectionTitle(isAr ? 'الأمان' : 'Security'),
-              const SizedBox(height: AfiaSpacing.md),
-              MoreSectionCard(
-                children: [
-                  MoreTile(
-                    icon: Icons.lock_outline_rounded,
-                    title: isAr ? 'تغيير كلمة المرور' : 'Change Password',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.changePassword),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AfiaSpacing.xl),
-              SectionTitle(isAr ? 'الدعم' : 'Support'),
-              const SizedBox(height: AfiaSpacing.md),
-              MoreSectionCard(
-                children: [
-                  MoreTile(
-                    icon: Icons.help_outline_rounded,
-                    title: isAr ? 'الأسئلة الشائعة' : 'FAQs',
-                    subtitle: isAr ? 'الأسئلة المتكررة' : 'Frequently asked questions',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.faqs),
-                  ),
-                  MoreTile(
-                    icon: Icons.headset_mic_outlined,
-                    title: isAr ? 'المساعدة' : 'Help',
-                    subtitle: isAr ? 'تواصل مع الدعم' : 'Contact support',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.help),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AfiaSpacing.xl),
-              SectionTitle(isAr ? 'عن التطبيق' : 'About'),
-              const SizedBox(height: AfiaSpacing.md),
-              MoreSectionCard(
-                children: [
-                  MoreTile(
-                    icon: Icons.info_outline_rounded,
-                    title: isAr ? 'عن عافية' : 'About Afia',
-                    subtitle: 'Version 1.0.0',
-                    onTap: () => Navigator.pushNamed(context, RouteNames.about),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AfiaSpacing.xxxl),
-              TextButton.icon(
-                onPressed: () => _showLogoutDialog(context),
-                icon: const Icon(Icons.logout_rounded),
-                label: Text(isAr ? 'تسجيل الخروج' : 'Log Out'),
-                style: TextButton.styleFrom(
-                  foregroundColor: AfiaColors.red,
-                  alignment: Alignment.centerLeft,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AfiaSpacing.sm,
-                    vertical: AfiaSpacing.md,
-                  ),
-                  textStyle: AfiaTypography.cardTitle.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                padding: EdgeInsetsDirectional.fromSTEB(
+                  AfiaSpacing.pageMargin,
+                  AfiaSpacing.sm,
+                  AfiaSpacing.pageMargin,
+                  80.0 + MediaQuery.paddingOf(ctx).bottom,
                 ),
-              ),
-            ],
-          );
+                children: [
+                  Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: () => context.read<MoreCubit>().updateProfileImage(),
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundColor: AfiaColors.primaryContainer,
+                                backgroundImage: state.profileImageBytes != null
+                                    ? MemoryImage(state.profileImageBytes!)
+                                    : (state.profileImagePath.isNotEmpty
+                                        ? (kIsWeb
+                                            ? NetworkImage(state.profileImagePath)
+                                            : FileImage(File(state.profileImagePath))) as ImageProvider
+                                        : null),
+                                child: state.profileImageBytes == null && state.profileImagePath.isEmpty
+                                    ? Text(
+                                        state.initials,
+                                        style: AfiaTypography.statValueCompact.copyWith(
+                                          color: AfiaColors.primary,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      )
+                                    : null,
+                              ),
+                              Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: AfiaColors.primary,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt_rounded,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: AfiaSpacing.md),
+                        Text(
+                          state.name.isNotEmpty
+                              ? state.name
+                              : (authState is AuthAuthenticated ? (authState.user.name ?? '') : ''),
+                          style: AfiaTypography.screenTitle.copyWith(
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        if (userEmail.isNotEmpty) ...[
+                          const SizedBox(height: AfiaSpacing.xs),
+                          Text(
+                            userEmail,
+                            style: AfiaTypography.body.copyWith(
+                              color: AfiaColors.textSecondary,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AfiaSpacing.xxl),
+                  SectionTitle(l10n.healthGoals),
+                  const SizedBox(height: AfiaSpacing.md),
+                  MoreSectionCard(
+                    children: [
+                      MoreTile(
+                        icon: Icons.person_outline,
+                        title: l10n.personalInfoMoreTitle,
+                        subtitle: l10n.personalInfoSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.personalInformation),
+                      ),
+                      MoreTile(
+                        icon: Icons.restaurant_outlined,
+                        title: l10n.dietPreferences,
+                        subtitle: l10n.dietPrefsSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.dietPreferences),
+                      ),
+                      MoreTile(
+                        icon: Icons.bar_chart_outlined,
+                        title: l10n.progress,
+                        subtitle: l10n.progressSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.progress),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AfiaSpacing.xl),
+                  SectionTitle(l10n.preferences),
+                  const SizedBox(height: AfiaSpacing.md),
+                  MoreSectionCard(
+                    children: [
+                      MoreTile(
+                        icon: Icons.notifications_none_rounded,
+                        title: l10n.notifications,
+                        subtitle: l10n.notificationsSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.notifications),
+                      ),
+
+                      MoreTile(
+                        icon: Icons.language_rounded,
+                        title: l10n.language,
+                        subtitle: 'العربية, English',
+                        onTap: () => _showLanguageSheet(context),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AfiaSpacing.xl),
+                  SectionTitle(l10n.security),
+                  const SizedBox(height: AfiaSpacing.md),
+                  MoreSectionCard(
+                    children: [
+                      MoreTile(
+                        icon: Icons.lock_outline_rounded,
+                        title: l10n.changePassword,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.changePassword),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AfiaSpacing.xl),
+                  SectionTitle(l10n.support),
+                  const SizedBox(height: AfiaSpacing.md),
+                  MoreSectionCard(
+                    children: [
+                      MoreTile(
+                        icon: Icons.help_outline_rounded,
+                        title: l10n.faqs,
+                        subtitle: l10n.faqsSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.faqs),
+                      ),
+                      MoreTile(
+                        icon: Icons.headset_mic_outlined,
+                        title: l10n.help,
+                        subtitle: l10n.helpSubtitleMore,
+                        onTap: () => Navigator.pushNamed(context, RouteNames.help),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AfiaSpacing.xl),
+                  SectionTitle(l10n.about),
+                  const SizedBox(height: AfiaSpacing.md),
+                  MoreSectionCard(
+                    children: [
+                      MoreTile(
+                        icon: Icons.info_outline_rounded,
+                        title: l10n.aboutAfia,
+                        subtitle: l10n.version('1.0.0'),
+                        onTap: () => Navigator.pushNamed(context, RouteNames.about),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: AfiaSpacing.xxxl),
+                  TextButton.icon(
+                    onPressed: () => _showLogoutDialog(context),
+                    icon: const Icon(Icons.logout_rounded),
+                    label: Text(l10n.logOut),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AfiaColors.red,
+                      alignment: AlignmentDirectional.centerStart,
+                      padding: const EdgeInsetsDirectional.symmetric(
+                        horizontal: AfiaSpacing.sm,
+                        vertical: AfiaSpacing.md,
+                      ),
+                      textStyle: AfiaTypography.cardTitle.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              );
             },
           );
         },
@@ -192,6 +252,7 @@ class _MoreView extends StatelessWidget {
 
   void _showLanguageSheet(BuildContext context) {
     final localeCubit = context.read<LocaleCubit>();
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet<void>(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -204,7 +265,7 @@ class _MoreView extends StatelessWidget {
           builder: (ctx, currentLocale) {
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
+                padding: const EdgeInsetsDirectional.all(20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -220,19 +281,17 @@ class _MoreView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text('App Language', style: AfiaTypography.screenTitle),
+                    Text(l10n.appLanguage, style: AfiaTypography.screenTitle),
                     const SizedBox(height: 12),
                     ...[
                       ('ar', 'العربية', '🇸🇦'),
                       ('en', 'English', '🇺🇸'),
                     ].map(
                       (entry) => ListTile(
-                        leading: Text(entry.$3,
-                            style: const TextStyle(fontSize: 24)),
+                        leading: Text(entry.$3, style: const TextStyle(fontSize: 24)),
                         title: Text(entry.$2, style: AfiaTypography.cardTitle),
                         trailing: currentLocale.languageCode == entry.$1
-                            ? const Icon(Icons.check_circle_rounded,
-                                color: AfiaColors.primary)
+                            ? const Icon(Icons.check_circle_rounded, color: AfiaColors.primary)
                             : null,
                         onTap: () {
                           localeCubit.setLocale(entry.$1);
@@ -251,21 +310,17 @@ class _MoreView extends StatelessWidget {
   }
 
   void _showLogoutDialog(BuildContext context) {
-    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+    final l10n = AppLocalizations.of(context)!;
     showDialog<void>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
-          title: Text(isAr ? 'تسجيل الخروج؟' : 'Log out?'),
-          content: Text(
-            isAr
-                ? 'سيتم إرجاعك إلى شاشة تسجيل الدخول.'
-                : 'This will return you to the authentication screen.',
-          ),
+          title: Text(l10n.logoutConfirm),
+          content: Text(l10n.logoutSubtitle),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: Text(isAr ? 'إلغاء' : 'Cancel'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () {
@@ -277,7 +332,7 @@ class _MoreView extends StatelessWidget {
                   (_) => false,
                 );
               },
-              child: Text(isAr ? 'خروج' : 'Log out'),
+              child: Text(l10n.logOut),
             ),
           ],
         );

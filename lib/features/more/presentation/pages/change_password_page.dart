@@ -1,6 +1,7 @@
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class ChangePasswordPage extends StatefulWidget {
@@ -29,20 +30,23 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
+
     return Scaffold(
       backgroundColor: AfiaColors.scaffoldBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: Icon(isAr ? Icons.arrow_forward_rounded : Icons.arrow_back_rounded),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Change Password', style: AfiaTypography.screenTitle),
+        title: Text(l10n.changePassword, style: AfiaTypography.screenTitle),
         centerTitle: true,
       ),
       body: ListView(
-        padding: const EdgeInsets.fromLTRB(
+        padding: const EdgeInsetsDirectional.fromSTEB(
           AfiaSpacing.pageMargin,
           AfiaSpacing.xl,
           AfiaSpacing.pageMargin,
@@ -50,7 +54,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         ),
         children: [
           Container(
-            padding: const EdgeInsets.all(AfiaSpacing.lg),
+            padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
             decoration: BoxDecoration(
               color: AfiaColors.surface,
               borderRadius: BorderRadius.circular(24),
@@ -59,7 +63,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
               children: [
                 _buildPasswordField(
                   controller: _currentPasswordController,
-                  label: 'Current Password',
+                  label: l10n.currentPassword,
                   obscure: _obscureCurrent,
                   onToggle: () =>
                       setState(() => _obscureCurrent = !_obscureCurrent),
@@ -67,14 +71,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                 const SizedBox(height: AfiaSpacing.md),
                 _buildPasswordField(
                   controller: _newPasswordController,
-                  label: 'New Password',
+                  label: l10n.newPassword,
                   obscure: _obscureNew,
                   onToggle: () => setState(() => _obscureNew = !_obscureNew),
                 ),
                 const SizedBox(height: AfiaSpacing.md),
                 _buildPasswordField(
                   controller: _confirmPasswordController,
-                  label: 'Confirm New Password',
+                  label: l10n.confirmNewPassword,
                   obscure: _obscureConfirm,
                   onToggle: () =>
                       setState(() => _obscureConfirm = !_obscureConfirm),
@@ -84,14 +88,14 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           ),
           const SizedBox(height: AfiaSpacing.md),
           Text(
-            'Password must be at least 8 characters and include a number and a letter.',
+            l10n.passwordRequirements,
             style: AfiaTypography.body.copyWith(
               color: AfiaColors.textSecondary,
             ),
           ),
           const SizedBox(height: AfiaSpacing.xxxl),
           FilledButton(
-            onPressed: _isSaving ? null : _onSave,
+            onPressed: _isSaving ? null : () => _onSave(l10n),
             style: FilledButton.styleFrom(
               backgroundColor: AfiaColors.primary,
               minimumSize: const Size(double.infinity, 52),
@@ -109,7 +113,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
                     ),
                   )
                 : Text(
-                    'Update Password',
+                    l10n.updatePassword,
                     style: AfiaTypography.cardTitle.copyWith(
                       color: AfiaColors.onPrimary,
                     ),
@@ -158,7 +162,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
           borderRadius: BorderRadius.circular(16),
           borderSide: const BorderSide(color: AfiaColors.primary, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding: const EdgeInsetsDirectional.symmetric(
           horizontal: AfiaSpacing.lg,
           vertical: AfiaSpacing.md,
         ),
@@ -166,13 +170,38 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     );
   }
 
-  void _onSave() {
+  void _onSave(AppLocalizations l10n) {
+    final current = _currentPasswordController.text.trim();
+    final newPass = _newPasswordController.text.trim();
+    final confirm = _confirmPasswordController.text.trim();
+
+    if (current.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pleaseEnterCurrentPassword)),
+      );
+      return;
+    }
+
+    if (newPass.length < 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.passwordRequirements)),
+      );
+      return;
+    }
+
+    if (newPass != confirm) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.passwordsDoNotMatch)),
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     Future.delayed(const Duration(milliseconds: 800), () {
       setState(() => _isSaving = false);
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password updated successfully')),
+        SnackBar(content: Text(l10n.passwordUpdatedSuccess)),
       );
       Navigator.pop(context);
     });

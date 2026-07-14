@@ -60,7 +60,7 @@ class _WaterRecordingViewState extends State<_WaterRecordingView> {
           ),
         ),
         title: Text(
-          AppLocalizations.of(context).translate('water_tracker'),
+          AppLocalizations.of(context)!.waterTracker,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.w700,

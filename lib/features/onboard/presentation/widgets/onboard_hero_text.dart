@@ -1,3 +1,4 @@
+import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
@@ -10,10 +11,11 @@ class OnboardHeroText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Column(
       children: [
         Text(
-          'Healthy habits,\nsmarter you.',
+          l.healthyHabitsSmarterYou,
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 28,
@@ -24,7 +26,7 @@ class OnboardHeroText extends StatelessWidget {
         ),
         const SizedBox(height: AfiaSpacing.sm),
         Text(
-          'Nutrition, activity, and AI insights\n— all in one place.',
+          l.onboardSubtitle,
           textAlign: TextAlign.center,
           style: AfiaTypography.body.copyWith(
             color: AfiaColors.textPrimary,

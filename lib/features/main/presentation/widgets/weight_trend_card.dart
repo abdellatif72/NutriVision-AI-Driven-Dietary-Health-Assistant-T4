@@ -2,6 +2,7 @@ import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
 import 'package:afia/features/main/presentation/cubit/progress_cubit.dart';
+import 'package:afia/app/localization/l10n.dart';
 import 'package:flutter/material.dart';
 
 class WeightTrendCard extends StatelessWidget {
@@ -11,19 +12,32 @@ class WeightTrendCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final isAr = Localizations.localeOf(context).languageCode == 'ar';
     final isLoss = trend.deltaKg < 0;
     final deltaColor = isLoss ? AfiaColors.green700 : AfiaColors.orange;
+    final unit = isAr ? 'كجم' : 'kg';
     final deltaText =
-        '${isLoss ? '▼' : '▲'} ${trend.deltaKg.abs().toStringAsFixed(1)} kg';
+        '${isLoss ? '▼' : '▲'} ${trend.deltaKg.abs().toStringAsFixed(1)} $unit';
+
+    // Localize the trend caption if it matches mock keys
+    String localizedCaption = trend.caption;
+    if (trend.caption.toLowerCase().contains('week')) {
+      localizedCaption = l10n.weightTrendWeek;
+    } else if (trend.caption.toLowerCase().contains('month')) {
+      localizedCaption = l10n.weightTrendMonth;
+    } else if (trend.caption.toLowerCase().contains('year')) {
+      localizedCaption = l10n.weightTrendYear;
+    }
 
     return Container(
-      margin: EdgeInsets.fromLTRB(
+      margin: const EdgeInsetsDirectional.fromSTEB(
         AfiaSpacing.pageMargin,
         0,
         AfiaSpacing.pageMargin,
         AfiaSpacing.md,
       ),
-      padding: const EdgeInsets.all(AfiaSpacing.lg),
+      padding: const EdgeInsetsDirectional.all(AfiaSpacing.lg),
       decoration: BoxDecoration(
         color: AfiaColors.surface,
         borderRadius: BorderRadius.circular(AfiaRadius.md),
@@ -36,7 +50,7 @@ class WeightTrendCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Weight development',
+                  l10n.weightDevelopment,
                   style: AfiaTypography.cardTitle,
                 ),
               ),
@@ -50,7 +64,7 @@ class WeightTrendCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AfiaSpacing.xs),
-          Text(trend.caption, style: AfiaTypography.caption),
+          Text(localizedCaption, style: AfiaTypography.caption),
           const SizedBox(height: AfiaSpacing.sm),
           SizedBox(
             height: 36,
@@ -64,11 +78,11 @@ class WeightTrendCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${trend.startKg.toStringAsFixed(1)} kg',
+                '${trend.startKg.toStringAsFixed(1)} $unit',
                 style: AfiaTypography.caption,
               ),
               Text(
-                '${trend.endKg.toStringAsFixed(1)} kg',
+                '${trend.endKg.toStringAsFixed(1)} $unit',
                 style: AfiaTypography.caption,
               ),
             ],

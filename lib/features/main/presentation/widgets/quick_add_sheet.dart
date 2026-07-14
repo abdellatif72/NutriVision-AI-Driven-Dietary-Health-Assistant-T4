@@ -18,9 +18,9 @@ class _QuickAddSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     final isAr = Localizations.localeOf(context).languageCode == 'ar';
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AfiaColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
       child: SafeArea(

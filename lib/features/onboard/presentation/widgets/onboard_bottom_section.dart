@@ -1,3 +1,4 @@
+import 'package:afia/app/localization/l10n.dart';
 import 'package:afia/core/theme/afia_colors.dart';
 import 'package:afia/core/theme/afia_spacing.dart';
 import 'package:afia/core/theme/afia_typography.dart';
@@ -17,6 +18,7 @@ class OnboardBottomSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context)!;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -35,7 +37,7 @@ class OnboardBottomSection extends StatelessWidget {
               ),
               textStyle: AfiaTypography.cardTitle.copyWith(color: Colors.white),
             ),
-            child: const Text('Get Started'),
+            child: Text(l.getStarted),
           ),
         ),
 
@@ -46,7 +48,7 @@ class OnboardBottomSection extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Already have an account? ',
+              l.alreadyHaveAccount,
               style: AfiaTypography.body.copyWith(
                 color: AfiaColors.textSecondary,
               ),
@@ -54,7 +56,7 @@ class OnboardBottomSection extends StatelessWidget {
             GestureDetector(
               onTap: onLogIn,
               child: Text(
-                'Log in',
+                l.logIn,
                 style: AfiaTypography.body.copyWith(
                   color: AfiaColors.primary,
                   fontWeight: FontWeight.w600,
