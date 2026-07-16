@@ -22,6 +22,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<GoogleSignInRequested>(_onGoogleSignInRequested);
     on<AppleSignInRequested>(_onAppleSignInRequested);
     on<ResetPasswordRequested>(_onResetPasswordRequested);
+    on<SendEmailVerificationRequested>(_onSendEmailVerificationRequested);
+    on<ReloadUserRequested>(_onReloadUserRequested);
 
     // Listen to changes in the active Firebase Auth state
     _authSubscription = _authRepository.authStateChanges.listen((user) {
@@ -151,6 +153,51 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (failure) => emit(AuthError(failure.message)),
       (_) => emit(AuthPasswordResetSuccess()),
     );
+  }
+
+  Future<void> _onSendEmailVerificationRequested(
+    SendEmailVerificationRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AuthAuthenticated) {
+      emit(currentState.copyWith(
+        isSendingVerification: true,
+        verificationSentSuccess: false,
+      ));
+
+      final result = await _authRepository.sendEmailVerification();
+      result.fold(
+        (failure) => emit(currentState.copyWith(
+          isSendingVerification: false,
+          verificationError: failure.message,
+        )),
+        (_) => emit(currentState.copyWith(
+          isSendingVerification: false,
+          verificationSentSuccess: true,
+        )),
+      );
+    }
+  }
+
+  Future<void> _onReloadUserRequested(
+    ReloadUserRequested event,
+    Emitter<AuthState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is AuthAuthenticated) {
+      final result = await _authRepository.reloadUser();
+      result.fold(
+        (failure) => emit(currentState.copyWith(verificationError: failure.message)),
+        (user) {
+          if (user != null) {
+            emit(AuthAuthenticated(user));
+          } else {
+            emit(AuthUnauthenticated());
+          }
+        },
+      );
+    }
   }
 
   @override

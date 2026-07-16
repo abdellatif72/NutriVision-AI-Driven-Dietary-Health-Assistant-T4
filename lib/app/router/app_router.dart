@@ -6,6 +6,7 @@ import 'package:afia/features/auth/presentation/pages/forgot_password_page.dart'
 import 'package:afia/features/auth/presentation/pages/goal_selection_page.dart';
 import 'package:afia/features/auth/presentation/pages/physical_information_page.dart';
 import 'package:afia/features/auth/presentation/pages/signup_page.dart';
+import 'package:afia/features/auth/presentation/pages/email_verification_page.dart';
 import 'package:afia/features/explore/presentation/pages/explore_page.dart';
 import 'package:afia/features/main/presentation/cubit/main_shell_cubit.dart';
 import 'package:afia/features/main/presentation/pages/main_shell_page.dart';
@@ -58,6 +59,11 @@ abstract final class AppRouter {
       case RouteNames.authForgotPassword:
         return MaterialPageRoute<void>(
           builder: (_) => const ForgotPasswordPage(),
+          settings: settings,
+        );
+      case RouteNames.authEmailVerification:
+        return MaterialPageRoute<void>(
+          builder: (_) => const EmailVerificationPage(),
           settings: settings,
         );
       case RouteNames.onboard:

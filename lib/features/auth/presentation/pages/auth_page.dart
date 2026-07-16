@@ -27,6 +27,11 @@ class _AuthPageState extends State<AuthPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthAuthenticated) {
+          if (!state.user.isEmailVerified) {
+            Navigator.of(context).pushReplacementNamed(RouteNames.authEmailVerification);
+            return;
+          }
+
           final moreRepo = sl<MoreRepository>();
           final profileResult = await moreRepo.getProfile();
           if (!context.mounted) return;

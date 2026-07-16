@@ -518,7 +518,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get teamMemberAhmed => 'Ahmed Abdellatif';
 
   @override
-  String get teamMemberAhmedRole => 'Auth, Backend & Meals';
+  String get teamMemberAhmedRole => 'Auth, Database & Storage';
 
   @override
   String get teamMemberMarawan => 'Marawan Mahmoud';
@@ -670,4 +670,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiChatInitialGreeting =>
       'Hello! How can I help you with your diet and meals today?';
+
+  @override
+  String get emailVerificationTitle => 'Verify Your Email';
+
+  @override
+  String get emailVerificationExplanation =>
+      'We\'ve sent a verification link to your email. Please check your inbox (and spam folder) to complete your registration.';
+
+  @override
+  String get resendVerificationEmail => 'Resend Verification Email';
+
+  @override
+  String get checkVerificationStatus => 'I\'ve verified my email';
+
+  @override
+  String get verificationEmailResent => 'Verification email sent successfully!';
+
+  @override
+  String get confirmEmailReceived => 'I confirm I received the email';
 }

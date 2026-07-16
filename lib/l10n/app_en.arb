@@ -1,68 +1,253 @@
 {
   "@@locale": "en",
   "home": "Home",
+  "@home": {
+    "description": "Home tab label"
+  },
   "meals": "Meals",
+  "@meals": {
+    "description": "Meals tab label"
+  },
   "chat": "Chat",
+  "@chat": {
+    "description": "Chat/AI tab label"
+  },
   "more": "More",
+  "@more": {
+    "description": "More tab label"
+  },
   "water": "Water",
+  "@water": {
+    "description": "Water tab label"
+  },
   "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
   "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
   "changeLanguage": "Change Language",
+  "@changeLanguage": {
+    "description": "Change language option"
+  },
   "appLanguage": "App Language",
+  "@appLanguage": {
+    "description": "App language setting"
+  },
   "dailyIntake": "Daily Intake",
+  "@dailyIntake": {
+    "description": "Daily intake label"
+  },
   "steps": "Steps",
+  "@steps": {
+    "description": "Steps metric"
+  },
   "hydration": "Hydration",
+  "@hydration": {
+    "description": "Hydration metric"
+  },
   "heartRate": "Heart Rate",
+  "@heartRate": {
+    "description": "Heart rate metric"
+  },
   "kcal": "kcal",
+  "@kcal": {
+    "description": "Kilocalories unit"
+  },
   "waterTracker": "Hydration Tracker",
+  "@waterTracker": {
+    "description": "Water tracker section title"
+  },
   "aiNutritionAssistant": "Smart Nutrition Assistant",
+  "@aiNutritionAssistant": {
+    "description": "AI assistant title"
+  },
   "askNutrition": "Ask me about nutrition, meals, or your health progress",
+  "@askNutrition": {
+    "description": "AI assistant prompt hint"
+  },
   "typeQuestion": "Type your question here...",
+  "@typeQuestion": {
+    "description": "Text input placeholder for AI chat"
+  },
   "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting"
+  },
   "themeLight": "Light",
+  "@themeLight": {
+    "description": "Light theme option"
+  },
   "themeDark": "Dark",
+  "@themeDark": {
+    "description": "Dark theme option"
+  },
   "themeSystem": "System Default",
+  "@themeSystem": {
+    "description": "System default theme option"
+  },
   "security": "Security",
+  "@security": {
+    "description": "Security section"
+  },
   "support": "Support",
+  "@support": {
+    "description": "Support section"
+  },
   "logOut": "Log Out",
+  "@logOut": {
+    "description": "Log out action"
+  },
   "changePassword": "Change Password",
+  "@changePassword": {
+    "description": "Change password action"
+  },
   "webCameraWarning": "Camera is not supported on the browser, the gallery will be opened instead.",
+  "@webCameraWarning": {
+    "description": "Warning when camera not available on web"
+  },
   "healthyHabitsSmarterYou": "Healthy habits,\nsmarter you.",
+  "@healthyHabitsSmarterYou": {
+    "description": "Onboarding hero text"
+  },
   "onboardSubtitle": "Nutrition, activity, and AI insights\n— all in one place.",
+  "@onboardSubtitle": {
+    "description": "Onboarding subtitle"
+  },
   "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started CTA button"
+  },
   "alreadyHaveAccount": "Already have an account? ",
+  "@alreadyHaveAccount": {
+    "description": "Login prompt text"
+  },
   "logIn": "Log In",
+  "@logIn": {
+    "description": "Login action"
+  },
   "loginTitle": "Welcome back!",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
   "loginSubtitle": "Log in to continue your journey.",
+  "@loginSubtitle": {
+    "description": "Login screen subtitle"
+  },
   "dontHaveAccount": "Don't have an account? ",
+  "@dontHaveAccount": {
+    "description": "Signup prompt text"
+  },
   "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up action"
+  },
   "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link"
+  },
   "email": "Email",
+  "@email": {
+    "description": "Email label"
+  },
   "password": "Password",
+  "@password": {
+    "description": "Password label"
+  },
   "orContinueWith": "or continue with",
+  "@orContinueWith": {
+    "description": "Social login divider text"
+  },
   "google": "Google",
+  "@google": {
+    "description": "Google sign in button"
+  },
   "apple": "Apple",
+  "@apple": {
+    "description": "Apple sign in button"
+  },
   "physicalInformation": "Physical Information",
+  "@physicalInformation": {
+    "description": "Physical info screen title"
+  },
   "goalSelection": "Goal Selection",
+  "@goalSelection": {
+    "description": "Goal selection screen title"
+  },
   "measurementSystem": "Measurement System",
+  "@measurementSystem": {
+    "description": "Measurement system setting"
+  },
   "metric": "Metric (kg, cm)",
+  "@metric": {
+    "description": "Metric system option"
+  },
   "imperial": "Imperial (lb, in)",
+  "@imperial": {
+    "description": "Imperial system option"
+  },
   "appearance": "Appearance",
+  "@appearance": {
+    "description": "Appearance section"
+  },
   "units": "Units",
+  "@units": {
+    "description": "Units setting"
+  },
   "account": "Account",
+  "@account": {
+    "description": "Account section"
+  },
   "privacyPolicy": "Privacy Policy",
-
+  "@privacyPolicy": {
+    "description": "Privacy policy link"
+  },
   "welcomeBack": "Welcome back!",
+  "@welcomeBack": {
+    "description": "Welcome back greeting"
+  },
   "pleaseEnterEmailPassword": "Please enter email and password",
+  "@pleaseEnterEmailPassword": {
+    "description": "Validation message"
+  },
   "emailNotVerifiedError": "Please verify your email first through the link sent. If it is incorrect, please sign up again.",
+  "@emailNotVerifiedError": {
+    "description": "Email not verified error"
+  },
   "emailHint": "you@example.com",
+  "@emailHint": {
+    "description": "Email input hint"
+  },
   "passwordHint": "• • • • • • • • •",
+  "@passwordHint": {
+    "description": "Password input hint"
+  },
   "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Signup screen title"
+  },
   "letsGetStarted": "Let's get you started.",
+  "@letsGetStarted": {
+    "description": "Signup screen subtitle"
+  },
   "fullName": "Full name",
+  "@fullName": {
+    "description": "Full name label"
+  },
   "enterYourName": "Enter your name",
+  "@enterYourName": {
+    "description": "Name input hint"
+  },
   "pleaseFillAllFields": "Please fill out all fields",
+  "@pleaseFillAllFields": {
+    "description": "Validation message"
+  },
   "emailVerificationSent": "A verification link has been sent to your email. Please click it to activate your account.",
+  "@emailVerificationSent": {
+    "description": "Email verification sent message"
+  },
   "didYouMean": "Did you mean {suggestion}?",
   "@didYouMean": {
     "description": "Email auto-correction suggestion",
@@ -73,32 +258,113 @@
     }
   },
   "stepOneOfTwo": "Step 1 of 2",
+  "@stepOneOfTwo": {
+    "description": "Onboarding step indicator"
+  },
   "stepTwoOfTwo": "Step 2 of 2",
+  "@stepTwoOfTwo": {
+    "description": "Onboarding step indicator"
+  },
   "physicalInfoSubtitle": "Help us personalize your experience with accurate information.",
+  "@physicalInfoSubtitle": {
+    "description": "Physical info screen subtitle"
+  },
   "gender": "Gender",
+  "@gender": {
+    "description": "Gender label"
+  },
   "selectGender": "Select your gender",
+  "@selectGender": {
+    "description": "Gender selection hint"
+  },
   "male": "Male",
+  "@male": {
+    "description": "Male option"
+  },
   "female": "Female",
+  "@female": {
+    "description": "Female option"
+  },
   "weight": "Weight",
+  "@weight": {
+    "description": "Weight label"
+  },
   "enterCurrentWeight": "Enter your current weight",
+  "@enterCurrentWeight": {
+    "description": "Weight input hint"
+  },
   "height": "Height",
+  "@height": {
+    "description": "Height label"
+  },
   "enterHeight": "Enter your height",
+  "@enterHeight": {
+    "description": "Height input hint"
+  },
   "enterValidWeightHeight": "Please enter valid weight and height",
+  "@enterValidWeightHeight": {
+    "description": "Validation message"
+  },
   "continueButton": "Continue",
+  "@continueButton": {
+    "description": "Continue button"
+  },
   "whatsYourGoal": "What's your goal?",
+  "@whatsYourGoal": {
+    "description": "Goal selection title"
+  },
   "tailorPlan": "We'll tailor your plan to what matters most to you.",
+  "@tailorPlan": {
+    "description": "Goal selection subtitle"
+  },
   "improveNutrition": "Improve Nutrition",
+  "@improveNutrition": {
+    "description": "Improve nutrition goal"
+  },
   "eatHealthier": "Eat healthier every day",
+  "@eatHealthier": {
+    "description": "Improve nutrition goal description"
+  },
   "loseWeight": "Lose Weight",
+  "@loseWeight": {
+    "description": "Lose weight goal"
+  },
   "achieveHealthyWeight": "Achieve a healthy weight",
+  "@achieveHealthyWeight": {
+    "description": "Lose weight goal description"
+  },
   "buildMuscle": "Build Muscle",
+  "@buildMuscle": {
+    "description": "Build muscle goal"
+  },
   "gainStrength": "Gain strength and energy",
+  "@gainStrength": {
+    "description": "Build muscle goal description"
+  },
   "stayHealthy": "Stay Healthy",
+  "@stayHealthy": {
+    "description": "Stay healthy goal"
+  },
   "maintainWellness": "Maintain wellness daily",
+  "@maintainWellness": {
+    "description": "Stay healthy goal description"
+  },
   "popular": "Popular",
+  "@popular": {
+    "description": "Popular badge"
+  },
   "selectMultipleGoals": "You can select multiple goals",
+  "@selectMultipleGoals": {
+    "description": "Multiple goals hint"
+  },
   "skipForNow": "Skip for now",
+  "@skipForNow": {
+    "description": "Skip action"
+  },
   "pleaseSelectGoal": "Please select at least one goal",
+  "@pleaseSelectGoal": {
+    "description": "Validation message"
+  },
   "errorSavingProfile": "Error saving profile: {error}",
   "@errorSavingProfile": {
     "description": "Error occurred while saving onboarding profile data",
@@ -118,72 +384,273 @@
     }
   },
   "dietPreferences": "Diet Preferences",
+  "@dietPreferences": {
+    "description": "Diet preferences screen title"
+  },
   "dietStyle": "Diet Style",
+  "@dietStyle": {
+    "description": "Diet style label"
+  },
   "goal": "Goal",
+  "@goal": {
+    "description": "Goal label"
+  },
   "macroSplit": "Macronutrient Split",
+  "@macroSplit": {
+    "description": "Macro split label"
+  },
   "carbs": "Carbs",
+  "@carbs": {
+    "description": "Carbohydrates label"
+  },
   "protein": "Protein",
+  "@protein": {
+    "description": "Protein label"
+  },
   "fat": "Fat",
+  "@fat": {
+    "description": "Fat label"
+  },
   "allergies": "Allergies",
+  "@allergies": {
+    "description": "Allergies label"
+  },
   "mealsPerDay": "Meals Per Day",
+  "@mealsPerDay": {
+    "description": "Meals per day setting"
+  },
   "waterGoal": "Water Goal",
+  "@waterGoal": {
+    "description": "Water goal setting"
+  },
   "savePreferences": "Save Preferences",
+  "@savePreferences": {
+    "description": "Save preferences action"
+  },
   "preferencesSaved": "Preferences saved",
+  "@preferencesSaved": {
+    "description": "Preferences saved confirmation"
+  },
   "dietBalanced": "Balanced",
+  "@dietBalanced": {
+    "description": "Balanced diet option"
+  },
   "dietLowCarb": "Low Carb",
+  "@dietLowCarb": {
+    "description": "Low carb diet option"
+  },
   "dietKeto": "Keto",
+  "@dietKeto": {
+    "description": "Keto diet option"
+  },
   "dietVegan": "Vegan",
+  "@dietVegan": {
+    "description": "Vegan diet option"
+  },
   "dietMediterranean": "Mediterranean",
+  "@dietMediterranean": {
+    "description": "Mediterranean diet option"
+  },
   "goalLose": "Lose Weight",
+  "@goalLose": {
+    "description": "Lose weight goal option"
+  },
   "goalMaintain": "Maintain",
+  "@goalMaintain": {
+    "description": "Maintain weight goal option"
+  },
   "goalGain": "Gain Weight",
+  "@goalGain": {
+    "description": "Gain weight goal option"
+  },
   "allergyGluten": "Gluten",
+  "@allergyGluten": {
+    "description": "Gluten allergy"
+  },
   "allergyDairy": "Dairy",
+  "@allergyDairy": {
+    "description": "Dairy allergy"
+  },
   "allergyNuts": "Nuts",
+  "@allergyNuts": {
+    "description": "Nuts allergy"
+  },
   "allergyEggs": "Eggs",
+  "@allergyEggs": {
+    "description": "Eggs allergy"
+  },
   "allergySoy": "Soy",
+  "@allergySoy": {
+    "description": "Soy allergy"
+  },
   "allergySeafood": "Seafood",
+  "@allergySeafood": {
+    "description": "Seafood allergy"
+  },
   "yourProgress": "Your progress",
+  "@yourProgress": {
+    "description": "Progress screen title"
+  },
   "macroAverageWeek": "Average macro — last week",
+  "@macroAverageWeek": {
+    "description": "Weekly macro average label"
+  },
   "macroAverageMonth": "Average macro — last month",
+  "@macroAverageMonth": {
+    "description": "Monthly macro average label"
+  },
   "macroAverageYear": "Average macro — last year",
+  "@macroAverageYear": {
+    "description": "Yearly macro average label"
+  },
   "periodWeekly": "Weekly",
+  "@periodWeekly": {
+    "description": "Weekly period option"
+  },
   "periodMonthly": "Monthly",
+  "@periodMonthly": {
+    "description": "Monthly period option"
+  },
   "periodYearly": "Yearly",
+  "@periodYearly": {
+    "description": "Yearly period option"
+  },
   "caloriesWeekCaption": "Calories — last week (day by day)",
+  "@caloriesWeekCaption": {
+    "description": "Weekly calories chart caption"
+  },
   "caloriesMonthCaption": "Average calories per week — last 4 weeks",
+  "@caloriesMonthCaption": {
+    "description": "Monthly calories chart caption"
+  },
   "caloriesYearCaption": "Approximate daily average per month — last 12 months",
+  "@caloriesYearCaption": {
+    "description": "Yearly calories chart caption"
+  },
   "waterWeekCaption": "Water — last week (day by day)",
+  "@waterWeekCaption": {
+    "description": "Weekly water chart caption"
+  },
   "waterMonthCaption": "Average water per week — last 4 weeks",
+  "@waterMonthCaption": {
+    "description": "Monthly water chart caption"
+  },
   "waterYearCaption": "Daily water average per month — last 12 months",
+  "@waterYearCaption": {
+    "description": "Yearly water chart caption"
+  },
   "weightTrendWeek": "During the last week",
+  "@weightTrendWeek": {
+    "description": "Weekly weight trend label"
+  },
   "weightTrendMonth": "During the last month",
+  "@weightTrendMonth": {
+    "description": "Monthly weight trend label"
+  },
   "weightTrendYear": "During the last year",
+  "@weightTrendYear": {
+    "description": "Yearly weight trend label"
+  },
   "weightDevelopment": "Weight development",
+  "@weightDevelopment": {
+    "description": "Weight development title"
+  },
   "currentPassword": "Current Password",
+  "@currentPassword": {
+    "description": "Current password field label"
+  },
   "newPassword": "New Password",
+  "@newPassword": {
+    "description": "New password field label"
+  },
   "confirmNewPassword": "Confirm New Password",
+  "@confirmNewPassword": {
+    "description": "Confirm new password field label"
+  },
   "passwordRequirements": "Password must be at least 8 characters and include a number and a letter.",
+  "@passwordRequirements": {
+    "description": "Password requirements hint"
+  },
   "updatePassword": "Update Password",
+  "@updatePassword": {
+    "description": "Update password action"
+  },
   "passwordUpdatedSuccess": "Password updated successfully",
+  "@passwordUpdatedSuccess": {
+    "description": "Password update success message"
+  },
   "pleaseEnterCurrentPassword": "Please enter current password",
+  "@pleaseEnterCurrentPassword": {
+    "description": "Validation message"
+  },
   "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Passwords mismatch error"
+  },
   "contactSupport": "Contact Support",
+  "@contactSupport": {
+    "description": "Contact support action"
+  },
   "helpSubtitle": "We are here to help you get the most out of Afia.",
+  "@helpSubtitle": {
+    "description": "Help screen subtitle"
+  },
   "liveChat": "Live Chat",
+  "@liveChat": {
+    "description": "Live chat option"
+  },
   "liveChatSubtitle": "Average reply in under 2 hours",
+  "@liveChatSubtitle": {
+    "description": "Live chat subtitle"
+  },
   "chatSupportComingSoon": "Chat support coming soon",
+  "@chatSupportComingSoon": {
+    "description": "Chat support coming soon message"
+  },
   "emailUs": "Email Us",
+  "@emailUs": {
+    "description": "Email us option"
+  },
   "emailUsSubtitle": "support@afia.app",
+  "@emailUsSubtitle": {
+    "description": "Email us subtitle"
+  },
   "emailSupportComingSoon": "Email support coming soon",
+  "@emailSupportComingSoon": {
+    "description": "Email support coming soon message"
+  },
   "reportProblem": "Report a Problem",
+  "@reportProblem": {
+    "description": "Report problem option"
+  },
   "reportProblemSubtitle": "Let us know what went wrong",
+  "@reportProblemSubtitle": {
+    "description": "Report problem subtitle"
+  },
   "problemReportingComingSoon": "Problem reporting coming soon",
+  "@problemReportingComingSoon": {
+    "description": "Problem reporting coming soon message"
+  },
   "sendFeedback": "Send Feedback",
+  "@sendFeedback": {
+    "description": "Send feedback option"
+  },
   "sendFeedbackSubtitle": "Help us improve Afia",
+  "@sendFeedbackSubtitle": {
+    "description": "Send feedback subtitle"
+  },
   "feedbackFeatureComingSoon": "Feedback feature coming soon",
+  "@feedbackFeatureComingSoon": {
+    "description": "Feedback feature coming soon message"
+  },
   "aboutAfia": "About Afia",
+  "@aboutAfia": {
+    "description": "About screen title"
+  },
   "afia": "Afia",
+  "@afia": {
+    "description": "App name"
+  },
   "version": "Version {ver}",
   "@version": {
     "description": "App version string",
@@ -194,77 +661,228 @@
     }
   },
   "afiaDescription": "Afia helps you track your daily nutrition, water intake, and health metrics. Powered by AI, it provides personalized meal recommendations and insights to support your wellness journey.",
+  "@afiaDescription": {
+    "description": "App description"
+  },
   "projectTeam": "Project Team",
+  "@projectTeam": {
+    "description": "Project team section title"
+  },
   "teamMemberAhmed": "Ahmed Abdellatif",
-  "teamMemberAhmedRole": "Auth, Backend & Meals",
+  "@teamMemberAhmed": {
+    "description": "Team member name"
+  },
+  "teamMemberAhmedRole": "Auth, Database & Storage",
+  "@teamMemberAhmedRole": {
+    "description": "Team member role"
+  },
   "teamMemberMarawan": "Marawan Mahmoud",
+  "@teamMemberMarawan": {
+    "description": "Team member name"
+  },
   "teamMemberMarawanRole": "UI/UX",
+  "@teamMemberMarawanRole": {
+    "description": "Team member role"
+  },
   "teamMemberMario": "Mario Nabil",
+  "@teamMemberMario": {
+    "description": "Team member name"
+  },
   "teamMemberMarioRole": "Profile, Onboarding & Home",
+  "@teamMemberMarioRole": {
+    "description": "Team member role"
+  },
   "teamMemberYusuf": "Yusuf Dagash",
+  "@teamMemberYusuf": {
+    "description": "Team member name"
+  },
   "teamMemberYusufRole": "Auth, AI",
+  "@teamMemberYusufRole": {
+    "description": "Team member role"
+  },
   "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link"
+  },
   "openSourceLicenses": "Open Source Licenses",
+  "@openSourceLicenses": {
+    "description": "Open source licenses link"
+  },
   "madeWithHeart": "Made with ❤️ for better health",
+  "@madeWithHeart": {
+    "description": "Footer text"
+  },
   "help": "Help",
+  "@help": {
+    "description": "Help screen title"
+  },
   "faq1Question": "How do I change my calorie goal?",
+  "@faq1Question": {
+    "description": "FAQ question 1"
+  },
   "faq1Answer": "Go to More > Diet Preferences, then adjust your calorie target and macro split.",
+  "@faq1Answer": {
+    "description": "FAQ answer 1"
+  },
   "faq2Question": "Can I track water reminders?",
+  "@faq2Question": {
+    "description": "FAQ question 2"
+  },
   "faq2Answer": "Yes. Go to More > Notifications and enable water reminders. You can set the interval between 1-4 hours.",
+  "@faq2Answer": {
+    "description": "FAQ answer 2"
+  },
   "faq3Question": "How do I reset my password?",
+  "@faq3Question": {
+    "description": "FAQ question 3"
+  },
   "faq3Answer": "Go to More > Change Password. Enter your current password, then your new password twice.",
+  "@faq3Answer": {
+    "description": "FAQ answer 3"
+  },
   "faq4Question": "How is my daily calorie target calculated?",
+  "@faq4Question": {
+    "description": "FAQ question 4"
+  },
   "faq4Answer": "Your target is based on your age, gender, height, weight, activity level, and selected goal (lose/maintain/gain).",
+  "@faq4Answer": {
+    "description": "FAQ answer 4"
+  },
   "faq5Question": "Can I use Afia offline?",
+  "@faq5Question": {
+    "description": "FAQ question 5"
+  },
   "faq5Answer": "Basic logging features work offline. Syncing across devices requires an internet connection.",
+  "@faq5Answer": {
+    "description": "FAQ answer 5"
+  },
   "faq6Question": "How do I change my language preference?",
+  "@faq6Question": {
+    "description": "FAQ question 6"
+  },
   "faq6Answer": "Go to More > Settings > Language to switch between العربية and English.",
+  "@faq6Answer": {
+    "description": "FAQ answer 6"
+  },
   "faq7Question": "Is my data secure?",
+  "@faq7Question": {
+    "description": "FAQ question 7"
+  },
   "faq7Answer": "Yes. Your health data is encrypted and stored securely. We do not share your personal information with third parties.",
+  "@faq7Answer": {
+    "description": "FAQ answer 7"
+  },
   "faqs": "FAQs",
-
+  "@faqs": {
+    "description": "FAQs screen title"
+  },
   "healthGoals": "Health & Goals",
+  "@healthGoals": {
+    "description": "Health goals section"
+  },
   "personalInfoMoreTitle": "Personal Information",
+  "@personalInfoMoreTitle": {
+    "description": "Personal info section in More"
+  },
   "personalInfoSubtitleMore": "Age, gender, height, weight",
+  "@personalInfoSubtitleMore": {
+    "description": "Personal info subtitle in More"
+  },
   "dietPrefsSubtitleMore": "Allergies, diet type, macros",
+  "@dietPrefsSubtitleMore": {
+    "description": "Diet prefs subtitle in More"
+  },
   "progress": "Progress",
+  "@progress": {
+    "description": "Progress section"
+  },
   "progressSubtitleMore": "Weight trends, history, milestones",
+  "@progressSubtitleMore": {
+    "description": "Progress subtitle in More"
+  },
   "preferences": "Preferences",
+  "@preferences": {
+    "description": "Preferences section"
+  },
   "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications section"
+  },
   "notificationsSubtitleMore": "Reminders for water, meals, weigh-in",
+  "@notificationsSubtitleMore": {
+    "description": "Notifications subtitle in More"
+  },
   "themeSubtitleMore": "Light, Dark, System",
+  "@themeSubtitleMore": {
+    "description": "Theme subtitle in More"
+  },
   "faqsSubtitleMore": "Frequently asked questions",
+  "@faqsSubtitleMore": {
+    "description": "FAQs subtitle in More"
+  },
   "helpSubtitleMore": "Contact support",
+  "@helpSubtitleMore": {
+    "description": "Help subtitle in More"
+  },
   "about": "About",
+  "@about": {
+    "description": "About section"
+  },
   "logoutConfirm": "Log out?",
+  "@logoutConfirm": {
+    "description": "Logout confirmation title"
+  },
   "logoutSubtitle": "This will return you to the authentication screen.",
+  "@logoutSubtitle": {
+    "description": "Logout confirmation subtitle"
+  },
   "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel action"
+  },
   "aiChatGreetingWithCalories": "Hello {name}! 👋 I am your smart nutrition assistant.\n\nYou have **{remaining} kcal** remaining from your goal today ({consumed} / {goal} kcal).\n\nI can help suggest meals, answer nutrition questions, or analyze your plate. How can I help you?",
   "@aiChatGreetingWithCalories": {
     "description": "Greeting message from AI assistant when calorie data is available",
     "placeholders": {
-      "name": {
-        "type": "String"
-      },
-      "remaining": {
-        "type": "String"
-      },
-      "consumed": {
-        "type": "int"
-      },
-      "goal": {
-        "type": "int"
-      }
+      "name": { "type": "String" },
+      "remaining": { "type": "String" },
+      "consumed": { "type": "int" },
+      "goal": { "type": "int" }
     }
   },
   "aiChatGreetingSimple": "Hello {name}! 👋 I am your smart nutrition assistant.\n\nI can help suggest meals, answer nutrition questions, and track your health progress. How can I help you today?",
   "@aiChatGreetingSimple": {
     "description": "Greeting message from AI assistant when no calorie data is available",
     "placeholders": {
-      "name": {
-        "type": "String"
-      }
+      "name": { "type": "String" }
     }
   },
-  "aiChatInitialGreeting": "Hello! How can I help you with your diet and meals today?"
+  "aiChatInitialGreeting": "Hello! How can I help you with your diet and meals today?",
+  "@aiChatInitialGreeting": {
+    "description": "Initial greeting from AI assistant"
+  },
+  "emailVerificationTitle": "Verify Your Email",
+  "@emailVerificationTitle": {
+    "description": "Title for email verification screen"
+  },
+  "emailVerificationExplanation": "We've sent a verification link to your email. Please check your inbox (and spam folder) to complete your registration.",
+  "@emailVerificationExplanation": {
+    "description": "Explanation text for email verification"
+  },
+  "resendVerificationEmail": "Resend Verification Email",
+  "@resendVerificationEmail": {
+    "description": "Button text to resend email verification"
+  },
+  "checkVerificationStatus": "I've verified my email",
+  "@checkVerificationStatus": {
+    "description": "Button text to check verification status"
+  },
+  "verificationEmailResent": "Verification email sent successfully!",
+  "@verificationEmailResent": {
+    "description": "Message shown when verification email is resent"
+  },
+  "confirmEmailReceived": "I confirm I received the email",
+  "@confirmEmailReceived": {
+    "description": "Button text to confirm receipt of verification email and proceed to login"
+  }
 }

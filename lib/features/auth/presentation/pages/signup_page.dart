@@ -107,7 +107,7 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 );
                 Navigator.of(context).pushReplacementNamed(
-                  RouteNames.authPhysicalInformation,
+                  RouteNames.authEmailVerification,
                 );
               } else if (state is AuthError) {
                 ScaffoldMessenger.of(context).showSnackBar(

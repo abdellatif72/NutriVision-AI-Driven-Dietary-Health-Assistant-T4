@@ -24,5 +24,9 @@ abstract class AuthRepository {
 
   Future<Either<Failure, AuthUser>> signInWithApple();
 
+  Future<Either<Failure, void>> sendEmailVerification();
+
+  Future<Either<Failure, AuthUser?>> reloadUser();
+
   Stream<AuthUser?> get authStateChanges;
 }

@@ -520,7 +520,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get teamMemberAhmed => 'أحمد عبد اللطيف';
 
   @override
-  String get teamMemberAhmedRole => 'المصادقة، الخلفية البرمجية والوجبات';
+  String get teamMemberAhmedRole => 'المصادقة، قاعدة البيانات والتخزين';
 
   @override
   String get teamMemberMarawan => 'مروان محمود';
@@ -581,7 +581,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'يعتمد هدفك اليومي على عمرك، وجنسك، وطولك، ووزنك، ومستوى نشاطك، والهدف المحدد (إنقاص/محافظة/زيادة الوزن).';
 
   @override
-  String get faq5Question => 'Can I use Afia offline?';
+  String get faq5Question => 'هل يمكنني استخدام عافية بدون اتصال بالإنترنت؟';
 
   @override
   String get faq5Answer =>
@@ -670,4 +670,23 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get aiChatInitialGreeting =>
       'مرحباً! كيف يمكنني مساعدتك في نظامك الغذائي ووجباتك اليوم؟';
+
+  @override
+  String get emailVerificationTitle => 'تفعيل البريد الإلكتروني';
+
+  @override
+  String get emailVerificationExplanation =>
+      'لقد أرسلنا رابط تفعيل إلى بريدك الإلكتروني. يرجى التحقق من صندوق الوارد (وقسم البريد المزعج/السبام) لإكمال تسجيلك.';
+
+  @override
+  String get resendVerificationEmail => 'إعادة إرسال رابط التفعيل';
+
+  @override
+  String get checkVerificationStatus => 'لقد قمت بالتفعيل';
+
+  @override
+  String get verificationEmailResent => 'تم إعادة إرسال رابط التفعيل بنجاح!';
+
+  @override
+  String get confirmEmailReceived => 'أؤكد استلام البريد الإلكتروني';
 }

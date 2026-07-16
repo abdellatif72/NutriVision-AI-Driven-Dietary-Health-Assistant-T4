@@ -382,16 +382,16 @@ None outstanding.
 
 ---
 
-## 10. Backend Plan (Intended — Not Yet Implemented)
+## 10. Backend & Integrations Status
 
-- **Auth**: Firebase Authentication (email/password + Google Sign-In)
-- **Database**: Firestore
-- **Storage**: Firebase Storage (meal photos, profile pictures)
-- **Nutrition API**: Layered — USDA FoodData Central (primary), Nutritionix (Arabic/branded foods), Open Food Facts (fallback)
-- **AI feature**: Anthropic Claude API or Gemini for recipe parsing and meal suggestions
-- **HTTP client**: `dio` (to be added)
-- **Local storage**: `shared_preferences` ^2.5.5 (already added, used by AI page). `hive` (not added).
-- **DI**: `get_it` + `injectable` (to be decided)
+- **Auth**: Fully implemented using Firebase Authentication and Supabase.
+- **Database**: Supabase PostgreSQL used as the primary database.
+- **Storage**: Supabase Storage / Firebase Storage used for media and file storage (e.g., photos).
+- **Nutrition API**: Layered integration with USDA FoodData Central and Nutritionix.
+- **AI Feature**: Google Gemini API integrated for chat responses and recipe/plate analysis ("Snap Your Plate").
+- **HTTP Client**: `dio` fully integrated and used for network requests.
+- **Local Storage**: `shared_preferences` used for local persistence.
+- **DI**: `get_it` and `injectable` used for dependency injection wiring.
 
 ---
 
@@ -406,51 +406,3 @@ None outstanding.
 7. **Do not add packages** without confirming they belong in `pubspec.yaml`.
 8. **Reminders feature has been removed** from the app — do not add it back.
 
-
----
-
-## What's Next to Work On
-
-> Last updated: 2026-07-14. Final sprint — Day 3 remaining tasks.
-
-### 🔴 Day 1 — Core Data Layers & Backend Integrations ✅ ALL DONE
-
-| Assignee | Task | Notes |
-|----------|------|-------|
-| **Abdellatif** | ✅ Supabase Setup | DONE |
-| **Abdellatif** | ✅ API Configuration | DONE |
-| **Abdellatif** | ✅ Dio Client | DONE |
-| **Abdellatif** | ✅ BMR Logic | DONE |
-| **Yusuf** | ✅ Gemini Text API | DONE |
-| **Yusuf** | ✅ "Snap Your Plate" | DONE |
-| **Yusuf** | ✅ AI UI Refactoring | DONE |
-| **Mario** | ✅ Meals Data Layer | DONE |
-| **Mario** | ✅ Meals UI Wiring | DONE |
-| **Mario** | ✅ Water Data Layer | DONE |
-
-### 🟡 Day 2 — Polish, Localization, and UI Completion ✅ ALL DONE
-
-| Assignee | Task | Notes |
-|----------|------|-------|
-| **Abdellatif** | ✅ Profile Persistence | DONE |
-| **Abdellatif** | ✅ Progress Page | DONE |
-| **Abdellatif** | ✅ UI Polish | DONE |
-| **Yusuf** | ✅ AI Confirmation | DONE |
-| **Yusuf** | ✅ Localization Wiring | DONE |
-| **Yusuf** | ✅ RTL Audit | DONE |
-| **Mario** | ✅ Explore Feature | DONE |
-| **Mario** | ✅ Health Package | DONE |
-| **Mario** | ✅ Shimmer Loading | DONE |
-
-### 🟢 Day 3 — Testing, Documentation, & Presentation
-
-| Assignee | Task | Notes |
-|----------|------|-------|
-| **Abdellatif** | ✅ Integration Test | DONE |
-| **Abdellatif** | Performance Audit | Run Flutter DevTools. Ensure smooth scrolling and no memory leaks. |
-| **Abdellatif** | Bug Squashing | Fix any final crashes. |
-| **Yusuf** | Demo Seeding | Seed a Demo User account in Supabase with realistic mock data for the demo. |
-| **Yusuf** | Presentation | Draft final presentation slides (Architecture, Supabase, Gemini AI). |
-| **Yusuf** | Demo Rehearsal | Rehearse live demo. Test "Snap Your Plate" on a real device. |
-| **Mario** | Widget Testing | Write widget tests for Home, Meals, and Water pages. |
-| **Mario** | Documentation | Finalize DEPI project document and update `README.md`. |
