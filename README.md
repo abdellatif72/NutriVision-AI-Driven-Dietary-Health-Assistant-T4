@@ -1,42 +1,58 @@
-# Afia — Technical Documentation Index
+# Afia — AI-Driven Dietary \& Health Assistant
 
-Welcome to the official engineering documentation for **Afia**, an AI-driven nutrition and wellness mobile application designed for Arabic-speaking users.
-
-This index organizes the comprehensive architectural design, reverse engineering results, and implementation specifications for the project. The documents are organized sequentially to guide technical reviewers, graduation committee members, software engineers, and future maintainers through the system from high-level objectives down to security, testing, and challenges.
+**Afia** is a state-of-the-art Flutter-based mobile application designed to empower Arabic-speaking users on their wellness journeys. By combining intuitive tracking systems with advanced conversational and visual AI, Afia acts as a personalized, culturally-aware health companion right in your pocket.
 
 ---
 
-## Table of Contents
+## 🌟 The Vision
 
-### 1. Introduction & Overview
-*   **[00-introduction.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/00-introduction.md)** — Project genesis, graduation context, and target audience needs.
-*   **[01-system-overview.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/01-system-overview.md)** — Core block diagram mapping mobile clients, dual backend synchronizations, and external integrations.
-*   **[02-requirements.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/02-requirements.md)** — Functional requirements (diet formulas, plate analysis, presets) and verified non-functional constraints.
+Most global health and nutrition applications are built around Western dietary habits, English-first user experiences, and databases that lack regional cuisines. For Arabic speakers, tracking a daily diet of traditional dishes like Kabsa, Mansaf, Shawarma, or Falafel often involves complex manual estimations or yields inaccurate metrics.
 
-### 2. Architecture & Design
-*   **[03-architecture.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/03-architecture.md)** — Deep dive into Feature-First organization, Clean Architecture layer separations, and Dependency Injection setup using `get_it`.
-*   **[04-project-structure.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/04-project-structure.md)** — Catalog of folders and core modules across `lib/app/`, `lib/core/`, and `lib/features/`.
+**Afia bridges this gap.** 
 
-### 3. State Management & Navigation
-*   **[05-state-management.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/05-state-management.md)** — Analysis of `flutter_bloc` state patterns, Bloc/Cubit selection criteria, reactive cubit composition, and optimistic state rollbacks.
-*   **[06-navigation.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/06-navigation.md)** — Named routing switch architecture, parameter casting, and the startup Auth Gate flow.
-
-### 4. Data Layer & Integrations
-*   **[07-data-layer.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/07-data-layer.md)** — Repositories, models extending entities, JSON mappings, and Clean Architecture exception conversion.
-*   **[08-backend.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/08-backend.md)** — Dual backend integration: Firebase Authentication and Supabase PostgreSQL schema with RLS and trigger functions.
-*   **[09-ai-module.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/09-ai-module.md)** — AI vision plate parsing pipelines, chat state models, prompt constructions, and API fallbacks.
-
-### 5. UI, Security & Performance
-*   **[10-ui-design.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/10-ui-design.md)** — Theme styling tokens (typography, colors, spacing) and RTL layout adaptation rules.
-*   **[11-security.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/11-security.md)** — Security patterns: JWT token swapping, client-to-backend authorization sync, and PostgreSQL RLS policies.
-*   **[12-performance.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/12-performance.md)** — Offline storage structures, rebuild control strategies, custom graphics canvas optimization.
-
-### 6. Review & Graduation Prep
-*   **[13-testing.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/13-testing.md)** — Analysis of existing test configurations, mocking structures, and commands.
-*   **[14-challenges.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/14-challenges.md)** — Engineering bottlenecks, code-to-design compromises, and graduation presentation panel Q&A defense.
-*   **[15-future-improvements.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/15-future-improvements.md)** — Roadmap for future platform integrations (Apple Health / Google Fit), Drift SQLite offline syncer, and push notifications.
+It delivers a fully localized, Right-to-Left (RTL) interface paired with AI models trained to recognize regional Arabic dishes, understand local dialects, and provide culturally-attuned wellness guidance.
 
 ---
 
-### Quick Reference: Cross-Cutting Discussion
-*   For a compiled set of specific review questions, see the original **[discussion_questions.md](file:///mnt/6AF6AC44F6AC11FD/anaT3bt/NutriVision-AI-Driven-Dietary-Health-Assistant-T4/docs/discussion_questions.md)**.
+## 🚀 Key Product Features
+
+### 📸 Snap Your Plate
+Forget typing out ingredients. Simply snap a photo of your meal. Afia’s vision engine analyzes the image, identifies the food (including complex multi-ingredient Arabic dishes), and automatically calculates estimated calories, protein, carbohydrates, and fats. Users can inspect, edit, and log the results directly to their diary in seconds.
+
+### 💬 Arabic AI Health Coach
+A conversational assistant powered by advanced language models that acts as a personal nutritionist. The coach:
+*   Engages in natural Arabic conversation.
+*   Suggests healthy alternatives to traditional high-calorie recipes.
+*   Explains food nutritional values and answers dietary questions.
+*   Adapts dynamically to the user's daily progress (steps, water logged, calories consumed).
+
+### 🍎 Smart Meal \& Food Logging
+*   **Explore Catalog**: Browse an extensive database of international and middle-eastern ingredients integrated with global nutrition databases.
+*   **Meal Slots**: Log meals under Breakfast, Lunch, Dinner, or Snacks, complete with macro breakdowns and progress rings.
+
+### 💧 Hydration Tracker
+A dedicated, beautifully animated interface to record water intake. Users can log standard cups with single taps or enter custom amounts to reach their daily hydration targets.
+
+### 📊 Health Metrics Dashboard
+A unified, premium visual dashboard displaying:
+*   **Caloric Balance**: Live progress rings showing calories consumed versus daily targets.
+*   **Physical Activity**: Live steps tracker and heart rate logs.
+*   **Progress Tracking**: Weight logs and historical trend charts showing weight change over time.
+
+---
+
+## 👥 Target Audience
+
+*   **Arabic Speakers**: Adults looking for a health tracker that respects their native language, regional dialects, and Right-to-Left layout conventions.
+*   **Traditional Food Lovers**: Individuals who consume Middle Eastern cuisines and want accurate, automated nutritional breakdowns without the hassle of manual ingredient parsing.
+*   **Wellness Enthusiasts**: Users looking for an all-in-one assistant coordinating activity, hydration, calories, and personalized conversational coaching.
+
+---
+
+## 💻 Developer \& Engineering Reference
+
+If you are a developer, reviewer, or future maintainer looking to compile the application or inspect its architecture:
+
+*   **Technology Stack**: Flutter (iOS + Android), Firebase (Authentication), Supabase (PostgreSQL Database, Edge Functions, Row Level Security, Storage), Gemini \& Groq APIs (AI Vision \& Conversational Chat), Dio (Networking).
+*   **Architecture**: Feature-First Clean Architecture.
+*   **Localization**: English and Arabic via ARB files (`intl` library) with directionality-aware widgets.
