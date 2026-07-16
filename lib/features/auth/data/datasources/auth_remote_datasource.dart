@@ -25,6 +25,10 @@ abstract class AuthRemoteDataSource {
 
   Future<AuthUserModel> signInWithApple();
 
+  Future<void> sendEmailVerification();
+
+  Future<AuthUserModel?> reloadUser();
+
   Stream<AuthUserModel?> get authStateChanges;
 }
 
@@ -64,7 +68,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final firebase.User updatedUser = _firebaseAuth.currentUser ?? credential.user!;
 
     // Send email verification link natively
-    // await updatedUser.sendEmailVerification();
+    await updatedUser.sendEmailVerification();
 
     // Sign out to prevent unverified cached sessions immediately
     // await _firebaseAuth.signOut();
@@ -94,15 +98,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     await user.reload();
     final firebase.User reloadedUser = _firebaseAuth.currentUser ?? user;
 
-    // Check if emailVerified is true
-    // if (!reloadedUser.emailVerified) {
-    //   await _firebaseAuth.signOut();
-    //   throw firebase.FirebaseAuthException(
-    //     code: 'email-not-verified',
-    //     message: 'برجاء تفعيل بريدك الإلكتروني أولاً من خلال الرابط. إذا كان البريد الإلكتروني غير صحيح، يرجى إنشاء حساب جديد ببريد صحيح.',
-    //   );
-    // }
-
     return AuthUserModel.fromFirebaseUser(reloadedUser);
   }
 
@@ -119,12 +114,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     final firebase.User? currentUser = _firebaseAuth.currentUser;
     if (currentUser == null) return null;
 
-    // if (!currentUser.emailVerified) {
-    //   await _firebaseAuth.signOut();
-    //   return null;
-    // }
+    try {
+      await currentUser.reload();
+    } catch (_) {
+      // Ignore network errors or session expired during reload
+    }
 
-    return AuthUserModel.fromFirebaseUser(currentUser);
+    final freshUser = _firebaseAuth.currentUser ?? currentUser;
+    return AuthUserModel.fromFirebaseUser(freshUser);
   }
 
   @override
@@ -191,10 +188,28 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
+  Future<void> sendEmailVerification() async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null) {
+      await currentUser.sendEmailVerification();
+    }
+  }
+
+  @override
+  Future<AuthUserModel?> reloadUser() async {
+    final currentUser = _firebaseAuth.currentUser;
+    if (currentUser != null) {
+      await currentUser.reload();
+      final reloadedUser = _firebaseAuth.currentUser ?? currentUser;
+      return AuthUserModel.fromFirebaseUser(reloadedUser);
+    }
+    return null;
+  }
+
+  @override
   Stream<AuthUserModel?> get authStateChanges {
     return _firebaseAuth.authStateChanges().map((firebaseUser) {
       if (firebaseUser == null) return null;
-      // if (!firebaseUser.emailVerified) return null;
       return AuthUserModel.fromFirebaseUser(firebaseUser);
     });
   }

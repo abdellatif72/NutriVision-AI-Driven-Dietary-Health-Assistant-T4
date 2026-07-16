@@ -6,6 +6,7 @@ class AuthUserModel extends AuthUser {
     required super.id,
     required super.email,
     super.name,
+    super.isEmailVerified,
   });
 
   factory AuthUserModel.fromFirebaseUser(firebase.User firebaseUser) {
@@ -13,6 +14,7 @@ class AuthUserModel extends AuthUser {
       id: firebaseUser.uid,
       email: firebaseUser.email ?? '',
       name: firebaseUser.displayName,
+      isEmailVerified: firebaseUser.emailVerified,
     );
   }
 }

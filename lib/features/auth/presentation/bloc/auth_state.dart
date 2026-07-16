@@ -14,11 +14,38 @@ class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
   final AuthUser user;
+  final bool isSendingVerification;
+  final String? verificationError;
+  final bool verificationSentSuccess;
 
-  const AuthAuthenticated(this.user);
+  const AuthAuthenticated(
+    this.user, {
+    this.isSendingVerification = false,
+    this.verificationError,
+    this.verificationSentSuccess = false,
+  });
+
+  AuthAuthenticated copyWith({
+    AuthUser? user,
+    bool? isSendingVerification,
+    String? verificationError,
+    bool? verificationSentSuccess,
+  }) {
+    return AuthAuthenticated(
+      user ?? this.user,
+      isSendingVerification: isSendingVerification ?? this.isSendingVerification,
+      verificationError: verificationError,
+      verificationSentSuccess: verificationSentSuccess ?? this.verificationSentSuccess,
+    );
+  }
 
   @override
-  List<Object?> get props => [user];
+  List<Object?> get props => [
+        user,
+        isSendingVerification,
+        verificationError,
+        verificationSentSuccess,
+      ];
 }
 
 class AuthUnauthenticated extends AuthState {}

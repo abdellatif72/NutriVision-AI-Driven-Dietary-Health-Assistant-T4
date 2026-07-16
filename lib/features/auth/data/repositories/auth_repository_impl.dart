@@ -73,5 +73,15 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<Either<Failure, void>> sendEmailVerification() async {
+    return _handleException(() => _remoteDataSource.sendEmailVerification());
+  }
+
+  @override
+  Future<Either<Failure, AuthUser?>> reloadUser() async {
+    return _handleException(() => _remoteDataSource.reloadUser());
+  }
+
+  @override
   Stream<AuthUser?> get authStateChanges => _remoteDataSource.authStateChanges;
 }

@@ -515,28 +515,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get projectTeam => 'Project Team';
 
   @override
-  String get teamMemberSara => 'Sara';
+  String get teamMemberAhmed => 'Ahmed Abdellatif';
 
   @override
-  String get teamMemberSaraRole => 'Design & Development';
+  String get teamMemberAhmedRole => 'Auth, Database & Storage';
 
   @override
-  String get teamMemberAhmed => 'Ahmed';
+  String get teamMemberMarawan => 'Marawan Mahmoud';
 
   @override
-  String get teamMemberAhmedRole => 'Backend & AI';
+  String get teamMemberMarawanRole => 'UI/UX';
 
   @override
-  String get teamMemberLayla => 'Layla';
+  String get teamMemberMario => 'Mario Nabil';
 
   @override
-  String get teamMemberLaylaRole => 'Research & Content';
+  String get teamMemberMarioRole => 'Profile, Onboarding & Home';
 
   @override
-  String get teamMemberKhalid => 'Khalid';
+  String get teamMemberYusuf => 'Yusuf Dagash';
 
   @override
-  String get teamMemberKhalidRole => 'Testing & QA';
+  String get teamMemberYusufRole => 'Auth, AI';
 
   @override
   String get termsOfService => 'Terms of Service';
@@ -670,4 +670,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get aiChatInitialGreeting =>
       'Hello! How can I help you with your diet and meals today?';
+
+  @override
+  String get emailVerificationTitle => 'Verify Your Email';
+
+  @override
+  String get emailVerificationExplanation =>
+      'We\'ve sent a verification link to your email. Please check your inbox (and spam folder) to complete your registration.';
+
+  @override
+  String get resendVerificationEmail => 'Resend Verification Email';
+
+  @override
+  String get checkVerificationStatus => 'I\'ve verified my email';
+
+  @override
+  String get verificationEmailResent => 'Verification email sent successfully!';
+
+  @override
+  String get confirmEmailReceived => 'I confirm I received the email';
 }

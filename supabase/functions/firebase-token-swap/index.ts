@@ -21,10 +21,12 @@ serve(async (req) => {
     }
 
     // 1. استدعاء معرّف المشروع من متغيرات البيئة
-    const projectId = Deno.env.get('FIREBASE_PROJECT_ID')
+    let projectId = Deno.env.get('FIREBASE_PROJECT_ID')
     if (!projectId) {
       throw new Error('FIREBASE_PROJECT_ID environment variable is not set')
     }
+    // Clean any literal quotes set by CLI/environments
+    projectId = projectId.replace(/^["']|["']$/g, '')
 
     // 2. التحقق من صحة التوكن عبر خدمة مفاتيح Google العامة (JWKS)
     const JWKS = jose.createRemoteJWKSet(
